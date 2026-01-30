@@ -813,14 +813,28 @@ function findGrants() {
 renderNotes();
 renderSearchHistory();
 
-// Try to load stats
-fetch('./stats.json')
-  .then(r => r.json())
-  .then(data => {
+// Try to load stats from Cloudflare Worker (live data) or fallback to local
+async function loadStats() {
+  try {
+    // Try Cloudflare Worker first (always fresh)
+    const res = await fetch('https://d2d-api.mattmauersp.workers.dev/stats');
+    const data = await res.json();
     document.getElementById('mrr-display').textContent = `$${data.mrr_dollars || 0} MRR`;
-    document.getElementById('customers-display').textContent = `${data.customers || 0} members`;
-  })
-  .catch(() => {});
+    document.getElementById('customers-display').textContent = `${data.subscriptions || data.customers || 0} members`;
+  } catch (err) {
+    // Fallback to local stats.json
+    try {
+      const res = await fetch('./stats.json');
+      const data = await res.json();
+      document.getElementById('mrr-display').textContent = `$${data.mrr_dollars || 0} MRR`;
+      document.getElementById('customers-display').textContent = `${data.customers || 0} members`;
+    } catch (err2) {
+      console.log('Stats not available');
+    }
+  }
+}
+
+loadStats();
 </script>
 
 </body>
