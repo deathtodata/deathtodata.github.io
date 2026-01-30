@@ -426,33 +426,53 @@ function doSearch() {
   const query = document.getElementById('query').value.trim();
   if (!query) return;
 
-  searches.unshift({ query, timestamp: new Date().toISOString(), engine: 'd2d-api' });
+  // Check if we've searched this recently (within 24 hours)
+  const recentSearch = searches.find(s =>
+    s.query.toLowerCase() === query.toLowerCase() &&
+    (Date.now() - new Date(s.timestamp).getTime()) < 24 * 60 * 60 * 1000
+  );
+
+  if (recentSearch) {
+    // Show cached notice
+    const notice = document.createElement('div');
+    notice.textContent = `📋 You searched this ${Math.floor((Date.now() - new Date(recentSearch.timestamp).getTime()) / 60000)} minutes ago`;
+    notice.style.cssText = 'background:#111;border:1px solid #0f0;padding:10px;margin:10px 0;border-radius:4px;font-size:13px;color:#0f0;';
+    document.querySelector('.search-box').after(notice);
+    setTimeout(() => notice.remove(), 3000);
+  }
+
+  // Log search locally
+  searches.unshift({
+    query: query,
+    timestamp: new Date().toISOString(),
+    engine: 'searx.be'
+  });
+
+  // Keep last 100 searches
   if (searches.length > 100) searches = searches.slice(0, 100);
   localStorage.setItem('d2d_searches', JSON.stringify(searches));
+
   renderSearchHistory();
-
-  let resultsDiv = document.getElementById('search-results');
-  if (!resultsDiv) {
-    resultsDiv = document.createElement('div');
-    resultsDiv.id = 'search-results';
-    resultsDiv.style.cssText = 'margin-top:20px;padding:20px;background:#111;border:1px solid #333;border-radius:4px;';
-    document.getElementById('search').appendChild(resultsDiv);
+const searchUrl = `https://searx.be/search?q=${encodeURIComponent(query)}`;
+  let frame = document.getElementById('search-frame');
+  if (!frame) {
+    frame = document.createElement('iframe');
+    frame.id = 'search-frame';
+    frame.style.cssText = 'width:100%;height:70vh;border:1px solid #0f0;margin-top:20px;background:#000;';
+    document.getElementById('search').appendChild(frame);
   }
-  resultsDiv.innerHTML = '<p style="color:#0f0;">Searching...</p>';
-
-  fetch('https://d2d-api.mattmauersp.workers.dev/search?q=' + encodeURIComponent(query))
-    .then(r => r.json())
-    .then(data => {
-      let html = data.abstract ? '<div style="margin-bottom:15px;padding:15px;background:#1a1a1a;border-radius:4px;"><p style="color:#fff;">' + data.abstract + '</p><a href="' + data.url + '" target="_blank" style="color:#0f0;font-size:13px;">Source: ' + data.source + '</a></div>' : '';
-      if (data.related && data.related.length) {
-        html += '<p style="color:#888;font-size:12px;margin:15px 0 10px;">RELATED:</p>';
-        data.related.forEach(function(r) { if(r.Text) html += '<a href="' + r.FirstURL + '" target="_blank" style="color:#0f0;display:block;margin-bottom:8px;">' + r.Text + '</a>'; });
-      }
-      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'s\',\'width=900,height=700\')" style="background:#0f0;color:#000;border:none;padding:10px 20px;margin-top:15px;cursor:pointer;font-weight:bold;">Deep Search →</button>';
-      resultsDiv.innerHTML = html || '<p style="color:#888;">No results</p>';
-    })
-    .catch(function() { resultsDiv.innerHTML = '<p style="color:#f66;">Search failed</p>'; });
+  frame.src = searchUrl;
 }
+
+document.getElementById('query').addEventListener('keypress', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+document.querySelectorAll('.engine').forEach(engine => {
+  engine.addEventListener('click', e => {
+    e.preventDefault();
+    const query = document.getElementById('query').value.trim();
+    if (!query) return alert('Enter a search query first');
 
     // Log with specific engine
     const engineName = engine.textContent;
