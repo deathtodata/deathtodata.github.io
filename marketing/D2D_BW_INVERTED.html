@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Death2Data</title>
+<style>
+@page { size: letter; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background: #fff;
+  color: #000;
+}
+
+.page {
+  width: 8.5in;
+  height: 11in;
+  padding: 0.6in;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header - stark */
+header {
+  text-align: center;
+  padding-bottom: 0.3in;
+  border-bottom: 4px solid #000;
+}
+
+h1 {
+  font-size: 52pt;
+  font-weight: 900;
+  letter-spacing: -3px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.tagline {
+  font-size: 12pt;
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
+/* Main */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.3in 0;
+}
+
+/* THE TABLE - Pure B&W, inverted sides */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 4px solid #000;
+}
+
+/* THEM = White on Black (inverted = they're the dark side) */
+.col.them {
+  background: #000;
+  color: #fff;
+  padding: 0.3in;
+}
+
+/* US = Black on White (clean, nothing to hide) */
+.col.us {
+  background: #fff;
+  color: #000;
+  padding: 0.3in;
+  border-left: 4px solid #000;
+}
+
+.col h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 11pt;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.col.them h2 {
+  border-bottom: 1px solid #444;
+}
+
+.col.us h2 {
+  border-bottom: 1px solid #ccc;
+}
+
+.col ul {
+  list-style: none;
+  font-size: 12pt;
+  line-height: 2;
+}
+
+.col li {
+  padding-left: 24px;
+  position: relative;
+}
+
+.col.them li::before {
+  content: "×";
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+.col.us li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+}
+
+/* Price - inverted block */
+.price-section {
+  text-align: center;
+  margin-top: 0.3in;
+}
+
+.price-box {
+  display: inline-block;
+  background: #000;
+  color: #fff;
+  padding: 16px 48px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.price {
+  font-size: 42pt;
+  font-weight: 900;
+}
+
+.price-note {
+  font-size: 10pt;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding-top: 0.3in;
+  border-top: 4px solid #000;
+}
+
+.url {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 24pt;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.contact {
+  font-size: 10pt;
+  margin-top: 8px;
+  color: #555;
+}
+
+.motto {
+  font-size: 9pt;
+  margin-top: 16px;
+  font-style: italic;
+  color: #777;
+}
+
+@media print {
+  .col.them, .price-box {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  
+  <header>
+    <h1>DEATH2DATA</h1>
+    <p class="tagline">YOUR DATA IS YOURS. KEEP IT THAT WAY.</p>
+  </header>
+  
+  <main>
+    <div class="comparison">
+      
+      <div class="col them">
+        <h2>They Take</h2>
+        <ul>
+          <li>Your searches</li>
+          <li>Your location</li>
+          <li>Your habits</li>
+          <li>Your messages</li>
+          <li>Your photos</li>
+          <li>Your contacts</li>
+          <li>Your identity</li>
+          <li>Everything</li>
+        </ul>
+      </div>
+      
+      <div class="col us">
+        <h2>We Keep Nothing</h2>
+        <ul>
+          <li>No search logs</li>
+          <li>No tracking</li>
+          <li>No profiles</li>
+          <li>No collection</li>
+          <li>No selling</li>
+          <li>No sharing</li>
+          <li>No AI training</li>
+          <li>Nothing</li>
+        </ul>
+      </div>
+      
+    </div>
+    
+    <div class="price-section">
+      <div class="price-box">
+        <div class="price">$1/mo</div>
+        <div class="price-note">No contracts. Cancel anytime.</div>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="url">death2data.com</div>
+    <div class="contact">matt@death2data.com</div>
+    <p class="motto">Privacy isn't about hiding. It's about owning what's yours.</p>
+  </footer>
+  
+</div>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Death2Data Robots.txt
+User-agent: *
+Allow: /
+
+# Block sensitive paths
+Disallow: /api/
+Disallow: /.netlify/
+Disallow: /admin/
+Disallow: /_*
+
+# AI Crawlers - Welcome!
+User-agent: GPTBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+# Sitemap
+Sitemap: https://death2data.com/sitemap.xml

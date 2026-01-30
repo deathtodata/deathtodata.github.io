@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Death2Data - Business Cards (Print Ready)</title>
+    <style>
+        @page { size: letter; margin: 0.5in; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            padding: 0.5in;
+            background: #f5f5f5;
+        }
+        .sheet {
+            display: grid;
+            grid-template-columns: repeat(2, 3.5in);
+            grid-template-rows: repeat(5, 2in);
+            gap: 0;
+            background: white;
+        }
+        .card {
+            width: 3.5in;
+            height: 2in;
+            background: #000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0.25in;
+            border: 1px dashed #ccc;
+            position: relative;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 4px;
+        }
+        .tagline {
+            font-size: 9px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        .qr-container {
+            background: #fff;
+            padding: 6px;
+            margin-bottom: 6px;
+        }
+        .qr-container svg {
+            width: 80px;
+            height: 80px;
+        }
+        .cta {
+            font-size: 10px;
+            color: #0f0;
+            font-weight: bold;
+        }
+        .url {
+            font-size: 9px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        /* Print instructions */
+        .instructions {
+            margin-top: 40px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            font-family: system-ui, -apple-system, sans-serif;
+            font-size: 12px;
+            page-break-before: always;
+        }
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #000;
+        }
+        .instructions ul {
+            margin-left: 20px;
+            line-height: 1.8;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+        }
+        @media print {
+            body { background: white; }
+            .instructions { display: none; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Business Cards - Death2Data</title>
+<meta name="description" content="Business Cards page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="business-cards, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/business-cards.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Business Cards - Death2Data">
+<meta property="og:description" content="Business Cards page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/business-cards.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Business Cards - Death2Data">
+<meta name="twitter:description" content="Business Cards page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Business Cards - Death2Data",
+  "description": "Business Cards page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/business-cards.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="sheet" id="card-sheet">
+    <!-- 10 cards will be generated here -->
+</div>
+
+<div class="instructions">
+    <h3>📋 PRINT INSTRUCTIONS</h3>
+    <ul>
+        <li><strong>Paper:</strong> Use 100lb+ cardstock (white or black)</li>
+        <li><strong>Print Settings:</strong> Scale 100% (no auto-fit), Color or Grayscale</li>
+        <li><strong>Cut:</strong> Cut along dashed lines with paper cutter or scissors</li>
+        <li><strong>Size:</strong> Standard business card (3.5" × 2")</li>
+        <li><strong>QR Code:</strong> Test scan before printing full batch</li>
+    </ul>
+
+    <h3 style="margin-top: 20px;">🧪 TEST BEFORE PRINTING</h3>
+    <ul>
+        <li>Print ONE card first</li>
+        <li>Scan QR code with phone camera</li>
+        <li>Verify it opens Stripe payment page</li>
+        <li>Check card size is exactly 3.5" × 2"</li>
+        <li>Then print full sheet</li>
+    </ul>
+
+    <h3 style="margin-top: 20px;">📊 QR CODE INFO</h3>
+    <ul>
+        <li><strong>Link:</strong> https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00
+        <li><strong>Pricing:</strong> $1 every 4 weeks ($13/year)</li>
+        <li><strong>Redirect:</strong> death2data.com/success (after payment)</li>
+        <li><strong>Mode:</strong> Test mode (use for testing, switch to live later)</li>
+    </ul>
+</div>
+
+<script>
+// Generate QR code once
+var qr = qrcode(0, 'M');
+qr.addData('https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00
+qr.make();
+var qrSVG = qr.createSvgTag(3, 0);
+
+// Generate 10 cards
+var sheet = document.getElementById('card-sheet');
+for (var i = 0; i < 10; i++) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+        <div class="logo">DEATH2DATA</div>
+        <div class="tagline">Zero Tracking. Own Your Data.</div>
+        <div class="qr-container">${qrSVG}</div>
+        <div class="cta">SCAN TO JOIN</div>
+        <div class="url">death2data.com · $1/mo</div>
+    `;
+    sheet.appendChild(card);
+}
+</script>
+
+</body>
+</html>

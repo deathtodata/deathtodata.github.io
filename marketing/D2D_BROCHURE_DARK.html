@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Death2Data</title>
+<style>
+@page { size: letter; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+}
+
+.page {
+  width: 8.5in;
+  height: 11in;
+  padding: 0.75in;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding-bottom: 0.4in;
+  border-bottom: 2px solid #333;
+}
+
+h1 {
+  font-size: 48pt;
+  font-weight: 800;
+  letter-spacing: -2px;
+  margin-bottom: 8px;
+}
+
+.tagline {
+  font-size: 14pt;
+  color: #888;
+  font-weight: 300;
+}
+
+/* Main content */
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0.4in 0;
+}
+
+/* The Table - This is the whole pitch */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 13pt;
+  line-height: 1.8;
+}
+
+.col {
+  padding: 0.3in;
+}
+
+.col.them {
+  background: #1a0000;
+  border: 2px solid #440000;
+}
+
+.col.us {
+  background: #001a00;
+  border: 2px solid #004400;
+}
+
+.col h2 {
+  font-size: 11pt;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #333;
+}
+
+.col.them h2 { color: #ff4444; }
+.col.us h2 { color: #44ff44; }
+
+.col ul {
+  list-style: none;
+}
+
+.col li {
+  margin-bottom: 8px;
+  padding-left: 24px;
+  position: relative;
+}
+
+.col.them li::before {
+  content: "✗";
+  position: absolute;
+  left: 0;
+  color: #ff4444;
+  font-weight: bold;
+}
+
+.col.us li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #44ff44;
+  font-weight: bold;
+}
+
+/* Price */
+.price-section {
+  text-align: center;
+  padding: 0.3in 0;
+  margin-top: 0.2in;
+}
+
+.price {
+  font-size: 56pt;
+  font-weight: 900;
+}
+
+.price-note {
+  font-size: 12pt;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding-top: 0.3in;
+  border-top: 2px solid #333;
+}
+
+.url {
+  font-size: 28pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.email {
+  font-size: 11pt;
+  color: #666;
+}
+
+.motto {
+  margin-top: 16px;
+  font-size: 10pt;
+  color: #555;
+  font-style: italic;
+}
+
+@media print {
+  body { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .col.them, .col.us { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  
+  <header>
+    <h1>DEATH2DATA</h1>
+    <p class="tagline">Your data is yours. Keep it that way.</p>
+  </header>
+  
+  <main>
+    <div class="comparison">
+      
+      <div class="col them">
+        <h2>They Take</h2>
+        <ul>
+          <li>Your search history</li>
+          <li>Your location data</li>
+          <li>Your browsing habits</li>
+          <li>Your messages</li>
+          <li>Your photos</li>
+          <li>Your contacts</li>
+          <li>Everything you type</li>
+          <li>Forever</li>
+        </ul>
+      </div>
+      
+      <div class="col us">
+        <h2>We Keep Nothing</h2>
+        <ul>
+          <li>No search history</li>
+          <li>No tracking cookies</li>
+          <li>No user profiles</li>
+          <li>No data collection</li>
+          <li>No selling to anyone</li>
+          <li>No AI training on you</li>
+          <li>No tricks</li>
+          <li>Your data = yours</li>
+        </ul>
+      </div>
+      
+    </div>
+    
+    <div class="price-section">
+      <div class="price">$1/mo</div>
+      <div class="price-note">No contracts. Cancel anytime.</div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="url">death2data.com</div>
+    <div class="email">Questions? matt@death2data.com</div>
+    <p class="motto">"Privacy isn't about hiding. It's about protecting."</p>
+  </footer>
+  
+</div>
+
+</body>
+</html>

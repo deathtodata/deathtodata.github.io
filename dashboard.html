@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Analytics Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: ui-monospace, 'SF Mono', monospace;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #222;
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 18px;
+  color: #00ff00;
+  letter-spacing: 2px;
+}
+
+nav a {
+  color: #666;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 13px;
+}
+nav a:hover { color: #888; }
+
+h1 { font-size: 24px; margin-bottom: 8px; }
+.subtitle { color: #666; margin-bottom: 30px; }
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 24px;
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.stat-card .value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.stat-card .subvalue {
+  font-size: 14px;
+  color: #00ff00;
+  margin-top: 4px;
+}
+
+.stat-card.highlight { border-color: #00ff00; }
+.stat-card.warning .value { color: #ffaa00; }
+.stat-card.alert .value { color: #ff4444; }
+
+/* Tables */
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 16px;
+  color: #888;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 1px solid #1a1a1a;
+}
+
+th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  background: #0d0d0d;
+}
+
+td {
+  font-size: 14px;
+}
+
+.bot-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.bot-badge.ai { background: #ff444433; color: #ff6666; }
+.bot-badge.search { background: #4444ff33; color: #6666ff; }
+.bot-badge.social { background: #44ff4433; color: #66ff66; }
+.bot-badge.human { background: #00ff0033; color: #00ff00; }
+.bot-badge.unknown { background: #88888833; color: #888; }
+
+.count {
+  font-family: ui-monospace, monospace;
+  color: #888;
+}
+
+.bar {
+  height: 8px;
+  background: #00ff00;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+
+/* Charts */
+.chart-container {
+  background: #111;
+  border: 1px solid #222;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.breakdown {
+  display: flex;
+  gap: 40px;
+}
+
+.breakdown-item {
+  flex: 1;
+}
+
+.breakdown-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.breakdown-value {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.breakdown-bar {
+  height: 24px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 12px;
+  display: flex;
+}
+
+.breakdown-bar .segment {
+  height: 100%;
+}
+
+.breakdown-bar .human { background: #00ff00; }
+.breakdown-bar .bot { background: #ff4444; }
+
+/* Export */
+.export-section {
+  text-align: right;
+  padding: 20px 0;
+}
+
+.btn {
+  padding: 10px 20px;
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  font-family: inherit;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.btn:hover {
+  border-color: #00ff00;
+  color: #00ff00;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 60px;
+  color: #666;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #222;
+  border-top-color: #00ff00;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .breakdown { flex-direction: column; gap: 20px; }
+}
+</style>
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  
+  <header>
+    <div class="logo">D2D ANALYTICS</div>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/tools">Tools</a>
+      <a href="/docs/">Docs</a>
+    </nav>
+  </header>
+  
+  <h1>Dashboard</h1>
+  <p class="subtitle">Privacy-first analytics. No individual tracking.</p>
+  
+  <div id="content">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading analytics...</p>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const API_BASE = '/api';
+const SITE_ID = 'd2d_default'; // Change per site
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DATA FETCHING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function fetchStats() {
+  try {
+    const response = await fetch(`${API_BASE}/stats?site_id=${SITE_ID}`);
+    if (!response.ok) throw new Error('Failed to fetch stats');
+    return await response.json();
+  } catch (e) {
+    console.error('Error fetching stats:', e);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function renderDashboard(data) {
+  if (!data) {
+    document.getElementById('content').innerHTML = `
+      <div class="loading">
+        <p style="color: #ff4444;">Failed to load analytics data.</p>
+        <p style="color: #666; margin-top: 8px;">Make sure the API is running.</p>
+      </div>
+    `;
+    return;
+  }
+  
+  // Calculate percentages
+  const humanPct = data.human_percentage || 0;
+  const botPct = 100 - humanPct;
+  
+  // Bot categorization
+  const aiTypes = ['gptbot', 'claudebot', 'perplexity', 'cohere', 'bytedance', 'meta-ai', 'amazon'];
+  const searchTypes = ['googlebot', 'bingbot', 'duckduckgo', 'yandex', 'baidu'];
+  const socialTypes = ['facebook', 'twitter', 'linkedin', 'discord', 'slack'];
+  
+  let aiTotal = 0, searchTotal = 0, socialTotal = 0, unknownTotal = 0;
+  
+  Object.entries(data.bots || {}).forEach(([bot, count]) => {
+    if (bot === 'human') return;
+    if (aiTypes.includes(bot)) aiTotal += count;
+    else if (searchTypes.includes(bot)) searchTotal += count;
+    else if (socialTypes.includes(bot)) socialTotal += count;
+    else unknownTotal += count;
+  });
+  
+  // Render
+  document.getElementById('content').innerHTML = `
+    <!-- Overview Stats -->
+    <div class="stats-grid">
+      <div class="stat-card highlight">
+        <div class="label">Total Page Views</div>
+        <div class="value">${formatNumber(data.total_views)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Human Visitors</div>
+        <div class="value">${formatNumber(data.human_views)}</div>
+        <div class="subvalue">${humanPct}% of traffic</div>
+      </div>
+      <div class="stat-card ${botPct > 50 ? 'warning' : ''}">
+        <div class="label">Bot Traffic</div>
+        <div class="value">${formatNumber(data.bot_views)}</div>
+        <div class="subvalue">${botPct}% of traffic</div>
+      </div>
+      <div class="stat-card ${aiTotal > 0 ? 'alert' : ''}">
+        <div class="label">AI Crawlers</div>
+        <div class="value">${formatNumber(aiTotal)}</div>
+        <div class="subvalue">Training on your content</div>
+      </div>
+    </div>
+    
+    <!-- Traffic Breakdown -->
+    <div class="chart-container">
+      <div class="chart-title">Traffic Breakdown</div>
+      <div class="breakdown">
+        <div class="breakdown-item">
+          <div class="breakdown-label">Human vs Bot</div>
+          <div class="breakdown-bar">
+            <div class="segment human" style="width: ${humanPct}%"></div>
+            <div class="segment bot" style="width: ${botPct}%"></div>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #666;">
+            <span>Human: ${humanPct}%</span>
+            <span>Bot: ${botPct}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- AI Bot Breakdown -->
+    <div class="section">
+      <h2>AI Crawler Activity</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Bot</th>
+            <th>Organization</th>
+            <th>Visits</th>
+            <th>Threat</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderAIBots(data.ai_bots || {})}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- All Bots -->
+    <div class="section">
+      <h2>All Traffic Sources</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Count</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderAllBots(data.bots || {}, data.total_views)}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Top Pages -->
+    <div class="section">
+      <h2>Top Pages</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Page</th>
+            <th>Views</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderPages(data.top_pages || [])}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Top Referrers -->
+    <div class="section">
+      <h2>Traffic Sources</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Referrer</th>
+            <th>Visits</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${renderReferrers(data.top_referrers || [])}
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- Export -->
+    <div class="export-section">
+      <button class="btn" onclick="exportJSON()">Export JSON</button>
+      <button class="btn" onclick="exportCSV()">Export CSV</button>
+    </div>
+  `;
+}
+
+function renderAIBots(aiBots) {
+  const botInfo = {
+    gptbot: { org: 'OpenAI', threat: 'AI Training' },
+    claudebot: { org: 'Anthropic', threat: 'AI Training' },
+    perplexity: { org: 'Perplexity', threat: 'AI Search' },
+    cohere: { org: 'Cohere', threat: 'AI Training' },
+    bytedance: { org: 'ByteDance', threat: 'AI Training' },
+    'meta-ai': { org: 'Meta', threat: 'AI Training' },
+    amazon: { org: 'Amazon', threat: 'Alexa/AI' }
+  };
+  
+  const rows = Object.entries(aiBots)
+    .sort((a, b) => b[1] - a[1])
+    .map(([bot, count]) => {
+      const info = botInfo[bot] || { org: 'Unknown', threat: 'Unknown' };
+      return `
+        <tr>
+          <td><span class="bot-badge ai">${bot}</span></td>
+          <td>${info.org}</td>
+          <td class="count">${formatNumber(count)}</td>
+          <td style="color: #ff6666;">${info.threat}</td>
+        </tr>
+      `;
+    });
+  
+  return rows.length > 0 ? rows.join('') : '<tr><td colspan="4" style="color:#666;">No AI crawlers detected</td></tr>';
+}
+
+function renderAllBots(bots, total) {
+  return Object.entries(bots)
+    .sort((a, b) => b[1] - a[1])
+    .map(([bot, count]) => {
+      const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+      const badgeClass = bot === 'human' ? 'human' : 
+                        ['gptbot', 'claudebot', 'perplexity', 'cohere'].includes(bot) ? 'ai' :
+                        ['googlebot', 'bingbot', 'duckduckgo'].includes(bot) ? 'search' :
+                        ['facebook', 'twitter', 'linkedin'].includes(bot) ? 'social' : 'unknown';
+      return `
+        <tr>
+          <td><span class="bot-badge ${badgeClass}">${bot}</span></td>
+          <td class="count">${formatNumber(count)}</td>
+          <td>
+            <span class="count">${pct}%</span>
+            <div class="bar" style="width: ${pct}%; background: ${bot === 'human' ? '#00ff00' : '#666'};"></div>
+          </td>
+        </tr>
+      `;
+    })
+    .join('');
+}
+
+function renderPages(pages) {
+  const maxCount = Math.max(...pages.map(p => p.count), 1);
+  return pages.map(p => `
+    <tr>
+      <td><code>${p.path}</code></td>
+      <td>
+        <span class="count">${formatNumber(p.count)}</span>
+        <div class="bar" style="width: ${(p.count / maxCount) * 100}%;"></div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderReferrers(referrers) {
+  const maxCount = Math.max(...referrers.map(r => r.count), 1);
+  return referrers.map(r => `
+    <tr>
+      <td>${r.referrer}</td>
+      <td>
+        <span class="count">${formatNumber(r.count)}</span>
+        <div class="bar" style="width: ${(r.count / maxCount) * 100}%;"></div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function formatNumber(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+  return String(n || 0);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let currentData = null;
+
+async function exportJSON() {
+  if (!currentData) return;
+  
+  const blob = new Blob([JSON.stringify(currentData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-analytics-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+}
+
+async function exportCSV() {
+  if (!currentData) return;
+  
+  let csv = 'Metric,Value\n';
+  csv += `Total Views,${currentData.total_views}\n`;
+  csv += `Human Views,${currentData.human_views}\n`;
+  csv += `Bot Views,${currentData.bot_views}\n`;
+  csv += `Human Percentage,${currentData.human_percentage}%\n`;
+  csv += '\nBot Breakdown\n';
+  csv += 'Bot,Count\n';
+  Object.entries(currentData.bots || {}).forEach(([bot, count]) => {
+    csv += `${bot},${count}\n`;
+  });
+  
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function init() {
+  currentData = await fetchStats();
+  renderDashboard(currentData);
+}
+
+// For demo/testing without API
+function useMockData() {
+  currentData = {
+    site_id: 'd2d_default',
+    total_views: 12847,
+    human_views: 9234,
+    bot_views: 3613,
+    human_percentage: 72,
+    devices: { desktop: 7823, mobile: 4890, tablet: 134 },
+    bots: {
+      human: 9234,
+      gptbot: 1456,
+      googlebot: 892,
+      claudebot: 567,
+      bingbot: 234,
+      facebook: 189,
+      twitter: 145,
+      perplexity: 78,
+      unknown: 52
+    },
+    ai_bots: {
+      gptbot: 1456,
+      claudebot: 567,
+      perplexity: 78
+    },
+    top_pages: [
+      { path: '/docs/api', count: 2345 },
+      { path: '/notebook', count: 1892 },
+      { path: '/search', count: 1567 },
+      { path: '/', count: 1234 },
+      { path: '/tools', count: 987 }
+    ],
+    top_referrers: [
+      { referrer: 'google.com', count: 4567 },
+      { referrer: 'direct', count: 3456 },
+      { referrer: 'twitter.com', count: 1234 },
+      { referrer: 'reddit.com', count: 890 },
+      { referrer: 'internal', count: 678 }
+    ]
+  };
+  renderDashboard(currentData);
+}
+
+// Start
+init().catch(() => {
+  console.log('API unavailable, using mock data');
+  useMockData();
+});
+</script>
+
+</body>
+</html>

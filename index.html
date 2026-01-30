@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Death2Data - Privacy Tools</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+}
+
+/* MRR Ticker */
+.mrr-ticker {
+  background: rgba(0, 255, 0, 0.05);
+  border-bottom: 1px solid #0f0;
+  padding: 12px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: #0f0;
+  font-family: 'Courier New', monospace;
+}
+.mrr-ticker .label { color: #666; margin-right: 10px; }
+
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+h1 { color: #0f0; font-size: 1.8rem; margin-bottom: 10px; }
+.subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+
+/* Tabs */
+.tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #222; }
+.tab { background: none; border: none; color: #666; padding: 12px 20px; cursor: pointer; font-size: 15px; transition: all 0.2s; }
+.tab:hover { color: #888; }
+.tab.active { color: #0f0; border-bottom: 2px solid #0f0; }
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* Search */
+.search-box { display: flex; gap: 10px; margin-bottom: 20px; }
+.search-box input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 16px; border-radius: 4px; }
+.search-box input:focus { border-color: #0f0; outline: none; }
+.search-box button { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; border-radius: 4px; }
+.search-box button:hover { background: #0ff; }
+.search-engines { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.engine { background: #111; border: 1px solid #222; padding: 12px 18px; color: #888; text-decoration: none; font-size: 14px; border-radius: 4px; transition: all 0.2s; }
+.engine:hover { border-color: #0f0; color: #0f0; }
+.search-note { color: #555; font-size: 13px; margin-top: 20px; line-height: 1.6; }
+
+/* Search History */
+.search-history { margin-top: 30px; padding-top: 20px; border-top: 1px solid #222; }
+.search-history h3 { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+.history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 14px; }
+.history-item .query { color: #aaa; }
+.history-item .time { color: #555; font-size: 12px; }
+.clear-history { background: none; border: 1px solid #333; color: #666; padding: 8px 15px; cursor: pointer; font-size: 12px; margin-top: 10px; }
+.clear-history:hover { border-color: #f66; color: #f66; }
+
+/* Notebook */
+.notebook-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.notebook-header h2 { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+.new-note { background: #0f0; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+.new-note:hover { background: #0ff; }
+.note-list { margin-bottom: 20px; }
+.note-item { background: #111; border: 1px solid #222; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
+.note-item:hover { border-color: #333; transform: translateX(5px); }
+.note-title { color: #fff; margin-bottom: 5px; font-weight: 500; }
+.note-date { color: #555; font-size: 12px; }
+.note-preview { color: #888; font-size: 14px; margin-top: 10px; }
+.editor { display: none; }
+.editor.active { display: block; }
+.editor input { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 18px; margin-bottom: 10px; border-radius: 4px; font-weight: 500; }
+.editor input:focus { border-color: #0f0; outline: none; }
+.editor textarea { width: 100%; min-height: 400px; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 16px; font-family: inherit; resize: vertical; border-radius: 4px; line-height: 1.6; }
+.editor textarea:focus { border-color: #0f0; outline: none; }
+.editor-actions { display: flex; gap: 10px; margin-top: 10px; }
+.editor-actions button { padding: 12px 24px; cursor: pointer; border: none; font-weight: 500; border-radius: 4px; }
+.save-btn { background: #0f0; color: #000; }
+.save-btn:hover { background: #0ff; }
+.back-btn { background: #333; color: #fff; }
+.back-btn:hover { background: #444; }
+.delete-btn { background: #300; color: #f66; margin-left: auto; }
+.delete-btn:hover { background: #500; }
+
+/* QR Tools */
+.qr-section { margin-bottom: 30px; background: #111; border: 1px solid #222; padding: 20px; border-radius: 4px; }
+.qr-section h3 { color: #0f0; font-size: 16px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+.form-group { margin-bottom: 15px; }
+.form-group label { display: block; color: #888; font-size: 13px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+.form-group input, .form-group select { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 12px; font-size: 15px; border-radius: 4px; }
+.form-group input:focus, .form-group select:focus { border-color: #0f0; outline: none; }
+.generate-btn { background: #0f0; color: #000; border: none; padding: 12px 30px; cursor: pointer; font-weight: bold; border-radius: 4px; }
+.generate-btn:hover { background: #0ff; }
+.qr-output { margin-top: 20px; text-align: center; padding: 20px; background: #fff; border-radius: 4px; }
+
+/* Export Section */
+.export-section { margin-top: 30px; padding: 20px; background: #111; border: 1px solid #222; border-radius: 4px; }
+.export-section h3 { color: #0f0; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.export-section p { color: #666; font-size: 13px; margin-bottom: 15px; }
+.export-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+.export-btn { background: #222; border: 1px solid #333; color: #888; padding: 10px 20px; cursor: pointer; font-size: 13px; border-radius: 4px; }
+.export-btn:hover { border-color: #0f0; color: #0f0; }
+
+/* Empty state */
+.empty { text-align: center; padding: 80px 20px; color: #555; }
+.empty p { margin-bottom: 20px; line-height: 1.6; }
+
+/* Footer */
+.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #222; text-align: center; color: #555; font-size: 13px; }
+.footer a { color: #0f0; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- MRR Ticker -->
+<div class="mrr-ticker">
+  <span class="label">BUILDING IN PUBLIC:</span>
+  <span id="mrr-display">$6.48 MRR</span> ·
+  <span id="customers-display">7 members</span> ·
+  <a href="./join.html" style="color: #0f0; text-decoration: none;">Join for $1/month →</a>
+</div>
+
+<div class="container">
+  <h1>DEATH2DATA</h1>
+  <p class="subtitle">Privacy tools that don't spy on you. Your data stays here. Export it anytime.</p>
+
+  <div class="tabs">
+    <button class="tab active" data-panel="search">Search</button>
+    <button class="tab" data-panel="notebook">Notebook</button>
+    <button class="tab" data-panel="tools">Tools</button>
+    <button class="tab" data-panel="grants">Grants</button>
+    <button class="tab" data-panel="export">Export</button>
+  </div>
+
+  <!-- SEARCH PANEL -->
+  <div id="search" class="panel active">
+    <div class="search-box">
+      <input type="text" id="query" placeholder="Search privately..." autofocus>
+      <button onclick="doSearch()">Search</button>
+    </div>
+
+    <p style="color:#888;margin-bottom:15px;">Pick a private search engine:</p>
+
+    <div class="search-engines">
+      <a href="#" class="engine" data-url="https://searx.be/search?q=">SearX.be</a>
+      <a href="#" class="engine" data-url="https://search.brave.com/search?q=">Brave</a>
+      <a href="#" class="engine" data-url="https://duckduckgo.com/?q=">DuckDuckGo</a>
+    </div>
+
+    <p class="search-note">
+      We don't proxy your searches - you go directly to the engine of your choice.<br>
+      Your search history is stored locally. Export it anytime for your own AI training.
+    </p>
+
+    <!-- Local Search History -->
+    <div class="search-history" id="search-history-section" style="display:none;">
+      <h3>Your Recent Searches (local only)</h3>
+      <div id="search-history"></div>
+      <button class="clear-history" onclick="clearSearchHistory()">Clear History</button>
+    </div>
+  </div>
+
+  <!-- NOTEBOOK PANEL -->
+  <div id="notebook" class="panel">
+    <div id="note-list-view">
+      <div class="notebook-header">
+        <h2>Your Notes (stored locally)</h2>
+        <button class="new-note" onclick="createNote()">+ New Note</button>
+      </div>
+      <div id="notes-container" class="note-list"></div>
+    </div>
+
+    <div id="note-editor" class="editor">
+      <input type="text" id="note-title-input" placeholder="Note title...">
+      <textarea id="note-content-input" placeholder="Write your note here..."></textarea>
+      <div class="editor-actions">
+        <button class="save-btn" onclick="saveNote()">Save</button>
+        <button class="back-btn" onclick="closeEditor()">Back</button>
+        <button class="delete-btn" onclick="deleteCurrentNote()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOOLS PANEL -->
+  <div id="tools" class="panel">
+    <!-- WiFi QR -->
+    <div class="qr-section">
+      <h3>WiFi QR Code</h3>
+      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code to share WiFi credentials</p>
+      <div class="form-group">
+        <label>Network Name (SSID)</label>
+        <input type="text" id="wifi-ssid" placeholder="My WiFi Network">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="text" id="wifi-password" placeholder="secretpassword123">
+      </div>
+      <div class="form-group">
+        <label>Security Type</label>
+        <select id="wifi-security">
+          <option value="WPA">WPA/WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="nopass">None (Open)</option>
+        </select>
+      </div>
+      <button class="generate-btn" onclick="generateWiFiQR()">Generate WiFi QR</button>
+      <div id="wifi-qr-output" class="qr-output" style="display:none;"></div>
+    </div>
+
+    <!-- URL QR -->
+    <div class="qr-section">
+      <h3>URL QR Code</h3>
+      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code for any website or link</p>
+      <div class="form-group">
+        <label>URL</label>
+        <input type="text" id="url-input" placeholder="https://death2data.com">
+      </div>
+      <button class="generate-btn" onclick="generateURLQR()">Generate URL QR</button>
+      <div id="url-qr-output" class="qr-output" style="display:none;"></div>
+    </div>
+
+    <!-- Contact QR -->
+    <div class="qr-section">
+      <h3>Contact Card QR</h3>
+      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code with contact info (vCard)</p>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="contact-name" placeholder="John Doe">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="contact-email" placeholder="john@example.com">
+      </div>
+      <div class="form-group">
+        <label>Phone</label>
+        <input type="tel" id="contact-phone" placeholder="+1 555 123 4567">
+      </div>
+      <button class="generate-btn" onclick="generateContactQR()">Generate Contact QR</button>
+      <div id="contact-qr-output" class="qr-output" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- GRANTS PANEL -->
+  <div id="grants" class="panel">
+    <div class="qr-section">
+      <h3>Grant Finder</h3>
+      <p style="color:#888;margin-bottom:20px;">
+        Find funding for your project. Government grants, foundations, tech credits, and accelerators.<br>
+        <strong style="color:#0f0;">D2D Members:</strong> Get help applying (3 applications/month included)
+      </p>
+
+      <div class="form-group">
+        <label>What are you building?</label>
+        <input type="text" id="grant-project" placeholder="A privacy-first search engine">
+      </div>
+
+      <div class="form-group">
+        <label>Who is it for?</label>
+        <input type="text" id="grant-users" placeholder="Privacy-conscious users">
+      </div>
+
+      <div class="form-group">
+        <label>What problem does it solve?</label>
+        <input type="text" id="grant-problem" placeholder="Search engines track everything you do">
+      </div>
+
+      <div class="form-group">
+        <label>Where are you located?</label>
+        <input type="text" id="grant-location" placeholder="Florida, USA">
+      </div>
+
+      <div class="form-group">
+        <label>How far along?</label>
+        <select id="grant-stage">
+          <option value="idea">Idea stage</option>
+          <option value="prototype">Prototype built</option>
+          <option value="launched">Launched / has users</option>
+          <option value="revenue">Generating revenue</option>
+        </select>
+      </div>
+
+      <button class="generate-btn" onclick="findGrants()">Find Matching Grants</button>
+
+      <div id="grant-results" style="display:none;margin-top:30px;">
+        <h3 style="color:#0f0;font-size:16px;margin-bottom:15px;">POTENTIAL MATCHES</h3>
+        <div id="grants-list"></div>
+        <p style="margin-top:20px;color:#666;font-size:13px;">
+          <strong style="color:#0f0;">Next step:</strong> Generate application materials →
+          <a href="./grant-materials.html" target="_blank" style="color:#0f0;text-decoration:none;border-bottom:1px solid #0f0;margin-left:5px;">Open Materials Generator</a>
+        </p>
+        <p style="margin-top:10px;color:#666;font-size:13px;">
+          Or email matt@death2data.com with subject "Grant help: [your project]" for personalized assistance.
+        </p>
+      </div>
+    </div>
+
+    <div class="export-section" style="margin-top:20px;">
+      <h3>How It Works</h3>
+      <p style="margin-bottom:10px;">
+        <strong style="color:#0f0;">1. We find matches</strong> - Federal, state, foundations, tech programs<br>
+        <strong style="color:#0f0;">2. Generate materials</strong> - <a href="./grant-materials.html" target="_blank" style="color:#0f0;text-decoration:none;border-bottom:1px solid #0f0;">Spec sheets, cover letters, budgets</a><br>
+        <strong style="color:#0f0;">3. We apply together</strong> - You know your project, we know the forms
+      </p>
+      <p style="margin-top:15px;font-size:13px;color:#555;">
+        Not grant writers. We're translators. $1/month members get 3 applications/month with help.
+      </p>
+    </div>
+  </div>
+
+  <!-- EXPORT PANEL -->
+  <div id="export" class="panel">
+    <div class="export-section">
+      <h3>Export Your Data</h3>
+      <p>Everything you create here stays on YOUR device. Export it anytime in formats useful for AI training, backups, or moving to another tool.</p>
+      
+      <div class="export-buttons">
+        <button class="export-btn" onclick="exportJSON()">Export All (JSON)</button>
+        <button class="export-btn" onclick="exportMarkdown()">Notes as Markdown</button>
+        <button class="export-btn" onclick="exportSearches()">Search History (CSV)</button>
+        <button class="export-btn" onclick="exportTrainingData()">AI Training Format (JSONL)</button>
+      </div>
+    </div>
+
+    <div class="export-section" style="margin-top:20px;">
+      <h3>What Gets Exported</h3>
+      <p style="margin-bottom:10px;">
+        <strong style="color:#0f0;">Notes:</strong> <span id="note-count">0</span> notes<br>
+        <strong style="color:#0f0;">Searches:</strong> <span id="search-count">0</span> queries<br>
+        <strong style="color:#0f0;">Total Size:</strong> <span id="data-size">0</span> KB
+      </p>
+      <p style="color:#555;font-size:12px;">We never see this data. It lives in your browser's localStorage.</p>
+    </div>
+
+    <div class="export-section" style="margin-top:20px;">
+      <h3>Import Data</h3>
+      <p>Restore from a previous export:</p>
+      <input type="file" id="import-file" accept=".json" style="margin-top:10px;">
+      <button class="export-btn" onclick="importData()" style="margin-top:10px;">Import</button>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>Open source. No tracking. No ads. Your data stays on your device.</p>
+    <p style="margin-top: 10px;">
+      <a href="mailto:matt@death2data.com">matt@death2data.com</a> ·
+      <a href="https://github.com/deathtodata">GitHub</a> ·
+      <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00">Join for $1/month</a>
+    </p>
+  </div>
+</div>
+
+<!-- QR Code Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+<script>
+// ========================================
+// DATA STORAGE
+// ========================================
+let notes = JSON.parse(localStorage.getItem('d2d_notes') || '[]');
+let searches = JSON.parse(localStorage.getItem('d2d_searches') || '[]');
+let currentNoteId = null;
+
+// ========================================
+// TABS
+// ========================================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.panel).classList.add('active');
+    
+    if (tab.dataset.panel === 'export') updateExportStats();
+  });
+});
+
+// ========================================
+// SEARCH
+// ========================================
+function doSearch() {
+  const query = document.getElementById('query').value.trim();
+  if (!query) return;
+
+  // Check if we've searched this recently (within 24 hours)
+  const recentSearch = searches.find(s =>
+    s.query.toLowerCase() === query.toLowerCase() &&
+    (Date.now() - new Date(s.timestamp).getTime()) < 24 * 60 * 60 * 1000
+  );
+
+  if (recentSearch) {
+    // Show cached notice
+    const notice = document.createElement('div');
+    notice.textContent = `📋 You searched this ${Math.floor((Date.now() - new Date(recentSearch.timestamp).getTime()) / 60000)} minutes ago`;
+    notice.style.cssText = 'background:#111;border:1px solid #0f0;padding:10px;margin:10px 0;border-radius:4px;font-size:13px;color:#0f0;';
+    document.querySelector('.search-box').after(notice);
+    setTimeout(() => notice.remove(), 3000);
+  }
+
+  // Log search locally
+  searches.unshift({
+    query: query,
+    timestamp: new Date().toISOString(),
+    engine: 'searx.be'
+  });
+
+  // Keep last 100 searches
+  if (searches.length > 100) searches = searches.slice(0, 100);
+  localStorage.setItem('d2d_searches', JSON.stringify(searches));
+
+  renderSearchHistory();
+  window.open(`https://searx.be/search?q=${encodeURIComponent(query)}`, '_blank');
+}
+
+document.getElementById('query').addEventListener('keypress', e => {
+  if (e.key === 'Enter') doSearch();
+});
+
+document.querySelectorAll('.engine').forEach(engine => {
+  engine.addEventListener('click', e => {
+    e.preventDefault();
+    const query = document.getElementById('query').value.trim();
+    if (!query) return alert('Enter a search query first');
+
+    // Log with specific engine
+    const engineName = engine.textContent;
+    searches.unshift({
+      query: query,
+      timestamp: new Date().toISOString(),
+      engine: engineName
+    });
+    if (searches.length > 100) searches = searches.slice(0, 100);
+    localStorage.setItem('d2d_searches', JSON.stringify(searches));
+    
+    renderSearchHistory();
+    window.open(engine.dataset.url + encodeURIComponent(query), '_blank');
+  });
+});
+
+function renderSearchHistory() {
+  const section = document.getElementById('search-history-section');
+  const container = document.getElementById('search-history');
+  
+  if (searches.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+  
+  section.style.display = 'block';
+  container.innerHTML = searches.slice(0, 10).map(s => `
+    <div class="history-item">
+      <span class="query">${s.query}</span>
+      <span class="time">${new Date(s.timestamp).toLocaleString()}</span>
+    </div>
+  `).join('');
+}
+
+function clearSearchHistory() {
+  if (!confirm('Clear all search history?')) return;
+  searches = [];
+  localStorage.setItem('d2d_searches', JSON.stringify(searches));
+  renderSearchHistory();
+}
+
+// ========================================
+// NOTEBOOK
+// ========================================
+function renderNotes() {
+  const container = document.getElementById('notes-container');
+
+  if (notes.length === 0) {
+    container.innerHTML = '<div class="empty"><p>No notes yet.</p><p>Click "+ New Note" to get started.</p></div>';
+    return;
+  }
+
+  container.innerHTML = notes.map(note => `
+    <div class="note-item" onclick="editNote('${note.id}')">
+      <div class="note-title">${note.title || 'Untitled'}</div>
+      <div class="note-date">${new Date(note.updated).toLocaleDateString()}</div>
+      <div class="note-preview">${(note.content || '').substring(0, 100)}${note.content?.length > 100 ? '...' : ''}</div>
+    </div>
+  `).join('');
+}
+
+function createNote() {
+  const note = {
+    id: Date.now().toString(),
+    title: '',
+    content: '',
+    created: new Date().toISOString(),
+    updated: new Date().toISOString()
+  };
+  notes.unshift(note);
+  editNote(note.id);
+}
+
+function editNote(id) {
+  currentNoteId = id;
+  const note = notes.find(n => n.id === id);
+  document.getElementById('note-title-input').value = note.title;
+  document.getElementById('note-content-input').value = note.content;
+  document.getElementById('note-list-view').style.display = 'none';
+  document.getElementById('note-editor').classList.add('active');
+}
+
+function saveNote() {
+  const note = notes.find(n => n.id === currentNoteId);
+  note.title = document.getElementById('note-title-input').value;
+  note.content = document.getElementById('note-content-input').value;
+  note.updated = new Date().toISOString();
+  localStorage.setItem('d2d_notes', JSON.stringify(notes));
+  closeEditor();
+}
+
+function closeEditor() {
+  document.getElementById('note-editor').classList.remove('active');
+  document.getElementById('note-list-view').style.display = 'block';
+  renderNotes();
+}
+
+function deleteCurrentNote() {
+  if (!confirm('Delete this note?')) return;
+  notes = notes.filter(n => n.id !== currentNoteId);
+  localStorage.setItem('d2d_notes', JSON.stringify(notes));
+  closeEditor();
+}
+
+// ========================================
+// QR CODE GENERATORS
+// ========================================
+function generateWiFiQR() {
+  const ssid = document.getElementById('wifi-ssid').value;
+  const password = document.getElementById('wifi-password').value;
+  const security = document.getElementById('wifi-security').value;
+  if (!ssid) return alert('Enter WiFi network name');
+
+  let wifiString = `WIFI:T:${security};S:${ssid};`;
+  if (security !== 'nopass') wifiString += `P:${password};`;
+  wifiString += ';';
+
+  const output = document.getElementById('wifi-qr-output');
+  output.innerHTML = '<canvas id="wifi-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to connect to WiFi</p>';
+  output.style.display = 'block';
+  QRCode.toCanvas(document.getElementById('wifi-qr-canvas'), wifiString, { width: 300, margin: 2 });
+}
+
+function generateURLQR() {
+  const url = document.getElementById('url-input').value;
+  if (!url) return alert('Enter a URL');
+
+  const output = document.getElementById('url-qr-output');
+  output.innerHTML = '<canvas id="url-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to visit</p>';
+  output.style.display = 'block';
+  QRCode.toCanvas(document.getElementById('url-qr-canvas'), url, { width: 300, margin: 2 });
+}
+
+function generateContactQR() {
+  const name = document.getElementById('contact-name').value;
+  const email = document.getElementById('contact-email').value;
+  const phone = document.getElementById('contact-phone').value;
+  if (!name) return alert('Enter a name');
+
+  const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nEMAIL:${email}\nTEL:${phone}\nEND:VCARD`;
+  const output = document.getElementById('contact-qr-output');
+  output.innerHTML = '<canvas id="contact-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to save contact</p>';
+  output.style.display = 'block';
+  QRCode.toCanvas(document.getElementById('contact-qr-canvas'), vcard, { width: 300, margin: 2 });
+}
+
+// ========================================
+// EXPORT FUNCTIONS
+// ========================================
+function updateExportStats() {
+  document.getElementById('note-count').textContent = notes.length;
+  document.getElementById('search-count').textContent = searches.length;
+  
+  const data = JSON.stringify({ notes, searches });
+  const sizeKB = (new Blob([data]).size / 1024).toFixed(2);
+  document.getElementById('data-size').textContent = sizeKB;
+}
+
+function downloadFile(content, filename, type) {
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportJSON() {
+  const data = {
+    exported_at: new Date().toISOString(),
+    source: 'death2data',
+    notes: notes,
+    searches: searches
+  };
+  downloadFile(JSON.stringify(data, null, 2), `d2d-export-${Date.now()}.json`, 'application/json');
+}
+
+function exportMarkdown() {
+  let md = `# Death2Data Notes Export\nExported: ${new Date().toLocaleString()}\n\n`;
+  
+  notes.forEach(note => {
+    md += `## ${note.title || 'Untitled'}\n`;
+    md += `*Created: ${new Date(note.created).toLocaleString()}*\n\n`;
+    md += `${note.content}\n\n---\n\n`;
+  });
+  
+  downloadFile(md, `d2d-notes-${Date.now()}.md`, 'text/markdown');
+}
+
+function exportSearches() {
+  let csv = 'timestamp,query,engine\n';
+  searches.forEach(s => {
+    csv += `"${s.timestamp}","${s.query.replace(/"/g, '""')}","${s.engine}"\n`;
+  });
+  downloadFile(csv, `d2d-searches-${Date.now()}.csv`, 'text/csv');
+}
+
+function exportTrainingData() {
+  // JSONL format for AI training
+  let jsonl = '';
+  
+  // Notes as instruction-following examples
+  notes.forEach(note => {
+    if (note.title && note.content) {
+      jsonl += JSON.stringify({
+        instruction: `Write about: ${note.title}`,
+        input: '',
+        output: note.content
+      }) + '\n';
+    }
+  });
+  
+  // Searches as query examples
+  searches.forEach(s => {
+    jsonl += JSON.stringify({
+      instruction: 'Generate a search query',
+      input: '',
+      output: s.query
+    }) + '\n';
+  });
+  
+  downloadFile(jsonl, `d2d-training-${Date.now()}.jsonl`, 'application/jsonl');
+}
+
+function importData() {
+  const file = document.getElementById('import-file').files[0];
+  if (!file) return alert('Select a file first');
+  
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      
+      if (data.notes) {
+        notes = data.notes;
+        localStorage.setItem('d2d_notes', JSON.stringify(notes));
+      }
+      
+      if (data.searches) {
+        searches = data.searches;
+        localStorage.setItem('d2d_searches', JSON.stringify(searches));
+      }
+      
+      alert('Import successful!');
+      renderNotes();
+      renderSearchHistory();
+      updateExportStats();
+    } catch (err) {
+      alert('Invalid file format');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ========================================
+// GRANT FINDER
+// ========================================
+const GRANT_DATABASE = [
+  {
+    name: 'AWS Activate',
+    type: 'Cloud Credits',
+    amount: '$1K - $100K credits',
+    difficulty: 'Easy',
+    timeline: '1-2 weeks',
+    tags: ['tech', 'startup', 'credits'],
+    url: 'https://aws.amazon.com/activate/'
+  },
+  {
+    name: 'Google for Startups',
+    type: 'Cloud Credits + Mentorship',
+    amount: '$100K credits',
+    difficulty: 'Easy',
+    timeline: '2-4 weeks',
+    tags: ['tech', 'startup', 'credits', 'mentorship'],
+    url: 'https://cloud.google.com/startup'
+  },
+  {
+    name: 'Mozilla Builders',
+    type: 'Foundation Grant',
+    amount: '$10K - $50K',
+    difficulty: 'Medium',
+    timeline: '2-3 months',
+    tags: ['privacy', 'open-source', 'tech'],
+    url: 'https://builders.mozilla.community/'
+  },
+  {
+    name: 'Knight Foundation',
+    type: 'Foundation Grant',
+    amount: '$10K - $200K',
+    difficulty: 'Hard',
+    timeline: '3-6 months',
+    tags: ['journalism', 'info-tools', 'civic'],
+    url: 'https://knightfoundation.org/apply/'
+  },
+  {
+    name: 'SBIR/STTR',
+    type: 'Government Grant',
+    amount: '$50K - $2M',
+    difficulty: 'Hard',
+    timeline: '6-12 months',
+    tags: ['research', 'innovation', 'government'],
+    url: 'https://www.sbir.gov/'
+  },
+  {
+    name: 'NSF SBIR',
+    type: 'Government Research',
+    amount: '$50K - $500K',
+    difficulty: 'Hard',
+    timeline: '4-8 months',
+    tags: ['research', 'science', 'innovation'],
+    url: 'https://seedfund.nsf.gov/'
+  }
+];
+
+function findGrants() {
+  const project = document.getElementById('grant-project').value.trim();
+  const users = document.getElementById('grant-users').value.trim();
+  const problem = document.getElementById('grant-problem').value.trim();
+  const location = document.getElementById('grant-location').value.trim();
+  const stage = document.getElementById('grant-stage').value;
+
+  if (!project || !users || !problem) {
+    alert('Please fill out at least the first 3 questions');
+    return;
+  }
+
+  // Simple keyword matching (can be enhanced with ML later)
+  const keywords = (project + ' ' + users + ' ' + problem).toLowerCase();
+  let matches = [...GRANT_DATABASE];
+
+  // Prioritize based on stage
+  if (stage === 'idea' || stage === 'prototype') {
+    // Start with easy cloud credits
+    matches = matches.sort((a, b) => {
+      if (a.difficulty === 'Easy') return -1;
+      if (b.difficulty === 'Easy') return 1;
+      return 0;
+    });
+  }
+
+  // Filter by keywords (basic matching)
+  if (keywords.includes('privacy') || keywords.includes('security')) {
+    matches.unshift(GRANT_DATABASE.find(g => g.name === 'Mozilla Builders'));
+  }
+
+  // Display results
+  const resultsDiv = document.getElementById('grant-results');
+  const listDiv = document.getElementById('grants-list');
+
+  listDiv.innerHTML = matches.slice(0, 5).map(grant => `
+    <div style="background:#111;border:1px solid #222;padding:15px;margin-bottom:10px;border-radius:4px;">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;">
+        <strong style="color:#0f0;">${grant.name}</strong>
+        <span style="color:#666;font-size:12px;">${grant.difficulty}</span>
+      </div>
+      <div style="color:#888;font-size:13px;margin-bottom:8px;">
+        ${grant.type} · ${grant.amount}
+      </div>
+      <div style="color:#666;font-size:12px;margin-bottom:10px;">
+        Timeline: ${grant.timeline}
+      </div>
+      <a href="${grant.url}" target="_blank" style="color:#0f0;font-size:13px;text-decoration:none;border-bottom:1px solid #0f0;">Learn more →</a>
+    </div>
+  `).join('');
+
+  resultsDiv.style.display = 'block';
+
+  // Save to localStorage for later reference
+  const grantQuery = {
+    timestamp: new Date().toISOString(),
+    project,
+    users,
+    problem,
+    location,
+    stage,
+    matches: matches.slice(0, 5).map(g => g.name)
+  };
+
+  let grantHistory = JSON.parse(localStorage.getItem('d2d_grant_queries') || '[]');
+  grantHistory.unshift(grantQuery);
+  if (grantHistory.length > 10) grantHistory = grantHistory.slice(0, 10);
+  localStorage.setItem('d2d_grant_queries', JSON.stringify(grantHistory));
+}
+
+// ========================================
+// INIT
+// ========================================
+renderNotes();
+renderSearchHistory();
+
+// Try to load stats
+fetch('./stats.json')
+  .then(r => r.json())
+  .then(data => {
+    document.getElementById('mrr-display').textContent = `$${data.mrr_dollars || 0} MRR`;
+    document.getElementById('customers-display').textContent = `${data.customers || 0} members`;
+  })
+  .catch(() => {});
+</script>
+
+</body>
+</html>

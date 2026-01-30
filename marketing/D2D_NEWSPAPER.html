@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Death2Data</title>
+<style>
+@page { size: letter; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Times New Roman', Times, serif;
+  background: #fff;
+  color: #000;
+}
+
+.page {
+  width: 8.5in;
+  height: 11in;
+  padding: 0.5in;
+}
+
+/* Newspaper masthead style */
+header {
+  text-align: center;
+  border-bottom: 3px double #000;
+  padding-bottom: 12px;
+  margin-bottom: 24px;
+}
+
+h1 {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 60pt;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.dateline {
+  font-size: 10pt;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+/* Lead paragraph */
+.lead {
+  font-size: 14pt;
+  line-height: 1.6;
+  text-align: justify;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #000;
+}
+
+.lead strong {
+  font-weight: bold;
+}
+
+/* THE TABLE - pure black and white */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid #000;
+  margin-bottom: 24px;
+}
+
+.col {
+  padding: 20px;
+}
+
+.col.them {
+  background: #000;
+  color: #fff;
+}
+
+.col.us {
+  background: #fff;
+  color: #000;
+  border-left: 2px solid #000;
+}
+
+.col h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14pt;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.col.them h2 {
+  border-bottom: 1px solid #333;
+}
+
+.col.us h2 {
+  border-bottom: 1px solid #ccc;
+}
+
+.col ul {
+  list-style: none;
+  font-size: 13pt;
+  line-height: 1.8;
+}
+
+.col li {
+  margin-bottom: 4px;
+}
+
+/* Price announcement */
+.announcement {
+  text-align: center;
+  padding: 20px;
+  border: 3px solid #000;
+  margin-bottom: 24px;
+}
+
+.price {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 48pt;
+  font-weight: 900;
+}
+
+.terms {
+  font-size: 11pt;
+  margin-top: 8px;
+}
+
+/* Footer */
+footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 16px;
+  border-top: 3px double #000;
+}
+
+.url {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 18pt;
+  font-weight: 900;
+}
+
+.contact {
+  font-size: 10pt;
+  text-align: right;
+}
+
+@media print {
+  .col.them {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  
+  <header>
+    <h1>DEATH2DATA</h1>
+    <p class="dateline">Privacy Tools for the Surveilled Age</p>
+  </header>
+  
+  <p class="lead">
+    <strong>Every search you make, every site you visit, every message you send</strong> is being collected, analyzed, and sold. Big Tech has built the largest surveillance apparatus in human history—and you're the product. <strong>Death2Data</strong> offers an alternative: tools that work without harvesting your data.
+  </p>
+  
+  <div class="comparison">
+    <div class="col them">
+      <h2>What They Take</h2>
+      <ul>
+        <li>Every search query</li>
+        <li>Every location ping</li>
+        <li>Every website visit</li>
+        <li>Every message sent</li>
+        <li>Every photo uploaded</li>
+        <li>Every contact saved</li>
+        <li>Every preference learned</li>
+        <li>Everything. Forever.</li>
+      </ul>
+    </div>
+    <div class="col us">
+      <h2>What We Keep</h2>
+      <ul>
+        <li>No search history</li>
+        <li>No location data</li>
+        <li>No browsing logs</li>
+        <li>No message scanning</li>
+        <li>No photo analysis</li>
+        <li>No contact harvesting</li>
+        <li>No behavioral profiles</li>
+        <li>Nothing. By design.</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="announcement">
+    <div class="price">ONE DOLLAR</div>
+    <p class="terms">per month · no contracts · cancel anytime</p>
+  </div>
+  
+  <footer>
+    <div class="url">death2data.com</div>
+    <div class="contact">
+      matt@death2data.com<br>
+      Florida, USA<br>
+      <em>Open source. No investors.</em>
+    </div>
+  </footer>
+  
+</div>
+
+</body>
+</html>

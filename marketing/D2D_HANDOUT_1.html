@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>D2D Handout - Print 20 Copies</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: letter; margin: 0.4in; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 0.4in;
+            max-width: 8.5in;
+        }
+        .header {
+            border-bottom: 4px solid #000;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+        }
+        .logo { font-size: 60px; font-weight: 900; }
+        .tagline { font-size: 16px; color: #444; margin-top: 4px; }
+        .main { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        h2 { font-size: 16px; margin-bottom: 8px; border-bottom: 1px solid #ccc; }
+        p { font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+        .price-box {
+            background: #000;
+            color: #fff;
+            padding: 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .price { font-size: 72px; font-weight: 900; }
+        .price-label { font-size: 16px; color: #aaa; }
+        .how-to {
+            background: #f0f0f0;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .how-to ol { margin-left: 20px; font-size: 14px; }
+        .how-to li { margin-bottom: 8px; }
+        .url {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 16px;
+            border: 2px solid #000;
+            margin: 16px 0;
+        }
+        .footer {
+            margin-top: 16px;
+            padding-top: 12px;
+            border-top: 1px solid #ccc;
+            font-size: 11px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">D2D</div>
+    <div class="tagline">Privacy tools. Member-owned. $1 to join.</div>
+</div>
+
+<div class="main">
+    <div>
+        <h2>The Problem</h2>
+        <p>Every "free" app sells your data. Google, Facebook, your notes app—all of them. That's not paranoia. That's their business model.</p>
+        <p>VC-funded companies HAVE to extract value from users. They owe investors 10x returns.</p>
+        
+        <h2>The Solution</h2>
+        <p><strong>D2D is a privacy co-op.</strong></p>
+        <p>Member-funded. No investors. No ads. No data sales. Your data stays on YOUR device—we never have it.</p>
+    </div>
+    
+    <div>
+        <h2>What $1 Gets You</h2>
+        <p><strong>→ VOTE</strong> on what gets built next</p>
+        <p><strong>→ ACCESS</strong> to all tools (journal is live now)</p>
+        <p><strong>→ CODE</strong> is MIT licensed—fork anytime</p>
+        <p><strong>→ FOUNDING MEMBER</strong> status (first 100)</p>
+        
+        <h2>The Math</h2>
+        <p>4,200 members = sustainable forever.</p>
+        <p>No growth hacking. No exit strategy. Just tools that work for people who pay for them.</p>
+    </div>
+</div>
+
+<div class="price-box">
+    <div class="price">$1</div>
+    <div class="price-label">Lifetime Membership • Venmo @death2data</div>
+</div>
+
+<div class="url">death2data.com/prompt</div>
+
+<div class="how-to">
+    <strong>How to Join:</strong>
+    <ol>
+        <li>Try the free journal: death2data.com/prompt</li>
+        <li>Venmo $1 to @death2data</li>
+        <li>Put your email in the Venmo note</li>
+        <li>You're in. Voting access within 24hrs.</li>
+    </ol>
+</div>
+
+<div class="footer">
+    Death2Data • Tampa, FL • MIT Licensed • hello@death2data.com
+</div>
+
+</body>
+</html>

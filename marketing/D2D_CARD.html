@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>D2D - The Difference</title>
+<style>
+@page { size: 5in 3in; margin: 0.25in; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: Helvetica, Arial, sans-serif;
+  width: 5in;
+  height: 3in;
+  padding: 0.25in;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.logo {
+  font-size: 18pt;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.comparison {
+  display: flex;
+  flex: 1;
+  border: 2px solid #000;
+}
+
+.col {
+  flex: 1;
+  padding: 8px;
+  font-size: 9pt;
+}
+
+.col.them {
+  background: #fee;
+  border-right: 2px solid #000;
+}
+
+.col.us {
+  background: #efe;
+}
+
+.col h3 {
+  font-size: 10pt;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.col.them h3 { color: #900; }
+.col.us h3 { color: #060; }
+
+.col ul {
+  list-style: none;
+  line-height: 1.4;
+}
+
+.col.them li::before { content: "✗ "; color: #c00; font-weight: bold; }
+.col.us li::before { content: "✓ "; color: #0a0; font-weight: bold; }
+
+.footer {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 11pt;
+  font-weight: bold;
+}
+
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">DEATH2DATA</div>
+</div>
+
+<div class="comparison">
+  <div class="col them">
+    <h3>Big Tech Takes:</h3>
+    <ul>
+      <li>Your search history</li>
+      <li>Your location data</li>
+      <li>Your browsing habits</li>
+      <li>Your personal info</li>
+      <li>Everything, forever</li>
+    </ul>
+  </div>
+  <div class="col us">
+    <h3>D2D Keeps Nothing:</h3>
+    <ul>
+      <li>No search history</li>
+      <li>No tracking cookies</li>
+      <li>No user profiles</li>
+      <li>No data collection</li>
+      <li>Your data = yours</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  $1/month → death2data.com
+</div>
+
+</body>
+</html>

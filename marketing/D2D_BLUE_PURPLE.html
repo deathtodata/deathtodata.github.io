@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Death2Data</title>
+<style>
+@page { size: letter; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Courier New', Courier, monospace;
+  background: #000;
+  color: #fff;
+}
+
+.page {
+  width: 8.5in;
+  height: 11in;
+  padding: 0.6in;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  text-align: center;
+  padding-bottom: 0.3in;
+  border-bottom: 2px solid #333;
+}
+
+h1 {
+  font-size: 52pt;
+  font-weight: 900;
+  letter-spacing: -3px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.tagline {
+  font-size: 11pt;
+  margin-top: 8px;
+  letter-spacing: 3px;
+  color: #666;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* THE TABLE - Blue (them/cold/corporate) vs Purple (us/warm/human) */
+.comparison {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid #444;
+}
+
+/* THEM = Cold blue (corporate, surveillance) */
+.col.them {
+  background: #0a0a1a;
+  padding: 0.3in;
+  border-right: 2px solid #444;
+}
+
+/* US = Warm purple/violet (human, protective) */
+.col.us {
+  background: #1a0a1a;
+  padding: 0.3in;
+}
+
+.col h2 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.col.them h2 {
+  color: #4488ff;
+  border-bottom: 1px solid #224488;
+}
+
+.col.us h2 {
+  color: #aa66ff;
+  border-bottom: 1px solid #662288;
+}
+
+.col ul {
+  list-style: none;
+  font-size: 12pt;
+  line-height: 1.9;
+}
+
+.col li {
+  padding-left: 24px;
+  position: relative;
+}
+
+.col.them li {
+  color: #88aadd;
+}
+
+.col.us li {
+  color: #cc99ff;
+}
+
+.col.them li::before {
+  content: "◆";
+  position: absolute;
+  left: 0;
+  color: #4488ff;
+  font-size: 8pt;
+  top: 4px;
+}
+
+.col.us li::before {
+  content: "○";
+  position: absolute;
+  left: 0;
+  color: #aa66ff;
+  font-size: 10pt;
+  top: 2px;
+}
+
+/* Price */
+.price-section {
+  text-align: center;
+  margin-top: 0.3in;
+}
+
+.price {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 48pt;
+  font-weight: 900;
+  background: linear-gradient(90deg, #4488ff, #aa66ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.price-note {
+  font-size: 10pt;
+  color: #666;
+  margin-top: 4px;
+}
+
+footer {
+  text-align: center;
+  padding-top: 0.3in;
+  border-top: 2px solid #333;
+}
+
+.url {
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 22pt;
+  font-weight: 900;
+  color: #fff;
+}
+
+.contact {
+  font-size: 10pt;
+  color: #555;
+  margin-top: 8px;
+}
+
+@media print {
+  body, .col.them, .col.us {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  
+  <header>
+    <h1>DEATH2DATA</h1>
+    <p class="tagline">YOUR DATA IS YOURS</p>
+  </header>
+  
+  <main>
+    <div class="comparison">
+      
+      <div class="col them">
+        <h2>Surveillance</h2>
+        <ul>
+          <li>Your searches logged</li>
+          <li>Your location tracked</li>
+          <li>Your habits profiled</li>
+          <li>Your messages scanned</li>
+          <li>Your photos analyzed</li>
+          <li>Your identity sold</li>
+          <li>AI trained on you</li>
+          <li>Forever</li>
+        </ul>
+      </div>
+      
+      <div class="col us">
+        <h2>Privacy</h2>
+        <ul>
+          <li>Searches stay private</li>
+          <li>No location data</li>
+          <li>No behavioral profiles</li>
+          <li>No message scanning</li>
+          <li>No photo analysis</li>
+          <li>Nothing for sale</li>
+          <li>No AI training</li>
+          <li>Gone when you leave</li>
+        </ul>
+      </div>
+      
+    </div>
+    
+    <div class="price-section">
+      <div class="price">$1/mo</div>
+      <div class="price-note">No contracts. Cancel anytime.</div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="url">death2data.com</div>
+    <div class="contact">matt@death2data.com · Florida, USA</div>
+  </footer>
+  
+</div>
+
+</body>
+</html>

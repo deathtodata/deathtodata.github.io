@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Notebook</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, monospace;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+.container { max-width: 600px; margin: 0 auto; }
+.brand { font-size: 12px; color: #00ff00; letter-spacing: 2px; margin-bottom: 40px; }
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+/* LANDING */
+h1 { font-size: 32px; margin-bottom: 16px; }
+h1 .green { color: #00ff00; }
+.subtitle { color: #888; margin-bottom: 40px; line-height: 1.6; }
+
+.topic-box {
+  background: #111;
+  border: 1px solid #222;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.topic-box label {
+  display: block;
+  font-size: 11px;
+  color: #666;
+  margin-bottom: 12px;
+}
+.topic-box input {
+  width: 100%;
+  padding: 16px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+}
+.topic-box input:focus { outline: none; border-color: #00ff00; }
+
+.cta {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background: #00ff00;
+  color: #000;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+}
+.cta:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+.note { text-align: center; font-size: 12px; color: #444; margin-top: 16px; }
+
+/* NOTEBOOK */
+.agent-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+  background: #111;
+  border: 1px solid #222;
+  margin-bottom: 30px;
+  font-size: 12px;
+}
+.agent-bar .dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  background: #00ff00;
+  border-radius: 50%;
+  margin-right: 8px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.agent-bar .dot.dead { background: #ff4444; animation: none; }
+.agent-bar .status { color: #00ff00; }
+.agent-bar .status.dead { color: #ff4444; }
+.agent-bar .timer { color: #666; }
+.agent-bar .timer strong { color: #00ff00; }
+
+.header { margin-bottom: 30px; }
+.header h2 { font-size: 20px; margin-bottom: 8px; }
+.header h2 .topic { color: #00ff00; }
+.header p { color: #666; font-size: 13px; }
+
+.progress { margin-bottom: 30px; }
+.progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #666; margin-bottom: 8px; }
+.progress-bar { height: 4px; background: #222; border-radius: 2px; }
+.progress-fill { height: 100%; background: #00ff00; border-radius: 2px; }
+
+.cell {
+  background: #111;
+  border: 1px solid #222;
+  border-left: 3px solid #00ff00;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.cell.locked { opacity: 0.4; pointer-events: none; border-left-color: #333; }
+.cell-day { font-size: 11px; color: #00ff00; margin-bottom: 16px; }
+.cell-q { font-size: 16px; margin-bottom: 20px; line-height: 1.5; }
+.cell textarea {
+  width: 100%;
+  min-height: 120px;
+  background: #0a0a0a;
+  border: 1px solid #333;
+  padding: 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  resize: vertical;
+  margin-bottom: 12px;
+}
+.cell textarea:focus { outline: none; border-color: #00ff00; }
+.cell-footer { display: flex; justify-content: space-between; align-items: center; }
+.cell-footer .hint { font-size: 11px; color: #444; }
+.cell-footer button {
+  padding: 12px 24px;
+  background: #00ff00;
+  color: #000;
+  border: none;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.past { margin-top: 40px; }
+.past h3 { font-size: 11px; color: #666; margin-bottom: 16px; }
+.past-entry {
+  background: #111;
+  border: 1px solid #222;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.past-entry-head { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; }
+.past-entry-day { color: #00ff00; }
+.past-entry-date { color: #444; }
+.past-entry-q { font-size: 12px; color: #666; margin-bottom: 8px; }
+.past-entry-a { font-size: 14px; line-height: 1.5; }
+
+/* EXPIRED */
+.expired-box {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(10,10,10,0.95);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.expired-box.show { display: flex; }
+.expired-inner {
+  text-align: center;
+  padding: 40px;
+  max-width: 400px;
+}
+.expired-inner h2 { font-size: 24px; margin-bottom: 16px; color: #ffaa00; }
+.expired-inner p { color: #888; margin-bottom: 24px; line-height: 1.6; }
+.expired-inner .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.expired-inner .btn-secondary {
+  padding: 12px 24px;
+  background: #222;
+  color: #888;
+  border: 1px solid #333;
+  font-family: inherit;
+  cursor: pointer;
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>28-Day Digital Notebook - Privacy-First Journaling</title>
+<meta name="description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
+<meta name="keywords" content="28-day notebook, digital journal, privacy notebook, local storage">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/notebook.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="28-Day Digital Notebook - Privacy-First Journaling">
+<meta property="og:description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
+<meta property="og:url" content="https://death2data.com/notebook.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="28-Day Digital Notebook - Privacy-First Journaling">
+<meta name="twitter:description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "28-Day Digital Notebook - Privacy-First Journaling",
+  "description": "Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.",
+  "url": "https://death2data.com/notebook.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  <div class="brand">DEATH2DATA</div>
+  
+  <!-- PAGE: LANDING -->
+  <div class="page" id="pageLanding">
+    <h1><span class="green">$1</span> for 28 days</h1>
+    <p class="subtitle">Pick a topic. Answer one question per day. Get a physical notebook at the end.</p>
+    
+    <div class="topic-box">
+      <label>WHAT DO YOU WANT TO EXPLORE?</label>
+      <input type="text" id="topicInput" placeholder="fermentation, grief, starting a business...">
+    </div>
+    
+    <button class="cta" id="payBtn" disabled>Enter a topic first</button>
+    <p class="note">One-time payment. No account needed.</p>
+  </div>
+  
+  <!-- PAGE: NOTEBOOK -->
+  <div class="page" id="pageNotebook">
+    <div class="agent-bar">
+      <div>
+        <span class="dot" id="agentDot"></span>
+        <span>AGENT: </span>
+        <span class="status" id="agentStatus">ACTIVE</span>
+      </div>
+      <div class="timer" id="agentTimer"><strong>--</strong> days left</div>
+    </div>
+    
+    <div class="header">
+      <h2>Learning <span class="topic" id="notebookTopic">--</span></h2>
+      <p>One question per day for 28 days</p>
+    </div>
+    
+    <div class="progress">
+      <div class="progress-label">
+        <span>Progress</span>
+        <span id="progressText">0 / 28</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+    </div>
+    
+    <div class="cell" id="todayCell">
+      <div class="cell-day" id="cellDay">DAY 1</div>
+      <div class="cell-q" id="cellQuestion">Loading...</div>
+      <textarea id="cellInput" placeholder="Write your thoughts..."></textarea>
+      <div class="cell-footer">
+        <span class="hint" id="saveHint"></span>
+        <button onclick="saveEntry()">Save →</button>
+      </div>
+    </div>
+    
+    <div class="past">
+      <h3>PREVIOUS ENTRIES</h3>
+      <div id="pastEntries"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXPIRED OVERLAY -->
+<div class="expired-box" id="expiredBox">
+  <div class="expired-inner">
+    <h2>🎉 28 Days Complete</h2>
+    <p>Your agent has finished its cycle. Download your notebook or start a new journey.</p>
+    <div class="btns">
+      <button class="btn-secondary" onclick="downloadNotebook()">Download</button>
+      <button class="cta" onclick="startNew()">New Notebook ($1)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========================================
+// CONFIG
+// ========================================
+
+// YOUR STRIPE PAYMENT LINK - get from Stripe Dashboard → Payment Links
+// Set success URL to: https://yoursite.com/?paid=1
+const STRIPE_LINK = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
+
+// Questions (would come from Ollama eventually)
+const QUESTIONS = [
+  "What do you already know about {topic}?",
+  "Why does {topic} interest you?",
+  "What's your earliest memory related to {topic}?",
+  "Explain {topic} like you're talking to a curious kid.",
+  "What confuses you most about {topic}?",
+  "How did you first learn about {topic}?",
+  "What would be different if {topic} didn't exist?",
+  "How does {topic} show up in your daily life?",
+  "What's a common misconception about {topic}?",
+  "Who do you know that's good at {topic}? What makes them good?",
+  "What's surprising about {topic}?",
+  "How has {topic} changed over the last 50 years?",
+  "What's the connection between {topic} and money?",
+  "What emotions come up when you think about {topic}?",
+  "What's the dark side of {topic}?",
+  "Who benefits from {topic}? Who doesn't?",
+  "What would an expert say you're missing?",
+  "How would mastering {topic} change your life?",
+  "What's one thing you could do TODAY related to {topic}?",
+  "How does {topic} connect to your values?",
+  "What have you learned about yourself through {topic}?",
+  "What questions still remain?",
+  "If you could change one thing about {topic}, what?",
+  "Where will {topic} be in 10 years?",
+  "What will you remember most from this?",
+  "Who would you share your {topic} knowledge with?",
+  "What's your final take on {topic}?",
+  "Write a letter to past-you about {topic}."
+];
+
+// ========================================
+// STATE
+// ========================================
+const STORAGE_KEY = 'd2d_notebook';
+let data = null;
+
+// ========================================
+// INIT
+// ========================================
+function init() {
+  // Check if returning from Stripe
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('paid') === '1') {
+    // They just paid! Start their notebook
+    const topic = localStorage.getItem('d2d_pending_topic') || 'your topic';
+    localStorage.removeItem('d2d_pending_topic');
+    
+    data = {
+      topic: topic,
+      startDate: Date.now(),
+      expires: Date.now() + (28 * 24 * 60 * 60 * 1000), // 28 days
+      entries: {}
+    };
+    save();
+    
+    // Clean URL
+    window.history.replaceState({}, '', window.location.pathname);
+  } else {
+    // Load existing
+    data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+  }
+  
+  render();
+}
+
+// ========================================
+// RENDER
+// ========================================
+function render() {
+  // No data = show landing
+  if (!data) {
+    showPage('pageLanding');
+    setupLanding();
+    return;
+  }
+  
+  // Check expiry
+  const now = Date.now();
+  const daysLeft = Math.ceil((data.expires - now) / (24 * 60 * 60 * 1000));
+  
+  if (daysLeft <= 0) {
+    showPage('pageNotebook');
+    renderNotebook(0);
+    document.getElementById('expiredBox').classList.add('show');
+    return;
+  }
+  
+  showPage('pageNotebook');
+  renderNotebook(daysLeft);
+}
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function setupLanding() {
+  const input = document.getElementById('topicInput');
+  const btn = document.getElementById('payBtn');
+  
+  input.addEventListener('input', () => {
+    if (input.value.trim()) {
+      btn.disabled = false;
+      btn.textContent = `Start "${input.value.trim()}" → $1`;
+    } else {
+      btn.disabled = true;
+      btn.textContent = 'Enter a topic first';
+    }
+  });
+  
+  btn.addEventListener('click', () => {
+    localStorage.setItem('d2d_pending_topic', input.value.trim());
+    window.location.href = STRIPE_LINK;
+  });
+}
+
+function renderNotebook(daysLeft) {
+  const topic = data.topic;
+  const entries = data.entries || {};
+  const completed = Object.keys(entries).length;
+  
+  // Calculate current day (1-28)
+  const daysSinceStart = Math.floor((Date.now() - data.startDate) / (24*60*60*1000)) + 1;
+  const currentDay = Math.min(Math.max(1, daysSinceStart), 28);
+  
+  // Agent status
+  const dot = document.getElementById('agentDot');
+  const status = document.getElementById('agentStatus');
+  const timer = document.getElementById('agentTimer');
+  
+  if (daysLeft <= 0) {
+    dot.classList.add('dead');
+    status.classList.add('dead');
+    status.textContent = 'COMPLETE';
+  } else if (daysLeft <= 3) {
+    status.textContent = 'DECAYING';
+    status.style.color = '#ffaa00';
+  }
+  timer.innerHTML = `<strong>${Math.max(0, daysLeft)}</strong> days left`;
+  
+  // Header
+  document.getElementById('notebookTopic').textContent = topic;
+  
+  // Progress
+  document.getElementById('progressText').textContent = `${completed} / 28`;
+  document.getElementById('progressFill').style.width = `${(completed/28)*100}%`;
+  
+  // Today's cell
+  const cell = document.getElementById('todayCell');
+  const question = QUESTIONS[currentDay - 1] || QUESTIONS[0];
+  
+  document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
+  document.getElementById('cellQuestion').textContent = question.replace(/{topic}/g, topic);
+  document.getElementById('cellInput').value = entries[currentDay]?.answer || '';
+  
+  if (daysLeft <= 0) {
+    cell.classList.add('locked');
+    document.getElementById('cellInput').disabled = true;
+  }
+  
+  // Past entries
+  const past = document.getElementById('pastEntries');
+  const days = Object.keys(entries).filter(d => d != currentDay).sort((a,b) => b-a);
+  
+  if (days.length === 0) {
+    past.innerHTML = '<p style="color:#444;font-size:13px">No previous entries yet</p>';
+  } else {
+    past.innerHTML = days.map(day => {
+      const e = entries[day];
+      const q = QUESTIONS[day-1] || QUESTIONS[0];
+      return `
+        <div class="past-entry">
+          <div class="past-entry-head">
+            <span class="past-entry-day">DAY ${day}</span>
+            <span class="past-entry-date">${new Date(e.date).toLocaleDateString()}</span>
+          </div>
+          <div class="past-entry-q">${q.replace(/{topic}/g, topic)}</div>
+          <div class="past-entry-a">${e.answer}</div>
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+// ========================================
+// ACTIONS
+// ========================================
+function saveEntry() {
+  const input = document.getElementById('cellInput');
+  const answer = input.value.trim();
+  if (!answer) return;
+  
+  const daysSinceStart = Math.floor((Date.now() - data.startDate) / (24*60*60*1000)) + 1;
+  const currentDay = Math.min(Math.max(1, daysSinceStart), 28);
+  
+  if (!data.entries) data.entries = {};
+  data.entries[currentDay] = {
+    answer,
+    date: Date.now()
+  };
+  
+  save();
+  document.getElementById('saveHint').textContent = '✓ Saved';
+  
+  const daysLeft = Math.ceil((data.expires - Date.now()) / (24*60*60*1000));
+  renderNotebook(daysLeft);
+}
+
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function downloadNotebook() {
+  let md = `# ${data.topic}\n## 28-Day Notebook\n\n`;
+  
+  for (let i = 1; i <= 28; i++) {
+    const q = QUESTIONS[i-1] || QUESTIONS[0];
+    const e = data.entries?.[i];
+    md += `### Day ${i}\n**${q.replace(/{topic}/g, data.topic)}**\n\n`;
+    md += e ? `${e.answer}\n\n` : `_(no entry)_\n\n`;
+  }
+  
+  const blob = new Blob([md], {type: 'text/markdown'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${data.topic.replace(/\s+/g,'-')}-notebook.md`;
+  a.click();
+}
+
+function startNew() {
+  localStorage.removeItem(STORAGE_KEY);
+  data = null;
+  document.getElementById('expiredBox').classList.remove('show');
+  render();
+}
+
+// ========================================
+// GO
+// ========================================
+init();
+</script>
+</body>
+</html>

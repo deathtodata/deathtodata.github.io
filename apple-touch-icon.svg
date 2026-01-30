@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" fill="#0a0a0a" rx="20"/>
+  <text x="90" y="75" font-family="ui-monospace, 'SF Mono', monospace" font-size="32" font-weight="700" fill="#00ff00" text-anchor="middle">D2D</text>
+  <line x1="30" y1="85" x2="150" y2="85" stroke="#00ff00" stroke-width="2"/>
+  <text x="90" y="120" font-family="ui-monospace, 'SF Mono', monospace" font-size="14" fill="#888888" text-anchor="middle">DEATH2DATA</text>
+</svg>

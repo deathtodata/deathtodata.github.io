@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Debug Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: ui-monospace, monospace;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  padding: 20px;
+}
+.container { max-width: 1200px; margin: 0 auto; }
+h1 { color: #00ff00; margin-bottom: 8px; }
+.subtitle { color: #666; margin-bottom: 40px; }
+.timestamp { color: #444; font-size: 12px; margin-bottom: 40px; }
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+/* Cards */
+.card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 20px;
+}
+.card h2 {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.card h2 .status {
+  float: right;
+  font-size: 12px;
+}
+.card h2 .status.pass { color: #00ff00; }
+.card h2 .status.fail { color: #ff4444; }
+.card h2 .status.warn { color: #ffaa00; }
+.card h2 .status.loading { color: #666; }
+
+/* Check items */
+.check {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 13px;
+}
+.check:last-child { border-bottom: none; }
+.check .label { color: #888; }
+.check .value { color: #fff; }
+.check .value.ok { color: #00ff00; }
+.check .value.error { color: #ff4444; }
+.check .value.warn { color: #ffaa00; }
+.check .value a { color: inherit; }
+
+/* Code blocks */
+.code {
+  background: #000;
+  border: 1px solid #222;
+  padding: 12px;
+  font-size: 12px;
+  overflow-x: auto;
+  margin-top: 12px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.code .error { color: #ff4444; }
+.code .warn { color: #ffaa00; }
+.code .ok { color: #00ff00; }
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: #00ff00;
+  color: #000;
+  border: none;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 8px;
+  margin-top: 8px;
+}
+.btn:hover { background: #00cc00; }
+.btn.secondary {
+  background: #222;
+  color: #888;
+}
+.btn.secondary:hover { background: #333; }
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+th, td {
+  text-align: left;
+  padding: 8px;
+  border-bottom: 1px solid #1a1a1a;
+}
+th { color: #666; font-weight: normal; }
+
+/* Full width section */
+.full-width {
+  margin-bottom: 40px;
+}
+
+/* Status indicators */
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+.dot.green { background: #00ff00; }
+.dot.red { background: #ff4444; }
+.dot.yellow { background: #ffaa00; }
+.dot.gray { background: #444; }
+
+/* Log output */
+#log {
+  background: #000;
+  border: 1px solid #222;
+  padding: 16px;
+  height: 300px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.6;
+}
+#log .line { margin-bottom: 4px; }
+#log .error { color: #ff4444; }
+#log .warn { color: #ffaa00; }
+#log .ok { color: #00ff00; }
+#log .info { color: #888; }
+</style>
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  <h1>D2D Debug Dashboard</h1>
+  <p class="subtitle">Infrastructure status and diagnostics</p>
+  <p class="timestamp" id="timestamp">Last checked: --</p>
+  
+  <div style="margin-bottom: 40px;">
+    <button class="btn" onclick="runAllChecks()">Run All Checks</button>
+    <button class="btn secondary" onclick="clearLog()">Clear Log</button>
+  </div>
+  
+  <div class="grid">
+    
+    <!-- SITE STATUS -->
+    <div class="card">
+      <h2>Site Status <span class="status loading" id="site-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">Homepage</span>
+        <span class="value" id="check-home">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Tools</span>
+        <span class="value" id="check-tools">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Notebook</span>
+        <span class="value" id="check-notebook">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Docs</span>
+        <span class="value" id="check-docs">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Manage</span>
+        <span class="value" id="check-manage">--</span>
+      </div>
+    </div>
+    
+    <!-- PAYMENT -->
+    <div class="card">
+      <h2>Payment Links <span class="status loading" id="payment-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">Homepage Link</span>
+        <span class="value" id="check-stripe-home">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Notebook Link</span>
+        <span class="value" id="check-stripe-notebook">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Test Mode Links</span>
+        <span class="value" id="check-test-links">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Placeholder Links</span>
+        <span class="value" id="check-placeholder">--</span>
+      </div>
+    </div>
+    
+    <!-- DOCS -->
+    <div class="card">
+      <h2>Documentation <span class="status loading" id="docs-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">/docs/</span>
+        <span class="value" id="check-docs-index">--</span>
+      </div>
+      <div class="check">
+        <span class="label">/docs/faq</span>
+        <span class="value" id="check-docs-faq">--</span>
+      </div>
+      <div class="check">
+        <span class="label">/docs/membership</span>
+        <span class="value" id="check-docs-membership">--</span>
+      </div>
+      <div class="check">
+        <span class="label">/docs/billing</span>
+        <span class="value" id="check-docs-billing">--</span>
+      </div>
+    </div>
+    
+    <!-- SEO -->
+    <div class="card">
+      <h2>SEO / Meta <span class="status loading" id="seo-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">robots.txt</span>
+        <span class="value" id="check-robots">--</span>
+      </div>
+      <div class="check">
+        <span class="label">sitemap.xml</span>
+        <span class="value" id="check-sitemap">--</span>
+      </div>
+      <div class="check">
+        <span class="label">favicon</span>
+        <span class="value" id="check-favicon">--</span>
+      </div>
+      <div class="check">
+        <span class="label">og:image</span>
+        <span class="value" id="check-ogimage">--</span>
+      </div>
+    </div>
+    
+    <!-- LEGAL -->
+    <div class="card">
+      <h2>Legal Pages <span class="status loading" id="legal-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">/privacy</span>
+        <span class="value" id="check-privacy">--</span>
+      </div>
+      <div class="check">
+        <span class="label">/terms</span>
+        <span class="value" id="check-terms">--</span>
+      </div>
+    </div>
+    
+    <!-- LOCAL -->
+    <div class="card">
+      <h2>Local Services <span class="status loading" id="local-status">Checking...</span></h2>
+      <div class="check">
+        <span class="label">Ollama</span>
+        <span class="value" id="check-ollama">--</span>
+      </div>
+      <div class="check">
+        <span class="label">Ollama Models</span>
+        <span class="value" id="check-ollama-models">--</span>
+      </div>
+    </div>
+    
+  </div>
+  
+  <!-- LOG OUTPUT -->
+  <div class="full-width">
+    <div class="card">
+      <h2>Debug Log</h2>
+      <div id="log"></div>
+    </div>
+  </div>
+  
+  <!-- ISSUES FOUND -->
+  <div class="full-width">
+    <div class="card">
+      <h2>Issues Found <span class="status" id="issues-count">0</span></h2>
+      <div id="issues-list">
+        <p style="color: #666; padding: 20px 0;">Run checks to find issues.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- QUICK FIXES -->
+  <div class="full-width">
+    <div class="card">
+      <h2>Quick Fix Commands</h2>
+      <p style="color: #666; margin-bottom: 16px;">Copy these to terminal to fix issues:</p>
+      <div id="fix-commands">
+        <p style="color: #666;">Run checks first to generate fix commands.</p>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+<script>
+const SITE = 'https://death2data.com';
+const LIVE_STRIPE = 'buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
+
+let issues = [];
+let fixes = [];
+
+// ================================================================
+// LOGGING
+// ================================================================
+function log(msg, type = 'info') {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = 'line ' + type;
+  line.textContent = `[${new Date().toLocaleTimeString()}] ${msg}`;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('log').innerHTML = '';
+  issues = [];
+  fixes = [];
+  updateIssues();
+}
+
+// ================================================================
+// STATUS HELPERS
+// ================================================================
+function setStatus(id, status, text) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.textContent = text;
+    el.className = 'value ' + status;
+  }
+}
+
+function setCardStatus(id, status) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.className = 'status ' + status;
+    el.textContent = status === 'pass' ? 'OK' : status === 'fail' ? 'FAIL' : status === 'warn' ? 'WARN' : 'Checking...';
+  }
+}
+
+function addIssue(severity, message, fix = null) {
+  issues.push({ severity, message });
+  if (fix) fixes.push(fix);
+  updateIssues();
+}
+
+function updateIssues() {
+  const countEl = document.getElementById('issues-count');
+  const listEl = document.getElementById('issues-list');
+  const fixEl = document.getElementById('fix-commands');
+  
+  const errors = issues.filter(i => i.severity === 'error').length;
+  const warns = issues.filter(i => i.severity === 'warn').length;
+  
+  countEl.textContent = errors + ' errors, ' + warns + ' warnings';
+  countEl.className = 'status ' + (errors > 0 ? 'fail' : warns > 0 ? 'warn' : 'pass');
+  
+  if (issues.length === 0) {
+    listEl.innerHTML = '<p style="color: #00ff00; padding: 20px 0;">✓ No issues found!</p>';
+  } else {
+    listEl.innerHTML = issues.map(i => `
+      <div class="check">
+        <span class="dot ${i.severity === 'error' ? 'red' : 'yellow'}"></span>
+        <span style="color: ${i.severity === 'error' ? '#ff4444' : '#ffaa00'}">${i.message}</span>
+      </div>
+    `).join('');
+  }
+  
+  if (fixes.length === 0) {
+    fixEl.innerHTML = '<p style="color: #666;">No fixes needed or run checks first.</p>';
+  } else {
+    fixEl.innerHTML = fixes.map(f => `<div class="code">${f}</div>`).join('');
+  }
+}
+
+// ================================================================
+// CHECK FUNCTIONS
+// ================================================================
+async function checkUrl(url, name) {
+  try {
+    log(`Checking ${name}...`);
+    const res = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+    // no-cors means we can't read status, but if it doesn't throw, it exists
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function fetchPage(url) {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    return await res.text();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function checkSiteStatus() {
+  log('=== Checking Site Status ===', 'info');
+  
+  const pages = [
+    { id: 'check-home', url: '/', name: 'Homepage' },
+    { id: 'check-tools', url: '/tools', name: 'Tools' },
+    { id: 'check-notebook', url: '/notebook', name: 'Notebook' },
+    { id: 'check-docs', url: '/docs/', name: 'Docs' },
+    { id: 'check-manage', url: '/manage', name: 'Manage' },
+  ];
+  
+  let allPass = true;
+  
+  for (const page of pages) {
+    const html = await fetchPage(SITE + page.url);
+    if (html && html.length > 100) {
+      setStatus(page.id, 'ok', '✓ OK');
+      log(`${page.name}: OK`, 'ok');
+    } else {
+      setStatus(page.id, 'error', '✗ Error');
+      log(`${page.name}: FAILED`, 'error');
+      addIssue('error', `${page.name} (${page.url}) is not loading`);
+      allPass = false;
+    }
+  }
+  
+  setCardStatus('site-status', allPass ? 'pass' : 'fail');
+}
+
+async function checkPaymentLinks() {
+  log('=== Checking Payment Links ===', 'info');
+  
+  let allPass = true;
+  
+  // Check homepage
+  const homeHtml = await fetchPage(SITE + '/');
+  if (homeHtml) {
+    if (homeHtml.includes(LIVE_STRIPE)) {
+      setStatus('check-stripe-home', 'ok', '✓ Live');
+      log('Homepage Stripe: LIVE link found', 'ok');
+    } else if (homeHtml.includes('buy.stripe.com/test_')) {
+      setStatus('check-stripe-home', 'error', '✗ Test mode!');
+      log('Homepage Stripe: TEST MODE - not charging real money!', 'error');
+      addIssue('error', 'Homepage has TEST Stripe link', 
+        `sed -i '' 's|buy.stripe.com/test_[^"]*|${LIVE_STRIPE}|g' ~/Desktop/claudecodeprojecttemplate/public/index.html`);
+      allPass = false;
+    } else if (homeHtml.includes('YOUR_LINK_HERE')) {
+      setStatus('check-stripe-home', 'error', '✗ Placeholder');
+      log('Homepage Stripe: Has YOUR_LINK_HERE placeholder!', 'error');
+      addIssue('error', 'Homepage has YOUR_LINK_HERE placeholder',
+        `sed -i '' 's|YOUR_LINK_HERE|${LIVE_STRIPE}|g' ~/Desktop/claudecodeprojecttemplate/public/index.html`);
+      allPass = false;
+    } else {
+      setStatus('check-stripe-home', 'warn', '? Unknown');
+      log('Homepage Stripe: Could not find Stripe link', 'warn');
+    }
+  }
+  
+  // Check notebook
+  const notebookHtml = await fetchPage(SITE + '/notebook');
+  if (notebookHtml) {
+    if (notebookHtml.includes(LIVE_STRIPE)) {
+      setStatus('check-stripe-notebook', 'ok', '✓ Live');
+      log('Notebook Stripe: LIVE link found', 'ok');
+    } else if (notebookHtml.includes('buy.stripe.com/test_')) {
+      setStatus('check-stripe-notebook', 'error', '✗ Test mode!');
+      log('Notebook Stripe: TEST MODE!', 'error');
+      addIssue('error', 'Notebook has TEST Stripe link',
+        `sed -i '' 's|buy.stripe.com/test_[^"'"'"']*|${LIVE_STRIPE}|g' ~/Desktop/claudecodeprojecttemplate/public/notebook.html`);
+      allPass = false;
+    } else if (notebookHtml.includes('YOUR_LINK_HERE')) {
+      setStatus('check-stripe-notebook', 'error', '✗ Placeholder');
+      log('Notebook Stripe: Has YOUR_LINK_HERE placeholder!', 'error');
+      addIssue('error', 'Notebook has YOUR_LINK_HERE placeholder',
+        `sed -i '' 's|https://buy.stripe.com/YOUR_LINK_HERE|https://${LIVE_STRIPE}|g' ~/Desktop/claudecodeprojecttemplate/public/notebook.html`);
+      allPass = false;
+    } else {
+      setStatus('check-stripe-notebook', 'warn', '? Check manually');
+    }
+  }
+  
+  // Check for any test links
+  const allHtml = (homeHtml || '') + (notebookHtml || '');
+  const testCount = (allHtml.match(/buy\.stripe\.com\/test_/g) || []).length;
+  const placeholderCount = (allHtml.match(/YOUR_LINK_HERE/g) || []).length;
+  
+  setStatus('check-test-links', testCount === 0 ? 'ok' : 'error', 
+    testCount === 0 ? '✓ None' : `✗ ${testCount} found`);
+  setStatus('check-placeholder', placeholderCount === 0 ? 'ok' : 'error',
+    placeholderCount === 0 ? '✓ None' : `✗ ${placeholderCount} found`);
+  
+  if (testCount > 0) allPass = false;
+  if (placeholderCount > 0) allPass = false;
+  
+  setCardStatus('payment-status', allPass ? 'pass' : 'fail');
+}
+
+async function checkDocs() {
+  log('=== Checking Documentation ===', 'info');
+  
+  const pages = [
+    { id: 'check-docs-index', url: '/docs/', name: 'Docs Index' },
+    { id: 'check-docs-faq', url: '/docs/faq', name: 'FAQ' },
+    { id: 'check-docs-membership', url: '/docs/membership', name: 'Membership' },
+    { id: 'check-docs-billing', url: '/docs/billing', name: 'Billing' },
+  ];
+  
+  let errors = 0;
+  
+  for (const page of pages) {
+    const html = await fetchPage(SITE + page.url);
+    if (html && html.length > 100 && !html.includes('Page Not Found') && !html.includes('404')) {
+      setStatus(page.id, 'ok', '✓ OK');
+      log(`${page.name}: OK`, 'ok');
+    } else {
+      setStatus(page.id, 'error', '✗ Missing');
+      log(`${page.name}: MISSING`, 'error');
+      addIssue('warn', `${page.name} (${page.url}) is missing`);
+      errors++;
+    }
+  }
+  
+  setCardStatus('docs-status', errors === 0 ? 'pass' : errors < 2 ? 'warn' : 'fail');
+}
+
+async function checkSEO() {
+  log('=== Checking SEO ===', 'info');
+  
+  let errors = 0;
+  
+  const robots = await fetchPage(SITE + '/robots.txt');
+  if (robots && robots.includes('User-agent')) {
+    setStatus('check-robots', 'ok', '✓ OK');
+    log('robots.txt: OK', 'ok');
+  } else {
+    setStatus('check-robots', 'error', '✗ Missing');
+    log('robots.txt: MISSING', 'error');
+    addIssue('warn', 'robots.txt is missing');
+    errors++;
+  }
+  
+  const sitemap = await fetchPage(SITE + '/sitemap.xml');
+  if (sitemap && sitemap.includes('urlset')) {
+    setStatus('check-sitemap', 'ok', '✓ OK');
+    log('sitemap.xml: OK', 'ok');
+  } else {
+    setStatus('check-sitemap', 'error', '✗ Missing');
+    log('sitemap.xml: MISSING', 'error');
+    addIssue('warn', 'sitemap.xml is missing');
+    errors++;
+  }
+  
+  // Favicon - harder to check via fetch, just mark as manual
+  setStatus('check-favicon', 'warn', '? Manual');
+  setStatus('check-ogimage', 'warn', '? Manual');
+  
+  setCardStatus('seo-status', errors === 0 ? 'pass' : 'warn');
+}
+
+async function checkLegal() {
+  log('=== Checking Legal Pages ===', 'info');
+  
+  let errors = 0;
+  
+  const privacy = await fetchPage(SITE + '/privacy');
+  if (privacy && privacy.length > 500 && !privacy.includes('404')) {
+    setStatus('check-privacy', 'ok', '✓ OK');
+    log('Privacy Policy: OK', 'ok');
+  } else {
+    setStatus('check-privacy', 'error', '✗ Missing');
+    log('Privacy Policy: MISSING', 'error');
+    addIssue('error', 'Privacy Policy page is missing (required by Stripe)');
+    errors++;
+  }
+  
+  const terms = await fetchPage(SITE + '/terms');
+  if (terms && terms.length > 500 && !terms.includes('404')) {
+    setStatus('check-terms', 'ok', '✓ OK');
+    log('Terms of Service: OK', 'ok');
+  } else {
+    setStatus('check-terms', 'error', '✗ Missing');
+    log('Terms of Service: MISSING', 'error');
+    addIssue('error', 'Terms of Service page is missing (required by Stripe)');
+    errors++;
+  }
+  
+  setCardStatus('legal-status', errors === 0 ? 'pass' : 'fail');
+}
+
+async function checkLocal() {
+  log('=== Checking Local Services ===', 'info');
+  
+  try {
+    const res = await fetch('http://localhost:11434/api/tags');
+    const data = await res.json();
+    const modelCount = data.models ? data.models.length : 0;
+    setStatus('check-ollama', 'ok', '✓ Running');
+    setStatus('check-ollama-models', 'ok', `${modelCount} models`);
+    log(`Ollama: Running with ${modelCount} models`, 'ok');
+    setCardStatus('local-status', 'pass');
+  } catch (e) {
+    setStatus('check-ollama', 'warn', '○ Not running');
+    setStatus('check-ollama-models', 'warn', '--');
+    log('Ollama: Not running (optional)', 'warn');
+    setCardStatus('local-status', 'warn');
+  }
+}
+
+// ================================================================
+// RUN ALL
+// ================================================================
+async function runAllChecks() {
+  issues = [];
+  fixes = [];
+  updateIssues();
+  
+  document.getElementById('timestamp').textContent = 'Last checked: ' + new Date().toLocaleString();
+  
+  log('Starting all checks...', 'info');
+  
+  await checkSiteStatus();
+  await checkPaymentLinks();
+  await checkDocs();
+  await checkSEO();
+  await checkLegal();
+  await checkLocal();
+  
+  log('=== All checks complete ===', 'info');
+  
+  if (issues.filter(i => i.severity === 'error').length === 0) {
+    log('✓ No critical issues found!', 'ok');
+  } else {
+    log('✗ Found issues that need fixing. See Issues section.', 'error');
+  }
+}
+
+// Run on load
+runAllChecks();
+</script>
+
+</body>
+</html>

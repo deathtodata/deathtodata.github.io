@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome - Death2Data</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, sans-serif;
+  background: #0a0a0a;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.box {
+  text-align: center;
+  padding: 40px;
+}
+h1 { font-size: 48px; margin-bottom: 16px; }
+p { color: #888; margin-bottom: 32px; }
+.status {
+  background: #111;
+  border: 1px solid #222;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+.status.ok { border-color: #00ff00; }
+.status.err { border-color: #ff4444; }
+.btn {
+  display: inline-block;
+  padding: 16px 32px;
+  background: #00ff00;
+  color: #000;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 4px;
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Payment Successful - Access Granted</title>
+<meta name="description" content="Payment successful! Your Death2Data membership is now active. Redirecting to tools...">
+<meta name="keywords" content="payment success, membership active">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/success.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Payment Successful - Access Granted">
+<meta property="og:description" content="Payment successful! Your Death2Data membership is now active. Redirecting to tools...">
+<meta property="og:url" content="https://death2data.com/success.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Payment Successful - Access Granted">
+<meta name="twitter:description" content="Payment successful! Your Death2Data membership is now active. Redirecting to tools...">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Payment Successful - Access Granted",
+  "description": "Payment successful! Your Death2Data membership is now active. Redirecting to tools...",
+  "url": "https://death2data.com/success.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+<div class="box">
+  <h1>🎉</h1>
+  <p id="msg">Verifying payment...</p>
+  <div class="status" id="status">Please wait...</div>
+  <a href="/tools.html" class="btn" id="cta" style="display:none">Access Tools →</a>
+</div>
+<script>
+(async function() {
+  const params = new URLSearchParams(window.location.search);
+  const session_id = params.get('session_id');
+  
+  if (!session_id) {
+    document.getElementById('msg').textContent = 'Error';
+    document.getElementById('status').textContent = 'No session found. Did you complete checkout?';
+    document.getElementById('status').className = 'status err';
+    return;
+  }
+  
+  try {
+    const res = await fetch(`/.netlify/functions/verify?session_id=${session_id}`);
+    const data = await res.json();
+    
+    if (!data.ok) {
+      throw new Error(data.error || 'Verification failed');
+    }
+    
+    // Store member data
+    localStorage.setItem('d2d_member', JSON.stringify({
+      email: data.email,
+      customer_id: data.customer_id,
+      expires: data.expires
+    }));
+    
+    // Show success
+    document.getElementById('msg').textContent = 'Welcome to Death2Data!';
+    document.getElementById('status').className = 'status ok';
+    document.getElementById('status').innerHTML = `<strong>✓ Payment confirmed</strong><br><span style="color:#888">${data.email}</span>`;
+    document.getElementById('cta').style.display = 'inline-block';
+    
+  } catch (err) {
+    document.getElementById('msg').textContent = 'Error';
+    document.getElementById('status').textContent = err.message;
+    document.getElementById('status').className = 'status err';
+  }
+})();
+</script>
+</body>
+</html>

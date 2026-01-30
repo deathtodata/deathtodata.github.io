@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>D2D Platform Architecture</title>
+  <style>
+    @page { size: 8.5in 11in; margin: 0; }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #000;
+      color: #fff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .page {
+      width: 8.5in;
+      height: 11in;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      page-break-inside: avoid;
+      background: #0a0a0a;
+    }
+    
+    /* ==================== COVER ==================== */
+    .cover { background: linear-gradient(180deg, #0a0a0a 0%, #0d1a0d 100%); }
+    
+    .cover-brand {
+      position: absolute;
+      top: 50px;
+      left: 60px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #00ff00;
+    }
+    
+    .cover-date {
+      position: absolute;
+      top: 50px;
+      right: 60px;
+      font-size: 11px;
+      color: #666;
+    }
+    
+    .cover-title {
+      position: absolute;
+      top: 200px;
+      left: 60px;
+    }
+    
+    .cover-title h1 {
+      font-size: 140px;
+      font-weight: 800;
+      line-height: 0.85;
+      letter-spacing: -5px;
+    }
+    
+    .cover-title .line1 { color: #fff; }
+    .cover-title .line2 { color: #00ff00; }
+    
+    .cover-tagline {
+      position: absolute;
+      top: 520px;
+      left: 60px;
+      font-size: 22px;
+      color: #888;
+      max-width: 450px;
+      line-height: 1.4;
+    }
+    
+    .cover-stats {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      background: #0d0d0d;
+      border-top: 1px solid #1a1a1a;
+      display: flex;
+    }
+    
+    .cover-stat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 60px;
+      border-right: 1px solid #1a1a1a;
+    }
+    
+    .cover-stat:last-child { border-right: none; }
+    
+    .cover-stat-value {
+      font-size: 56px;
+      font-weight: 700;
+      color: #00ff00;
+      line-height: 1;
+    }
+    
+    .cover-stat-label {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-top: 8px;
+    }
+    
+    /* ==================== SECTION HEADERS ==================== */
+    .section-num {
+      position: absolute;
+      top: 45px;
+      right: 60px;
+      font-size: 100px;
+      font-weight: 800;
+      color: #00ff00;
+      opacity: 0.15;
+      line-height: 1;
+    }
+    
+    .section-title {
+      position: absolute;
+      top: 50px;
+      left: 60px;
+    }
+    
+    .section-title h2 {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    
+    .section-title p {
+      font-size: 16px;
+      color: #666;
+      margin-top: 15px;
+      max-width: 400px;
+    }
+    
+    .page-footer {
+      position: absolute;
+      bottom: 30px;
+      left: 60px;
+      right: 60px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: #444;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    /* ==================== METRICS ==================== */
+    .metrics-row {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      display: flex;
+      gap: 20px;
+    }
+    
+    .metric-card {
+      flex: 1;
+      background: #0d0d0d;
+      border-left: 4px solid #00ff00;
+      padding: 30px;
+    }
+    
+    .metric-card.orange { border-left-color: #ff6b35; }
+    
+    .metric-value {
+      font-size: 48px;
+      font-weight: 700;
+      color: #00ff00;
+    }
+    
+    .metric-card.orange .metric-value { color: #ff6b35; }
+    
+    .metric-label {
+      font-size: 9px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 5px;
+    }
+    
+    .metric-desc {
+      font-size: 12px;
+      color: #888;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #222;
+    }
+    
+    /* ==================== TABLE ==================== */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      background: #00ff00;
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 15px 20px;
+      text-align: left;
+    }
+    
+    td {
+      padding: 18px 20px;
+      font-size: 13px;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    
+    td.mono {
+      font-family: 'SF Mono', 'Monaco', monospace;
+      color: #00ff00;
+      font-size: 12px;
+    }
+    
+    /* ==================== CODE ==================== */
+    .code-block {
+      background: #0a0a0a;
+      border: 1px solid #1a1a1a;
+      border-left: 3px solid #00ff00;
+      padding: 25px 30px;
+      font-family: 'SF Mono', 'Monaco', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    
+    .code-comment { color: #666; }
+    .code-keyword { color: #ff6b35; }
+    .code-string { color: #00ff00; }
+    .code-tag { color: #ff6b35; }
+  </style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="cover-brand">DEATH2DATA</div>
+  <div class="cover-date">JANUARY 2026</div>
+  <div class="cover-title">
+    <h1><span class="line1">D2D</span><br><span class="line2">PLATFORM</span></h1>
+  </div>
+  <div class="cover-tagline">Multi-tenant infrastructure for privacy-first tools. No tracking. No ads. No bullshit.</div>
+  <div class="cover-stats">
+    <div class="cover-stat"><div class="cover-stat-value">6</div><div class="cover-stat-label">Verticals</div></div>
+    <div class="cover-stat"><div class="cover-stat-value">$10</div><div class="cover-stat-label">Monthly Cost</div></div>
+    <div class="cover-stat"><div class="cover-stat-value">0</div><div class="cover-stat-label">Cookies</div></div>
+    <div class="cover-stat"><div class="cover-stat-value">∞</div><div class="cover-stat-label">Scale</div></div>
+  </div>
+</div>
+
+<!-- PAGE 2: ARCHITECTURE -->
+<div class="page">
+  <div class="section-num">01</div>
+  <div class="section-title">
+    <h2>SYSTEM<br>ARCHITECTURE</h2>
+    <p>One SDK. Six brands. Complete financial separation.</p>
+  </div>
+  
+  <div style="position: absolute; top: 220px; left: 60px; right: 60px; bottom: 80px; background: #0d0d0d; border: 1px solid #1a1a1a; padding: 40px; display: flex; align-items: center;">
+    <div style="flex: 1;">
+      <div style="font-size: 9px; color: #00ff00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Domains</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222; color: #00ff00;">death2data.com</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">cringe.events</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">soul.community</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">deal.club</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">ultra.dev</div>
+      <div style="font-size: 14px; padding: 10px 0;">nil.athlete</div>
+    </div>
+    <div style="flex: 0.3; text-align: center; font-size: 32px; color: #00ff00; opacity: 0.4;">→</div>
+    <div style="flex: 1;">
+      <div style="background: #111; border: 2px solid #00ff00; padding: 20px; margin-bottom: 15px; text-align: center;">
+        <div style="font-size: 13px; font-weight: 700; color: #00ff00;">ANALYTICS</div>
+        <div style="font-size: 10px; color: #666; margin-top: 4px;">tracker.js + collector</div>
+      </div>
+      <div style="background: #111; border: 2px solid #00ff00; padding: 20px; margin-bottom: 15px; text-align: center;">
+        <div style="font-size: 13px; font-weight: 700; color: #00ff00;">STRIPE</div>
+        <div style="font-size: 10px; color: #666; margin-top: 4px;">per-vertical accounts</div>
+      </div>
+      <div style="background: #111; border: 2px solid #00ff00; padding: 20px; text-align: center;">
+        <div style="font-size: 13px; font-weight: 700; color: #00ff00;">D2D SDK</div>
+        <div style="font-size: 10px; color: #666; margin-top: 4px;">unified management</div>
+      </div>
+    </div>
+    <div style="flex: 0.3; text-align: center; font-size: 32px; color: #00ff00; opacity: 0.4;">→</div>
+    <div style="flex: 1;">
+      <div style="font-size: 9px; color: #00ff00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Data Layer</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">SQLite / Postgres</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">Webhook handlers</div>
+      <div style="font-size: 14px; padding: 10px 0; border-bottom: 1px solid #222;">Customer records</div>
+      <div style="font-size: 14px; padding: 10px 0;">Event streams</div>
+    </div>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>02</div></div>
+</div>
+
+<!-- PAGE 3: ANALYTICS -->
+<div class="page">
+  <div class="section-num">02</div>
+  <div class="section-title">
+    <h2>PRIVACY-FIRST<br>ANALYTICS</h2>
+    <p>No cookies. No fingerprinting. No PII.</p>
+  </div>
+  
+  <div class="metrics-row" style="top: 220px;">
+    <div class="metric-card">
+      <div class="metric-value">2KB</div>
+      <div class="metric-label">Tracker Size</div>
+      <div class="metric-desc">Lightweight. Won't slow your site.</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">0</div>
+      <div class="metric-label">Cookies Set</div>
+      <div class="metric-desc">No GDPR banners needed.</div>
+    </div>
+    <div class="metric-card orange">
+      <div class="metric-value">24hr</div>
+      <div class="metric-label">Session Scope</div>
+      <div class="metric-desc">Can't track across days.</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 450px; left: 60px; right: 60px; display: flex; flex-wrap: wrap; gap: 15px;">
+    <div style="width: 48%; display: flex; align-items: center; gap: 15px; background: #0d0d0d; padding: 18px 20px;">
+      <div style="width: 20px; height: 20px; background: #00ff00; color: #000; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</div>
+      <div style="font-size: 13px; color: #ccc;">Respects Do Not Track header</div>
+    </div>
+    <div style="width: 48%; display: flex; align-items: center; gap: 15px; background: #0d0d0d; padding: 18px 20px;">
+      <div style="width: 20px; height: 20px; background: #00ff00; color: #000; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</div>
+      <div style="font-size: 13px; color: #ccc;">No personal data stored</div>
+    </div>
+    <div style="width: 48%; display: flex; align-items: center; gap: 15px; background: #0d0d0d; padding: 18px 20px;">
+      <div style="width: 20px; height: 20px; background: #00ff00; color: #000; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</div>
+      <div style="font-size: 13px; color: #ccc;">Self-hosted, you own the data</div>
+    </div>
+    <div style="width: 48%; display: flex; align-items: center; gap: 15px; background: #0d0d0d; padding: 18px 20px;">
+      <div style="width: 20px; height: 20px; background: #00ff00; color: #000; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">✓</div>
+      <div style="font-size: 13px; color: #ccc;">Works without JavaScript</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 620px; left: 60px; right: 60px;" class="code-block">
+    <span class="code-comment">// Add to any page</span><br>
+    <span class="code-tag">&lt;script</span> src=<span class="code-string">"https://analytics.death2data.com/t.js"</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data-site=<span class="code-string">"yoursite.com"</span> defer<span class="code-tag">&gt;&lt;/script&gt;</span>
+  </div>
+  
+  <div style="position: absolute; top: 750px; left: 60px; right: 60px;">
+    <table>
+      <tr><th style="width: 35%">Endpoint</th><th style="width: 15%">Method</th><th>Description</th></tr>
+      <tr><td class="mono">/collect</td><td>POST</td><td>Receive events from tracker</td></tr>
+      <tr><td class="mono">/api/stats?site=X</td><td>GET</td><td>Stats (7 days default)</td></tr>
+      <tr><td class="mono">/api/live?site=X</td><td>GET</td><td>Live visitors (5min window)</td></tr>
+      <tr><td class="mono">/dashboard</td><td>GET</td><td>Visual dashboard</td></tr>
+    </table>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>03</div></div>
+</div>
+
+<!-- PAGE 4: STRIPE -->
+<div class="page">
+  <div class="section-num">03</div>
+  <div class="section-title">
+    <h2>STRIPE<br>INTEGRATION</h2>
+    <p>Each vertical has its own Stripe account.</p>
+  </div>
+  
+  <div class="metrics-row" style="top: 220px;">
+    <div class="metric-card">
+      <div class="metric-value">$1</div>
+      <div class="metric-label">Per Member</div>
+      <div class="metric-desc">Simple, transparent pricing.</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">~$0.90</div>
+      <div class="metric-label">Net Revenue</div>
+      <div class="metric-desc">After Stripe's 2.9% + $0.30</div>
+    </div>
+    <div class="metric-card orange">
+      <div class="metric-value">4,200</div>
+      <div class="metric-label">Break-even</div>
+      <div class="metric-desc">Members for sustainability.</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 450px; left: 60px; right: 60px;" class="code-block">
+    <span class="code-comment">// Per vertical</span><br>
+    <span class="code-keyword">await</span> d2d.for(<span class="code-string">'cringe'</span>).getMembers();<br>
+    <span class="code-keyword">await</span> d2d.for(<span class="code-string">'cringe'</span>).getMRR();<br>
+    <span class="code-keyword">await</span> d2d.for(<span class="code-string">'cringe'</span>).createPaymentLink();<br><br>
+    <span class="code-comment">// Across all verticals</span><br>
+    <span class="code-keyword">await</span> d2d.getDashboard();<br>
+    <span class="code-keyword">await</span> d2d.findCustomer(<span class="code-string">'email@example.com'</span>);
+  </div>
+  
+  <div style="position: absolute; top: 700px; left: 60px; right: 60px;">
+    <div style="font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Critical Webhook Events</div>
+    <table>
+      <tr><th style="width: 45%">Event</th><th>Action</th></tr>
+      <tr><td class="mono">checkout.session.completed</td><td>Send welcome email, grant access</td></tr>
+      <tr><td class="mono">customer.subscription.deleted</td><td>Revoke access, send win-back</td></tr>
+      <tr><td class="mono">invoice.payment_failed</td><td>Send dunning email sequence</td></tr>
+    </table>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>04</div></div>
+</div>
+
+<!-- PAGE 5: VERTICALS -->
+<div class="page">
+  <div class="section-num">04</div>
+  <div class="section-title">
+    <h2>SIX<br>VERTICALS</h2>
+    <p>Same infrastructure. Different communities.</p>
+  </div>
+  
+  <div style="position: absolute; top: 220px; left: 60px; right: 60px; display: flex; flex-wrap: wrap; gap: 15px;">
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #00ff00;">
+      <div style="font-size: 18px; font-weight: 700;">D2D</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">death2data.com</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Main brand. Privacy tools. The mothership.</div>
+    </div>
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #ff6b35;">
+      <div style="font-size: 18px; font-weight: 700;">CRINGE</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">cringe.events</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Founders pitch cringe, iterate fast.</div>
+    </div>
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #a855f7;">
+      <div style="font-size: 18px; font-weight: 700;">SOUL</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">soul.community</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Wellness without the woo-woo.</div>
+    </div>
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #22c55e;">
+      <div style="font-size: 18px; font-weight: 700;">DEAL</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">deal.club</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Real estate for normal people.</div>
+    </div>
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #3b82f6;">
+      <div style="font-size: 18px; font-weight: 700;">ULTRA</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">ultra.dev</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Infrastructure nerds. Privacy maximalists.</div>
+    </div>
+    <div style="width: 48%; background: #0d0d0d; padding: 25px; border-bottom: 3px solid #f59e0b;">
+      <div style="font-size: 18px; font-weight: 700;">NIL</div>
+      <div style="font-family: monospace; font-size: 11px; color: #00ff00; margin-top: 5px;">nil.athlete</div>
+      <div style="font-size: 12px; color: #888; margin-top: 12px;">Athletes owning their brand and data.</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 700px; left: 60px; right: 60px; padding: 25px; background: linear-gradient(135deg, #0a1a0a, #001a00); border: 1px solid #00ff00;">
+    <div style="font-size: 10px; color: #00ff00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">Each Domain Needs</div>
+    <div style="font-size: 14px; color: #ccc;">DNS → Netlify/Vercel &nbsp;&nbsp;•&nbsp;&nbsp; Analytics tracker &nbsp;&nbsp;•&nbsp;&nbsp; Stripe payment link &nbsp;&nbsp;•&nbsp;&nbsp; Webhook endpoint</div>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>05</div></div>
+</div>
+
+<!-- PAGE 6: DEPLOYMENT -->
+<div class="page">
+  <div class="section-num">05</div>
+  <div class="section-title">
+    <h2>DEPLOYMENT<br>OPTIONS</h2>
+    <p>From $5/mo VPS to serverless auto-scaling.</p>
+  </div>
+  
+  <div class="metrics-row" style="top: 220px;">
+    <div class="metric-card">
+      <div class="metric-value">VPS</div>
+      <div class="metric-label">$5-10/mo</div>
+      <div class="metric-desc">DigitalOcean, Vultr. PM2 + Nginx.</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">λ</div>
+      <div class="metric-label">Serverless</div>
+      <div class="metric-desc">Vercel/Netlify. Free tier. Auto-scale.</div>
+    </div>
+    <div class="metric-card orange">
+      <div class="metric-value">PaaS</div>
+      <div class="metric-label">Railway/Render</div>
+      <div class="metric-desc">Git deploy. ~$5-10/mo.</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 450px; left: 60px; right: 60px;">
+    <div style="font-size: 9px; color: #666; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Database Options</div>
+    <table>
+      <tr><th style="width: 25%">Database</th><th style="width: 25%">Scale</th><th>Notes</th></tr>
+      <tr><td>SQLite</td><td>100k events/day</td><td>Simplest. Single file. Start here.</td></tr>
+      <tr><td>PostgreSQL</td><td>Millions/day</td><td>Partition by month for scale.</td></tr>
+      <tr><td>ClickHouse</td><td>Billions/day</td><td>When you're actually big.</td></tr>
+    </table>
+  </div>
+  
+  <div style="position: absolute; top: 700px; left: 60px; right: 60px; background: #0d0d0d; border: 1px solid #1a1a1a;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; border-bottom: 1px solid #1a1a1a;">
+      <div style="font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px;">Monthly Infrastructure Cost</div>
+      <div style="font-size: 28px; font-weight: 700; color: #00ff00;">$10-15</div>
+    </div>
+    <div style="display: flex;">
+      <div style="flex: 1; padding: 20px 25px; border-right: 1px solid #1a1a1a;">
+        <div style="font-size: 18px; font-weight: 700;">$5-10</div>
+        <div style="font-size: 9px; color: #666; margin-top: 5px;">VPS (Analytics)</div>
+      </div>
+      <div style="flex: 1; padding: 20px 25px; border-right: 1px solid #1a1a1a;">
+        <div style="font-size: 18px; font-weight: 700;">~$5</div>
+        <div style="font-size: 9px; color: #666; margin-top: 5px;">Domains (6x)</div>
+      </div>
+      <div style="flex: 1; padding: 20px 25px; border-right: 1px solid #1a1a1a;">
+        <div style="font-size: 18px; font-weight: 700;">2.9%</div>
+        <div style="font-size: 9px; color: #666; margin-top: 5px;">Stripe Fee</div>
+      </div>
+      <div style="flex: 1; padding: 20px 25px;">
+        <div style="font-size: 18px; font-weight: 700;">$0</div>
+        <div style="font-size: 9px; color: #666; margin-top: 5px;">Netlify Sites</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>06</div></div>
+</div>
+
+<!-- PAGE 7: NEXT STEPS -->
+<div class="page">
+  <div class="section-num">06</div>
+  <div class="section-title">
+    <h2>NEXT<br>STEPS</h2>
+    <p>The roadmap to 4,200 members.</p>
+  </div>
+  
+  <div style="position: absolute; top: 220px; left: 60px; right: 300px;">
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d; margin-bottom: 10px;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Deploy analytics server (VPS or serverless)</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d; margin-bottom: 10px;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Add tracker to death2data.com</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d; margin-bottom: 10px;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Configure Stripe webhooks</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d; margin-bottom: 10px;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Purchase remaining vertical domains</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d; margin-bottom: 10px;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Build unified dashboard</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 20px; padding: 18px 20px; background: #0d0d0d;">
+      <div style="width: 22px; height: 22px; border: 2px solid #00ff00;"></div>
+      <div style="font-size: 14px;">Set up CI/CD for multi-site deploys</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; top: 600px; left: 60px; right: 60px; padding: 30px; background: linear-gradient(135deg, #0a1a0a, #001a00); border: 1px solid #00ff00;">
+    <div style="font-size: 10px; color: #00ff00; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Scale Economics</div>
+    <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #1a3a1a;">
+      <div style="width: 180px; font-weight: 700; color: #00ff00;">100 members</div>
+      <div style="color: #888;">$100 MRR → Infrastructure is ~10-15% of revenue</div>
+    </div>
+    <div style="display: flex; padding: 12px 0; border-bottom: 1px solid #1a3a1a;">
+      <div style="width: 180px; font-weight: 700; color: #00ff00;">1,000 members</div>
+      <div style="color: #888;">$1,000 MRR → Infrastructure is ~1-1.5% of revenue</div>
+    </div>
+    <div style="display: flex; padding: 12px 0;">
+      <div style="width: 180px; font-weight: 700; color: #00ff00;">4,200 members</div>
+      <div style="color: #888;">Full sustainability. No investors needed. Ever.</div>
+    </div>
+  </div>
+  
+  <div style="position: absolute; bottom: 100px; left: 60px; right: 60px; text-align: center;">
+    <div style="font-size: 42px; font-weight: 700; color: #00ff00;">death2data.com</div>
+    <div style="font-size: 14px; color: #666; margin-top: 10px;">$1/month. Privacy tools. No bullshit.</div>
+  </div>
+  
+  <div class="page-footer"><div>D2D PLATFORM ARCHITECTURE</div><div>07</div></div>
+</div>
+
+</body>
+</html>

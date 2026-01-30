@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>D2D Handout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: portrait; margin: 0.4in; }
+        @media print {
+            body { width: 8.5in; height: 11in; }
+        }
+        body {
+            font-family: -apple-system, 'Segoe UI', sans-serif;
+            background: #fff;
+            color: #000;
+            padding: 0.4in;
+            max-width: 8.5in;
+            font-size: 11px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            margin-bottom: 16px;
+            border-bottom: 3px solid #000;
+        }
+        
+        .logo { 
+            font-size: 48px; 
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+        
+        .tagline { 
+            font-size: 12px; 
+            color: #666; 
+        }
+        
+        .main { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 24px; 
+        }
+        
+        h2 { 
+            font-size: 11px; 
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px; 
+            color: #000;
+        }
+        
+        p { 
+            font-size: 11px; 
+            line-height: 1.5; 
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .price-box {
+            background: #000;
+            color: #fff;
+            padding: 16px;
+            text-align: center;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+        
+        .price { 
+            font-size: 48px; 
+            font-weight: 900; 
+            line-height: 1;
+        }
+        
+        .price-info {
+            text-align: left;
+        }
+        
+        .price-label { 
+            font-size: 14px; 
+            font-weight: 700;
+        }
+        
+        .price-sub {
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .url-box {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 10px;
+            border: 2px solid #000;
+            margin: 12px 0;
+            font-family: monospace;
+        }
+        
+        .how-to {
+            background: #f5f5f5;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        
+        .how-to strong { 
+            display: block;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .how-to ol { 
+            margin-left: 16px; 
+            font-size: 11px;
+        }
+        
+        .how-to li { 
+            margin-bottom: 4px;
+        }
+        
+        .benefit {
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+        
+        .footer {
+            margin-top: 12px;
+            padding-top: 8px;
+            border-top: 1px solid #ddd;
+            font-size: 9px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <div class="logo">D2D</div>
+        <div class="tagline">Privacy tools. Member-owned. No bullshit.</div>
+    </div>
+</div>
+
+<div class="main">
+    <div>
+        <h2>The Problem</h2>
+        <p>Every "free" app sells your data. VC-funded companies must extract value from users—they owe investors 10x returns. That money comes from you.</p>
+        
+        <h2 style="margin-top: 12px;">The Solution</h2>
+        <p><strong>D2D is a privacy co-op.</strong> Member-funded. No investors. No ads. Your data stays on YOUR device—we never have it.</p>
+        
+        <h2 style="margin-top: 12px;">The Math</h2>
+        <p>4,200 members = sustainable forever. No growth hacking. No exit. Just tools that work.</p>
+    </div>
+    
+    <div>
+        <h2>What $1 Gets You</h2>
+        <div class="benefit"><strong>→ VOTE</strong> on what gets built next</div>
+        <div class="benefit"><strong>→ ACCESS</strong> to all tools (journal is live)</div>
+        <div class="benefit"><strong>→ CODE</strong> is MIT licensed—fork anytime</div>
+        <div class="benefit"><strong>→ FOUNDING MEMBER</strong> status (first 100)</div>
+        
+        <div class="how-to" style="margin-top: 12px;">
+            <strong>How to Join</strong>
+            <ol>
+                <li>Try the journal: <strong>death2data.com/prompt</strong></li>
+                <li>Give Matt $1 cash</li>
+                <li>Write down your email</li>
+                <li>You're in.</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<div class="price-box">
+    <div class="price">$1</div>
+    <div class="price-info">
+        <div class="price-label">LIFETIME MEMBERSHIP</div>
+        <div class="price-sub">Cash only • MIT Licensed</div>
+    </div>
+</div>
+
+<div class="url-box">death2data.com/prompt</div>
+
+<div class="footer">
+    <div>Death2Data • Tampa, FL • hello@death2data.com</div>
+    <div>All code MIT Licensed • Fork anytime</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Revenue Widget</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'SF Mono', monospace;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 20px;
+}
+.widget {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.stat {
+  text-align: center;
+}
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #00ff00;
+}
+.stat-label {
+  font-size: 9px;
+  color: #666;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+.brand {
+  font-size: 10px;
+  color: #333;
+  margin-left: auto;
+}
+.brand a {
+  color: #444;
+  text-decoration: none;
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Widget - Death2Data</title>
+<meta name="description" content="Widget page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="widget, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/widget.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Widget - Death2Data">
+<meta property="og:description" content="Widget page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/widget.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Widget - Death2Data">
+<meta name="twitter:description" content="Widget page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Widget - Death2Data",
+  "description": "Widget page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/widget.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+<div class="widget">
+  <div class="stat">
+    <div class="stat-value" id="mrr">$0</div>
+    <div class="stat-label">MRR</div>
+  </div>
+  <div class="stat">
+    <div class="stat-value" id="customers">0</div>
+    <div class="stat-label">MEMBERS</div>
+  </div>
+  <div class="brand"><a href="https://death2data.com">death2data</a></div>
+</div>
+<script>
+fetch('/.netlify/functions/mrr')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('mrr').textContent = '$' + d.mrr.toFixed(0);
+    document.getElementById('customers').textContent = d.customers;
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Restoring Identity | Death2Data</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:ui-monospace,monospace;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  width:100%;
+  text-align:center;
+}
+
+.spinner{
+  font-size:3rem;
+  color:#0f0;
+  animation:pulse 1.5s infinite;
+  margin-bottom:20px;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+h1{
+  font-size:2rem;
+  margin-bottom:10px;
+  color:#0f0;
+}
+
+.status{
+  color:#888;
+  font-size:0.9rem;
+  margin-bottom:40px;
+  line-height:1.6;
+}
+
+.success-box{
+  background:#0a0a0a;
+  border:2px solid #0f0;
+  padding:40px;
+  margin:30px 0;
+  display:none;
+}
+
+.success-box.show{
+  display:block;
+}
+
+.error-box{
+  background:#0a0a0a;
+  border:2px solid #f00;
+  padding:40px;
+  margin:30px 0;
+  display:none;
+}
+
+.error-box.show{
+  display:block;
+}
+
+.error-box h2{
+  color:#f00;
+  font-size:1.5rem;
+  margin-bottom:15px;
+}
+
+.identity-info{
+  background:#000;
+  border:1px solid #0f0;
+  padding:20px;
+  margin:20px 0;
+  text-align:left;
+  font-size:0.9rem;
+}
+
+.identity-info .label{
+  color:#888;
+  font-size:0.7rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  margin-bottom:5px;
+}
+
+.identity-info .value{
+  color:#0f0;
+  font-family:monospace;
+  font-size:1.1rem;
+  margin-bottom:15px;
+  word-break:break-all;
+}
+
+button{
+  padding:18px 40px;
+  background:#0f0;
+  color:#000;
+  border:none;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  font-size:1rem;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  margin:10px 5px;
+}
+
+button:hover{
+  background:#fff;
+}
+
+button.secondary{
+  background:#222;
+  color:#888;
+}
+
+button.secondary:hover{
+  background:#333;
+  color:#0f0;
+}
+
+.countdown{
+  font-size:0.8rem;
+  color:#666;
+  margin-top:20px;
+}
+
+@media(max-width:768px){
+  h1{
+    font-size:1.5rem;
+  }
+  .success-box, .error-box{
+    padding:20px;
+  }
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Restore - Death2Data</title>
+<meta name="description" content="Restore page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="restore, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/restore.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Restore - Death2Data">
+<meta property="og:description" content="Restore page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/restore.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Restore - Death2Data">
+<meta name="twitter:description" content="Restore page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Restore - Death2Data",
+  "description": "Restore page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/restore.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  <div id="loading" class="loading-state">
+    <div class="spinner">⟳</div>
+    <h1>RESTORING YOUR IDENTITY</h1>
+    <p class="status">Verifying recovery token...</p>
+  </div>
+
+  <div id="success" class="success-box">
+    <h1>✓ IDENTITY RESTORED</h1>
+    <p style="color:#888;margin-bottom:30px">
+      Your D2D identity has been successfully restored to this device.
+    </p>
+
+    <div class="identity-info">
+      <div class="label">Anonymous Name</div>
+      <div class="value" id="anon-name">Loading...</div>
+
+      <div class="label">Access Token</div>
+      <div class="value" id="access-token" style="font-size:0.9rem">Loading...</div>
+    </div>
+
+    <button onclick="goToTools()">Continue to Tools →</button>
+    <button class="secondary" onclick="goHome()">Back to Home</button>
+
+    <div class="countdown" id="countdown">
+      Redirecting to tools in <span id="timer">5</span> seconds...
+    </div>
+  </div>
+
+  <div id="error" class="error-box">
+    <h2>RECOVERY FAILED</h2>
+    <p id="error-message" style="color:#888;margin-bottom:30px">
+      The recovery link is invalid or has expired.
+    </p>
+
+    <p style="color:#666;font-size:0.85rem;margin-bottom:30px">
+      Recovery links expire after 15 minutes and can only be used once.
+    </p>
+
+    <button onclick="location.href='/recover.html'">Request New Link</button>
+    <button class="secondary" onclick="location.href='/'">Back to Home</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// TOKEN VERIFICATION & IDENTITY RESTORATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function restoreIdentity() {
+  // Get token from URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  if (!token) {
+    showError('No recovery token provided in URL');
+    return;
+  }
+
+  try {
+    // Verify token with backend
+    const response = await fetch('/.netlify/functions/verify-recovery-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ token })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      showError(data.error || 'Failed to verify recovery token');
+      return;
+    }
+
+    // Extract identity from response
+    const { identity } = data;
+
+    if (!identity || !identity.anon_name || !identity.access_token) {
+      showError('Invalid identity data received from server');
+      return;
+    }
+
+    // Restore to localStorage
+    localStorage.setItem('d2d_anon_name', identity.anon_name);
+    localStorage.setItem('d2d_access_token', identity.access_token);
+    localStorage.setItem('d2d_public_key', identity.public_key);
+
+    // Private key might be encrypted or regenerated
+    if (identity.private_key) {
+      localStorage.setItem('d2d_private_key', identity.private_key);
+    }
+
+    if (identity.created) {
+      localStorage.setItem('d2d_created', identity.created);
+    }
+
+    // Show success
+    showSuccess(identity);
+
+  } catch (error) {
+    console.error('Restore error:', error);
+    showError('Network error. Please check your connection and try again.');
+  }
+}
+
+function showSuccess(identity) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('error').classList.remove('show');
+  document.getElementById('success').classList.add('show');
+
+  // Display identity info
+  document.getElementById('anon-name').textContent = identity.anon_name;
+  document.getElementById('access-token').textContent = identity.access_token;
+
+  // Start countdown
+  startCountdown();
+}
+
+function showError(message) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('success').classList.remove('show');
+  document.getElementById('error').classList.add('show');
+  document.getElementById('error-message').textContent = message;
+}
+
+function startCountdown() {
+  let seconds = 5;
+  const timerEl = document.getElementById('timer');
+  const countdownEl = document.getElementById('countdown');
+
+  const interval = setInterval(() => {
+    seconds--;
+    timerEl.textContent = seconds;
+
+    if (seconds <= 0) {
+      clearInterval(interval);
+      goToTools();
+    }
+  }, 1000);
+}
+
+function goToTools() {
+  const token = localStorage.getItem('d2d_access_token');
+  window.location.href = `/tools?token=${token}`;
+}
+
+function goHome() {
+  window.location.href = '/';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+restoreIdentity();
+</script>
+
+</body>
+</html>

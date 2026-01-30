@@ -1,0 +1,417 @@
+/**
+ * FORTUNE 0 - Terminal Aesthetic CSS Theme
+ *
+ * Black background, green/red accents, monospace fonts
+ * For builders who don't need permission from Fortune 500
+ *
+ * Usage:
+ *   <link rel="stylesheet" href="/css/fortune0.css">
+ *   <body class="f0-dark">
+ */
+
+/* ============================================================================
+   COLORS
+   ============================================================================ */
+
+:root {
+  /* Dark mode (default) */
+  --f0-black: #0a0a0a;
+  --f0-black-alt: #000000;
+  --f0-gray-1: #0f0f0f;
+  --f0-gray-2: #1a1a1a;
+  --f0-gray-3: #222222;
+  --f0-gray-4: #333333;
+  --f0-gray-5: #444444;
+  --f0-gray-6: #666666;
+  --f0-gray-7: #888888;
+
+  /* Accent colors */
+  --f0-green: #00ff00;
+  --f0-green-dim: #00cc00;
+  --f0-green-dark: #003300;
+  --f0-red: #ff0000;
+  --f0-red-dim: #cc0000;
+  --f0-red-dark: #300000;
+
+  /* Text */
+  --f0-text-primary: #ffffff;
+  --f0-text-secondary: #888888;
+  --f0-text-muted: #666666;
+  --f0-text-dark: #444444;
+}
+
+/* ============================================================================
+   BASE STYLES
+   ============================================================================ */
+
+.f0-dark,
+.f0-dark body {
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono',
+               'Courier New', Courier, monospace;
+  background: var(--f0-black);
+  color: var(--f0-text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+.f0-h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+.f0-h2 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+.f0-h3 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  color: var(--f0-text-muted);
+}
+
+.f0-mono {
+  font-family: ui-monospace, monospace;
+}
+
+.f0-text-green { color: var(--f0-green); }
+.f0-text-red { color: var(--f0-red); }
+.f0-text-muted { color: var(--f0-text-muted); }
+.f0-text-secondary { color: var(--f0-text-secondary); }
+
+/* ============================================================================
+   CONTAINERS & LAYOUT
+   ============================================================================ */
+
+.f0-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.f0-container-sm {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.f0-section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 20px;
+}
+
+/* ============================================================================
+   CARDS & BOXES
+   ============================================================================ */
+
+.f0-card {
+  background: var(--f0-gray-1);
+  border: 1px solid var(--f0-gray-3);
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s;
+}
+
+.f0-card:hover {
+  border-color: var(--f0-gray-5);
+}
+
+.f0-card-green {
+  border-color: var(--f0-green-dark);
+  background: var(--f0-green-dark);
+}
+
+.f0-card-red {
+  border-color: var(--f0-red-dark);
+  background: var(--f0-red-dark);
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+
+.f0-btn {
+  display: inline-block;
+  padding: 16px 32px;
+  font-family: ui-monospace, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.05em;
+}
+
+.f0-btn-primary {
+  background: var(--f0-green);
+  color: var(--f0-black);
+}
+
+.f0-btn-primary:hover {
+  background: var(--f0-green-dim);
+}
+
+.f0-btn-secondary {
+  background: var(--f0-gray-3);
+  color: var(--f0-text-primary);
+  border: 1px solid var(--f0-gray-5);
+}
+
+.f0-btn-secondary:hover {
+  background: var(--f0-gray-5);
+}
+
+.f0-btn-ghost {
+  background: transparent;
+  color: var(--f0-text-primary);
+  border: 1px solid var(--f0-gray-5);
+}
+
+.f0-btn-ghost:hover {
+  background: var(--f0-gray-1);
+  border-color: var(--f0-text-primary);
+}
+
+.f0-btn-danger {
+  background: var(--f0-red);
+  color: var(--f0-text-primary);
+}
+
+.f0-btn-danger:hover {
+  background: var(--f0-red-dim);
+}
+
+/* ============================================================================
+   GRIDS
+   ============================================================================ */
+
+.f0-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.f0-grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.f0-grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.f0-grid-4 {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ============================================================================
+   STATS / METRICS
+   ============================================================================ */
+
+.f0-stat {
+  text-align: center;
+}
+
+.f0-stat-value {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.f0-stat-value.green { color: var(--f0-green); }
+.f0-stat-value.red { color: var(--f0-red); }
+
+.f0-stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--f0-text-muted);
+}
+
+/* ============================================================================
+   TERMINAL / CODE BLOCKS
+   ============================================================================ */
+
+.f0-terminal {
+  background: var(--f0-black-alt);
+  border: 1px solid var(--f0-gray-3);
+  padding: 20px;
+  font-family: ui-monospace, monospace;
+  font-size: 14px;
+  overflow-x: auto;
+}
+
+.f0-terminal-line {
+  margin-bottom: 4px;
+}
+
+.f0-terminal-prompt {
+  color: var(--f0-green);
+  user-select: none;
+}
+
+.f0-terminal-command {
+  color: var(--f0-text-primary);
+}
+
+.f0-terminal-output {
+  color: var(--f0-text-secondary);
+}
+
+/* ============================================================================
+   TABLES
+   ============================================================================ */
+
+.f0-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.f0-table th {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--f0-gray-3);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--f0-text-muted);
+  font-weight: 700;
+}
+
+.f0-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--f0-gray-2);
+}
+
+.f0-table tr:hover {
+  background: var(--f0-gray-1);
+}
+
+/* ============================================================================
+   UTILITIES
+   ============================================================================ */
+
+.f0-mt-1 { margin-top: 8px; }
+.f0-mt-2 { margin-top: 16px; }
+.f0-mt-3 { margin-top: 24px; }
+.f0-mt-4 { margin-top: 32px; }
+
+.f0-mb-1 { margin-bottom: 8px; }
+.f0-mb-2 { margin-bottom: 16px; }
+.f0-mb-3 { margin-bottom: 24px; }
+.f0-mb-4 { margin-bottom: 32px; }
+
+.f0-text-center { text-align: center; }
+.f0-text-right { text-align: right; }
+
+.f0-hidden { display: none; }
+.f0-visible { display: block; }
+
+/* ============================================================================
+   HEADER / NAV
+   ============================================================================ */
+
+.f0-header {
+  background: var(--f0-gray-1);
+  border-bottom: 1px solid var(--f0-gray-3);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.f0-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--f0-green);
+  text-decoration: none;
+}
+
+.f0-nav {
+  display: flex;
+  gap: 24px;
+}
+
+.f0-nav-link {
+  color: var(--f0-text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.f0-nav-link:hover {
+  color: var(--f0-text-primary);
+}
+
+/* ============================================================================
+   LOADING / SPINNERS
+   ============================================================================ */
+
+.f0-loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--f0-gray-5);
+  border-top-color: var(--f0-green);
+  border-radius: 50%;
+  animation: f0-spin 0.8s linear infinite;
+}
+
+@keyframes f0-spin {
+  to { transform: rotate(360deg); }
+}
+
+.f0-pulse {
+  animation: f0-pulse 2s ease-in-out infinite;
+}
+
+@keyframes f0-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+  .f0-h1 {
+    font-size: 1.75rem;
+  }
+
+  .f0-grid-2,
+  .f0-grid-3,
+  .f0-grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .f0-header {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .f0-nav {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+}

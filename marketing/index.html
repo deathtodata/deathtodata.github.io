@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Marketing Materials - Print & Share</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: ui-monospace, 'SF Mono', monospace;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+header {
+  border-bottom: 1px solid #222;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+  color: #00ff00;
+}
+
+.subtitle {
+  color: #666;
+  font-size: 14px;
+}
+
+.section {
+  margin-bottom: 40px;
+}
+
+.section h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #888;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #222;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: #111;
+  border: 1px solid #222;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+
+.card:hover {
+  border-color: #00ff00;
+}
+
+.card h3 {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #fff;
+}
+
+.card .desc {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.card .links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.card a {
+  color: #00ff00;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 6px 12px;
+  border: 1px solid #222;
+  background: #0a0a0a;
+}
+
+.card a:hover {
+  border-color: #00ff00;
+  background: #111;
+}
+
+.note {
+  background: #1a1a00;
+  border: 1px solid #333300;
+  padding: 16px;
+  margin-top: 40px;
+  font-size: 13px;
+  color: #aaaa00;
+  line-height: 1.6;
+}
+
+.note strong {
+  color: #ffff00;
+}
+
+footer {
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #222;
+  text-align: center;
+  color: #444;
+  font-size: 12px;
+}
+
+footer a {
+  color: #666;
+  text-decoration: none;
+}
+
+footer a:hover {
+  color: #888;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <h1>D2D MARKETING MATERIALS</h1>
+    <p class="subtitle">Print-ready assets for events, pitches, and social media</p>
+  </header>
+
+  <!-- Business Cards & Handouts -->
+  <div class="section">
+    <h2>Business Cards & Handouts</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>Comparison Card</h3>
+        <p class="desc">5"x3" card showing Big Tech vs D2D. Perfect for handing out at events.</p>
+        <div class="links">
+          <a href="D2D_CARD.html" target="_blank">View HTML</a>
+          <a href="D2D_CARD.html" onclick="window.print(); return false;">Print</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Table Only</h3>
+        <p class="desc">Just the comparison table. Clean, simple, effective.</p>
+        <div class="links">
+          <a href="D2D_TABLE_ONLY.html" target="_blank">View HTML</a>
+          <a href="D2D_TABLE_ONLY.pdf" target="_blank">PDF</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>One-Page Overview</h3>
+        <p class="desc">Complete product overview on one page.</p>
+        <div class="links">
+          <a href="onepager.pdf" target="_blank">PDF</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Handouts (5 Variations)</h3>
+        <p class="desc">Different layouts optimized for different contexts.</p>
+        <div class="links">
+          <a href="D2D_HANDOUT.pdf" target="_blank">PDF</a>
+          <a href="D2D_HANDOUT_1.html" target="_blank">V1</a>
+          <a href="D2D_HANDOUT_2.html" target="_blank">V2</a>
+          <a href="D2D_HANDOUT_3.html" target="_blank">V3</a>
+          <a href="D2D_HANDOUT_SIMPLE.html" target="_blank">Simple</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Brochures -->
+  <div class="section">
+    <h2>Brochures</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>Bifold Brochure</h3>
+        <p class="desc">Letter landscape, folds in half. Two 5.5" panels. Great for leave-behinds.</p>
+        <div class="links">
+          <a href="D2D_BIFOLD.html" target="_blank">View</a>
+          <a href="D2D_BIFOLD.html" onclick="window.print(); return false;">Print</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Full Page (Dark)</h3>
+        <p class="desc">Dark theme brochure. Terminal aesthetic.</p>
+        <div class="links">
+          <a href="D2D_BROCHURE_DARK.html" target="_blank">View</a>
+          <a href="D2D_BROCHURE_DARK.html" onclick="window.print(); return false;">Print</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Full Page (Light)</h3>
+        <p class="desc">Light theme version. More traditional.</p>
+        <div class="links">
+          <a href="D2D_BROCHURE_LIGHT.html" target="_blank">View</a>
+          <a href="D2D_BROCHURE_LIGHT.html" onclick="window.print(); return false;">Print</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Half Page (2-Up)</h3>
+        <p class="desc">Print 2 per page to save paper.</p>
+        <div class="links">
+          <a href="D2D_HALFPAGE_2UP.html" target="_blank">View</a>
+          <a href="D2D_HALFPAGE_2UP.html" onclick="window.print(); return false;">Print</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Architecture & Technical -->
+  <div class="section">
+    <h2>Architecture & Technical Docs</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>Architecture Diagrams</h3>
+        <p class="desc">System architecture for technical presentations.</p>
+        <div class="links">
+          <a href="D2D_ARCHITECTURE.pdf" target="_blank">PDF</a>
+          <a href="D2D_Architecture.html" target="_blank">HTML</a>
+          <a href="D2D_ARCHITECTURE_v2.html" target="_blank">V2</a>
+          <a href="D2D_ARCHITECTURE_v3.html" target="_blank">V3</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Implementation Checklist</h3>
+        <p class="desc">Step-by-step setup guide for new users.</p>
+        <div class="links">
+          <a href="D2D_CHECKLIST.html" target="_blank">View</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Color Variations -->
+  <div class="section">
+    <h2>Color Variations</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>Blue/Purple Theme</h3>
+        <p class="desc">Alternate color scheme for variety.</p>
+        <div class="links">
+          <a href="D2D_BLUE_PURPLE.html" target="_blank">View</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Black & White (Inverted)</h3>
+        <p class="desc">High contrast, print-friendly.</p>
+        <div class="links">
+          <a href="D2D_BW_INVERTED.html" target="_blank">View</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Usage Notes -->
+  <div class="note">
+    <strong>How to Use:</strong><br><br>
+    1. <strong>For Events (ARK/WAV):</strong> Print business cards and bifold brochures. Hand out cards, leave brochures on tables.<br>
+    2. <strong>For Sponsor Pitches:</strong> Show architecture diagrams, demonstrate pixel system, reference dashboard.<br>
+    3. <strong>For Social Media:</strong> Screenshot comparison table, share architecture diagrams as images.<br>
+    4. <strong>For Website:</strong> Embed PDFs in blog posts, use comparison table on landing page.<br><br>
+    <strong>Printing Tips:</strong> All HTML files are print-optimized. Use Chrome/Safari for best results. Enable "Background graphics" in print settings for color versions.
+  </div>
+
+  <footer>
+    <p>Built by <a href="https://calriven.com" target="_blank">calriven.com</a> (AI CTO)</p>
+    <p style="margin-top: 8px;"><a href="/">← Back to Death2Data</a></p>
+  </footer>
+
+</div>
+
+</body>
+</html>

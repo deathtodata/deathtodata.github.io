@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>D2D Platform Architecture</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A0A;--surface:#0F0F0F;--card:#141414;--border:#1A1A1A;--green:#00FF00;--green-dim:#003300;--orange:#FF6B35;--white:#FFFFFF;--gray:#888888;--muted:#666666;--dim:#444444}
+@page{size:8.5in 11in;margin:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:8.5in;height:11in;background:var(--bg);position:relative;overflow:hidden;page-break-after:always;padding:40px 48px}
+.cover{padding:0}
+.cover .header{display:flex;justify-content:space-between;padding:40px 48px}
+.cover .brand{font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:var(--green);letter-spacing:3px}
+.cover .date{font-size:11px;color:var(--muted)}
+.cover .hero{padding:100px 48px}
+.cover .title-main{font-family:'Space Grotesk',sans-serif;font-size:120px;font-weight:800;color:var(--white);letter-spacing:-5px;line-height:0.9}
+.cover .title-sub{font-family:'Space Grotesk',sans-serif;font-size:96px;font-weight:800;color:var(--green);letter-spacing:-4px;line-height:1;margin-top:-10px}
+.cover .tagline{font-size:20px;color:var(--gray);line-height:1.5;margin-top:60px;max-width:420px}
+.cover .stats-bar{position:absolute;bottom:0;left:0;right:0;display:flex;background:var(--surface);border-top:1px solid var(--border)}
+.cover .stat{flex:1;padding:32px;border-right:1px solid var(--border)}
+.cover .stat:last-child{border-right:none}
+.cover .stat .value{font-family:'Space Grotesk',sans-serif;font-size:48px;font-weight:700;color:var(--green)}
+.cover .stat .label{font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-top:8px}
+.section-header{position:relative;margin-bottom:32px}
+.section-num{position:absolute;top:-10px;right:0;font-family:'Space Grotesk',sans-serif;font-size:80px;font-weight:800;color:var(--green);opacity:0.15}
+.section-title{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;letter-spacing:-1px}
+.section-subtitle{font-size:14px;color:var(--muted);margin-top:12px}
+.metric-row{display:flex;gap:20px;margin-bottom:24px}
+.metric-card{flex:1;background:var(--card);padding:20px;border-left:4px solid var(--green)}
+.metric-card.orange{border-left-color:var(--orange)}
+.metric-card .value{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--green)}
+.metric-card.orange .value{color:var(--orange)}
+.metric-card .label{font-size:9px;color:var(--muted);letter-spacing:1.5px;margin-top:4px}
+.metric-card .desc{font-size:12px;color:var(--gray);margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+.feature-item{background:var(--card);padding:14px 16px;font-size:13px}
+.code-block{background:#080808;border:1px solid var(--border);border-left:4px solid var(--green);padding:20px 24px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--green);white-space:pre-wrap;margin-bottom:24px}
+.code-block .comment{color:var(--muted)}
+.data-table{margin-bottom:24px}
+.table-title{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:1.5px;margin-bottom:10px}
+.data-table table{width:100%;border-collapse:collapse}
+.data-table th{background:var(--green);color:var(--bg);font-size:9px;font-weight:700;letter-spacing:1px;padding:12px 16px;text-align:left}
+.data-table td{padding:14px 16px;font-size:12px;border-bottom:1px solid var(--border)}
+.data-table td.code{font-family:'JetBrains Mono',monospace;color:var(--green);font-size:11px}
+.arch-diagram{background:var(--surface);padding:32px;display:flex;align-items:flex-start;gap:20px;margin-bottom:24px}
+.arch-col{flex:1}
+.arch-label{font-size:9px;font-weight:600;color:var(--green);letter-spacing:1.5px;margin-bottom:16px}
+.arch-item{font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.arch-item:first-of-type{border-top:1px solid var(--border)}
+.arch-item.highlight{color:var(--green)}
+.arch-arrow{font-size:28px;color:var(--green);opacity:0.4;padding-top:80px}
+.arch-col.services{display:flex;flex-direction:column;gap:12px}
+.service-box{background:var(--bg);border:2px solid var(--green);padding:16px 20px;text-align:center}
+.service-box .title{font-size:12px;font-weight:700;color:var(--green)}
+.service-box .sub{font-size:10px;color:var(--muted);margin-top:4px}
+.vertical-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.vertical-card{background:var(--card);padding:20px;position:relative}
+.vertical-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px}
+.vertical-card.d2d::after{background:#00FF00}
+.vertical-card.cringe::after{background:#FF6B35}
+.vertical-card.soul::after{background:#A855F7}
+.vertical-card.deal::after{background:#22C55E}
+.vertical-card.ultra::after{background:#3B82F6}
+.vertical-card.nil::after{background:#F59E0B}
+.vertical-card .name{font-size:18px;font-weight:700}
+.vertical-card .domain{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--green);margin-top:4px}
+.vertical-card .desc{font-size:12px;color:var(--gray);margin-top:12px}
+.highlight-box{background:linear-gradient(135deg,rgba(0,255,0,0.05) 0%,rgba(0,255,0,0.02) 100%);border:1px solid var(--green);padding:24px;margin-bottom:24px}
+.highlight-box .title{font-size:10px;font-weight:600;color:var(--green);letter-spacing:2px}
+.highlight-box .content{font-size:14px;margin-top:12px}
+.highlight-box .scale-rows{margin-top:16px}
+.highlight-box .scale-row{display:flex;padding:10px 0;border-bottom:1px solid rgba(0,255,0,0.2)}
+.highlight-box .scale-row .label{width:140px;font-weight:600;color:var(--green);font-size:13px}
+.highlight-box .scale-row .value{color:var(--gray);font-size:13px}
+.checklist{margin-bottom:24px}
+.check-item{display:flex;align-items:center;gap:16px;background:var(--card);padding:14px 16px;margin-bottom:8px}
+.checkbox{width:20px;height:20px;border:2px solid var(--green);flex-shrink:0}
+.check-item .text{font-size:14px}
+.cost-bar{background:var(--card);border:1px solid var(--border);margin-bottom:24px}
+.cost-header{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;border-bottom:1px solid var(--border)}
+.cost-header .label{font-size:9px;color:var(--muted);letter-spacing:1.5px}
+.cost-header .total{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--green)}
+.cost-items{display:flex}
+.cost-item{flex:1;padding:16px 24px;border-right:1px solid var(--border)}
+.cost-item:last-child{border-right:none}
+.cost-item .value{font-size:18px;font-weight:600}
+.cost-item .label{font-size:9px;color:var(--muted);margin-top:4px}
+.cta{text-align:center;padding:32px 0}
+.cta .url{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:700;color:var(--green)}
+.cta .tagline{font-size:14px;color:var(--muted);margin-top:8px}
+.page-footer{position:absolute;bottom:32px;left:48px;right:48px;display:flex;justify-content:space-between;font-size:8px;color:var(--dim);letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<!-- PAGE 1: COVER -->
+<div class="page cover">
+  <div class="header">
+    <span class="brand">DEATH2DATA</span>
+    <span class="date">JANUARY 2026</span>
+  </div>
+  <div class="hero">
+    <h1 class="title-main">D2D</h1>
+    <h1 class="title-sub">PLATFORM</h1>
+    <p class="tagline">Multi-tenant infrastructure for privacy-first tools.<br>No tracking. No ads. No bullshit.</p>
+  </div>
+  <div class="stats-bar">
+    <div class="stat"><div class="value">6</div><div class="label">VERTICALS</div></div>
+    <div class="stat"><div class="value">$10</div><div class="label">MONTHLY COST</div></div>
+    <div class="stat"><div class="value">0</div><div class="label">COOKIES</div></div>
+    <div class="stat"><div class="value">∞</div><div class="label">SCALE</div></div>
+  </div>
+</div>
+
+<!-- PAGE 2: ARCHITECTURE -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">01</div>
+    <h2 class="section-title">SYSTEM ARCHITECTURE</h2>
+    <p class="section-subtitle">One SDK. Six brands. Complete financial separation.</p>
+  </div>
+  <div class="arch-diagram">
+    <div class="arch-col">
+      <div class="arch-label">DOMAINS</div>
+      <div class="arch-item highlight">death2data.com</div>
+      <div class="arch-item">cringe.events</div>
+      <div class="arch-item">soul.community</div>
+      <div class="arch-item">deal.club</div>
+      <div class="arch-item">ultra.dev</div>
+      <div class="arch-item">nil.athlete</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-col services">
+      <div class="service-box"><div class="title">ANALYTICS</div><div class="sub">tracker.js + collector</div></div>
+      <div class="service-box"><div class="title">STRIPE</div><div class="sub">per-vertical accounts</div></div>
+      <div class="service-box"><div class="title">D2D SDK</div><div class="sub">unified management</div></div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-col">
+      <div class="arch-label">DATA LAYER</div>
+      <div class="arch-item">SQLite / Postgres</div>
+      <div class="arch-item">Webhook handlers</div>
+      <div class="arch-item">Customer records</div>
+      <div class="arch-item">Event streams</div>
+    </div>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>02</span></div>
+</div>
+
+<!-- PAGE 3: ANALYTICS -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">02</div>
+    <h2 class="section-title">PRIVACY-FIRST ANALYTICS</h2>
+    <p class="section-subtitle">No cookies. No fingerprinting. No PII.</p>
+  </div>
+  <div class="metric-row">
+    <div class="metric-card"><div class="value">2KB</div><div class="label">TRACKER SIZE</div><div class="desc">Won't slow your site</div></div>
+    <div class="metric-card"><div class="value">0</div><div class="label">COOKIES SET</div><div class="desc">No GDPR banners needed</div></div>
+    <div class="metric-card orange"><div class="value">24hr</div><div class="label">SESSION SCOPE</div><div class="desc">Can't track across days</div></div>
+  </div>
+  <div class="feature-grid">
+    <div class="feature-item">✓ Respects Do Not Track header</div>
+    <div class="feature-item">✓ No personal data stored</div>
+    <div class="feature-item">✓ Self-hosted, you own the data</div>
+    <div class="feature-item">✓ Works without JavaScript</div>
+  </div>
+  <div class="code-block"><span class="comment">// Add to any page</span>
+&lt;script src="https://analytics.death2data.com/t.js"
+        data-site="yoursite.com" defer&gt;&lt;/script&gt;</div>
+  <div class="data-table">
+    <div class="table-title">API ENDPOINTS</div>
+    <table>
+      <tr><th>ENDPOINT</th><th>METHOD</th><th>DESCRIPTION</th></tr>
+      <tr><td class="code">/collect</td><td>POST</td><td>Receive events from tracker</td></tr>
+      <tr><td class="code">/api/stats?site=X</td><td>GET</td><td>Stats (7 days default)</td></tr>
+      <tr><td class="code">/api/live?site=X</td><td>GET</td><td>Live visitors (5min window)</td></tr>
+      <tr><td class="code">/dashboard</td><td>GET</td><td>Visual dashboard</td></tr>
+    </table>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>03</span></div>
+</div>
+
+<!-- PAGE 4: STRIPE -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">03</div>
+    <h2 class="section-title">STRIPE INTEGRATION</h2>
+    <p class="section-subtitle">Each vertical has its own Stripe account. Complete separation.</p>
+  </div>
+  <div class="metric-row">
+    <div class="metric-card"><div class="value">$1</div><div class="label">PER MEMBER</div><div class="desc">Simple, transparent pricing</div></div>
+    <div class="metric-card"><div class="value">~$0.90</div><div class="label">NET REVENUE</div><div class="desc">After Stripe's 2.9% + $0.30</div></div>
+    <div class="metric-card orange"><div class="value">4,200</div><div class="label">BREAK-EVEN</div><div class="desc">Members for sustainability</div></div>
+  </div>
+  <div class="code-block"><span class="comment">// Per vertical</span>
+await d2d.for('cringe').getMembers();
+await d2d.for('cringe').getMRR();
+await d2d.for('cringe').createPaymentLink();
+
+<span class="comment">// Across all verticals</span>
+await d2d.getDashboard();
+await d2d.findCustomer('email@example.com');</div>
+  <div class="data-table">
+    <div class="table-title">CRITICAL WEBHOOK EVENTS</div>
+    <table>
+      <tr><th>EVENT</th><th>ACTION</th></tr>
+      <tr><td class="code">checkout.session.completed</td><td>Send welcome email, grant access</td></tr>
+      <tr><td class="code">customer.subscription.deleted</td><td>Revoke access, send win-back</td></tr>
+      <tr><td class="code">invoice.payment_failed</td><td>Send dunning email sequence</td></tr>
+    </table>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>04</span></div>
+</div>
+
+<!-- PAGE 5: VERTICALS -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">04</div>
+    <h2 class="section-title">SIX VERTICALS</h2>
+    <p class="section-subtitle">Same infrastructure. Different communities.</p>
+  </div>
+  <div class="vertical-grid">
+    <div class="vertical-card d2d"><div class="name">D2D</div><div class="domain">death2data.com</div><div class="desc">Main brand. Privacy tools. The mothership.</div></div>
+    <div class="vertical-card cringe"><div class="name">CRINGE</div><div class="domain">cringe.events</div><div class="desc">Founders pitch cringe, iterate fast.</div></div>
+    <div class="vertical-card soul"><div class="name">SOUL</div><div class="domain">soul.community</div><div class="desc">Wellness without the woo-woo.</div></div>
+    <div class="vertical-card deal"><div class="name">DEAL</div><div class="domain">deal.club</div><div class="desc">Real estate for normal people.</div></div>
+    <div class="vertical-card ultra"><div class="name">ULTRA</div><div class="domain">ultra.dev</div><div class="desc">Infrastructure nerds. Privacy maximalists.</div></div>
+    <div class="vertical-card nil"><div class="name">NIL</div><div class="domain">nil.athlete</div><div class="desc">Athletes owning their brand and data.</div></div>
+  </div>
+  <div class="highlight-box">
+    <div class="title">EACH DOMAIN NEEDS</div>
+    <div class="content">DNS → Netlify/Vercel  •  Analytics tracker  •  Stripe payment link  •  Webhook endpoint</div>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>05</span></div>
+</div>
+
+<!-- PAGE 6: DEPLOYMENT -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">05</div>
+    <h2 class="section-title">DEPLOYMENT OPTIONS</h2>
+    <p class="section-subtitle">From $5/mo VPS to serverless auto-scaling.</p>
+  </div>
+  <div class="metric-row">
+    <div class="metric-card"><div class="value">VPS</div><div class="label">$5-10/MO</div><div class="desc">DigitalOcean, Vultr.<br>PM2 + Nginx + Certbot.</div></div>
+    <div class="metric-card"><div class="value">λ</div><div class="label">SERVERLESS</div><div class="desc">Vercel/Netlify functions.<br>Free tier. Auto-scale.</div></div>
+    <div class="metric-card orange"><div class="value">PaaS</div><div class="label">RAILWAY</div><div class="desc">Git deploy.<br>~$5-10/mo.</div></div>
+  </div>
+  <div class="data-table">
+    <div class="table-title">DATABASE OPTIONS</div>
+    <table>
+      <tr><th>DATABASE</th><th>SCALE</th><th>NOTES</th></tr>
+      <tr><td>SQLite</td><td>100k events/day</td><td>Simplest. Single file. Start here.</td></tr>
+      <tr><td>PostgreSQL</td><td>Millions/day</td><td>Partition by month for scale.</td></tr>
+      <tr><td>ClickHouse</td><td>Billions/day</td><td>When you're actually big.</td></tr>
+    </table>
+  </div>
+  <div class="cost-bar">
+    <div class="cost-header"><span class="label">MONTHLY INFRASTRUCTURE COST</span><span class="total">$10-15</span></div>
+    <div class="cost-items">
+      <div class="cost-item"><div class="value">$5-10</div><div class="label">VPS</div></div>
+      <div class="cost-item"><div class="value">~$5</div><div class="label">Domains (6x)</div></div>
+      <div class="cost-item"><div class="value">2.9%</div><div class="label">Stripe Fee</div></div>
+      <div class="cost-item"><div class="value">$0</div><div class="label">Netlify Sites</div></div>
+    </div>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>06</span></div>
+</div>
+
+<!-- PAGE 7: NEXT STEPS -->
+<div class="page">
+  <div class="section-header">
+    <div class="section-num">06</div>
+    <h2 class="section-title">NEXT STEPS</h2>
+    <p class="section-subtitle">The roadmap to 4,200 members.</p>
+  </div>
+  <div class="checklist">
+    <div class="check-item"><div class="checkbox"></div><div class="text">Deploy analytics server (VPS or serverless)</div></div>
+    <div class="check-item"><div class="checkbox"></div><div class="text">Add tracker to death2data.com</div></div>
+    <div class="check-item"><div class="checkbox"></div><div class="text">Configure Stripe webhooks</div></div>
+    <div class="check-item"><div class="checkbox"></div><div class="text">Purchase remaining vertical domains</div></div>
+    <div class="check-item"><div class="checkbox"></div><div class="text">Build unified dashboard</div></div>
+    <div class="check-item"><div class="checkbox"></div><div class="text">Set up CI/CD for multi-site deploys</div></div>
+  </div>
+  <div class="highlight-box">
+    <div class="title">SCALE ECONOMICS</div>
+    <div class="scale-rows">
+      <div class="scale-row"><span class="label">100 members</span><span class="value">$100 MRR → Infrastructure is ~10-15% of revenue</span></div>
+      <div class="scale-row"><span class="label">1,000 members</span><span class="value">$1,000 MRR → Infrastructure is ~1-1.5% of revenue</span></div>
+      <div class="scale-row"><span class="label">4,200 members</span><span class="value">Full sustainability. No investors needed. Ever.</span></div>
+    </div>
+  </div>
+  <div class="cta">
+    <div class="url">death2data.com</div>
+    <div class="tagline">$1/month. Privacy tools. No bullshit.</div>
+  </div>
+  <div class="page-footer"><span>D2D PLATFORM ARCHITECTURE</span><span>07</span></div>
+</div>
+
+</body>
+</html>

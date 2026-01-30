@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Account Settings | Death2Data</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:ui-monospace,monospace;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+}
+
+/* Header */
+header{
+  background:#0a0a0a;
+  border-bottom:1px solid #222;
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.logo{
+  font-size:1.2rem;
+  font-weight:700;
+  color:#0f0;
+}
+.back-link{
+  color:#666;
+  text-decoration:none;
+  font-size:0.9rem;
+}
+.back-link:hover{
+  color:#0f0;
+}
+
+/* Main */
+main{
+  max-width:800px;
+  margin:0 auto;
+  padding:40px 20px;
+}
+
+h1{
+  font-size:clamp(1.5rem,5vw,2.5rem);
+  margin-bottom:10px;
+}
+h1 span{color:#0f0}
+
+.subtitle{
+  color:#888;
+  margin-bottom:40px;
+  font-size:0.9rem;
+}
+
+/* Identity Box */
+.identity-box{
+  background:#0a0a0a;
+  border:2px solid #0f0;
+  padding:30px;
+  margin-bottom:40px;
+}
+
+.identity-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
+
+.identity-label{
+  color:#666;
+  font-size:0.8rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+}
+
+.identity-value{
+  color:#0f0;
+  font-family:monospace;
+  font-size:1.1rem;
+  font-weight:700;
+}
+
+/* Action Cards */
+.action-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:20px;
+  margin-bottom:40px;
+}
+
+.action-card{
+  background:#0a0a0a;
+  border:1px solid #222;
+  padding:30px;
+  cursor:pointer;
+  transition:border-color 0.2s,background 0.2s;
+  position:relative;
+}
+
+.action-card:hover{
+  border-color:#0f0;
+  background:#0d0d0d;
+}
+
+.action-card h2{
+  font-size:1.2rem;
+  margin-bottom:15px;
+  color:#0f0;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.action-card p{
+  color:#888;
+  font-size:0.9rem;
+  line-height:1.6;
+  margin-bottom:20px;
+}
+
+.action-btn{
+  background:#0f0;
+  color:#000;
+  padding:12px 24px;
+  border:none;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  font-size:0.9rem;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  width:100%;
+}
+
+.action-btn:hover{
+  background:#fff;
+}
+
+.action-btn.secondary{
+  background:#222;
+  color:#888;
+}
+
+.action-btn.secondary:hover{
+  background:#333;
+  color:#0f0;
+}
+
+/* Status Badge */
+.status-badge{
+  display:inline-block;
+  padding:4px 12px;
+  background:#0f0;
+  color:#000;
+  font-size:0.7rem;
+  font-weight:700;
+  letter-spacing:0.1em;
+  border-radius:2px;
+}
+
+.status-badge.inactive{
+  background:#666;
+  color:#fff;
+}
+
+/* Info Box */
+.info-box{
+  background:#050505;
+  border:1px solid #222;
+  padding:20px;
+  margin-top:40px;
+  font-size:0.85rem;
+  color:#666;
+  line-height:1.6;
+}
+
+.info-box strong{
+  color:#0f0;
+}
+
+@media(max-width:768px){
+  .action-grid{
+    grid-template-columns:1fr;
+  }
+  .identity-row{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:8px;
+  }
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Account Dashboard - Manage Your Membership</title>
+<meta name="description" content="View your Death2Data membership status, manage subscription, and access account settings.">
+<meta name="keywords" content="account dashboard, membership, subscription management">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/tools/account.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Account Dashboard - Manage Your Membership">
+<meta property="og:description" content="View your Death2Data membership status, manage subscription, and access account settings.">
+<meta property="og:url" content="https://death2data.com/tools/account.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Account Dashboard - Manage Your Membership">
+<meta name="twitter:description" content="View your Death2Data membership status, manage subscription, and access account settings.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Account Dashboard - Manage Your Membership",
+  "description": "View your Death2Data membership status, manage subscription, and access account settings.",
+  "url": "https://death2data.com/tools/account.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<header>
+  <div class="logo">D2D ACCOUNT</div>
+  <a href="/tools.html" class="back-link">← Back to Tools</a>
+</header>
+
+<main>
+  <h1><span>YOUR</span> ACCOUNT</h1>
+  <p class="subtitle">Manage subscription, recover identity, and download backups</p>
+
+  <!-- Identity Info -->
+  <div class="identity-box">
+    <div class="identity-row">
+      <span class="identity-label">Anonymous Name</span>
+      <span class="identity-value" id="anon-name">Loading...</span>
+    </div>
+    <div class="identity-row">
+      <span class="identity-label">Access Token</span>
+      <span class="identity-value" id="token" style="font-size:0.85rem;word-break:break-all">Loading...</span>
+    </div>
+    <div class="identity-row">
+      <span class="identity-label">Subscription Status</span>
+      <span class="status-badge" id="sub-status">ACTIVE</span>
+    </div>
+  </div>
+
+  <!-- Action Cards -->
+  <div class="action-grid">
+    <!-- Manage Subscription -->
+    <div class="action-card">
+      <h2>💳 Manage Subscription</h2>
+      <p>Update payment method, view invoices, or cancel your subscription via Stripe's secure billing portal.</p>
+      <button class="action-btn" onclick="manageSubscription()">
+        Open Billing Portal →
+      </button>
+    </div>
+
+    <!-- Recover Identity -->
+    <div class="action-card">
+      <h2>🔑 Recover Identity</h2>
+      <p>Lost your device? Recover your D2D identity using your subscription email address.</p>
+      <button class="action-btn secondary" onclick="recoverIdentity()">
+        Recover Identity
+      </button>
+    </div>
+
+    <!-- Download Backup -->
+    <div class="action-card">
+      <h2>💾 Download Backup</h2>
+      <p>Export your identity keys and save them to a secure location. Use this to restore your identity on a new device.</p>
+      <button class="action-btn secondary" onclick="downloadBackup()">
+        Download Backup
+      </button>
+    </div>
+
+    <!-- View Recovery Email -->
+    <div class="action-card">
+      <h2>📧 Recovery Email</h2>
+      <p id="email-display">No email saved. Add one for account recovery.</p>
+      <button class="action-btn secondary" onclick="updateEmail()">
+        Update Email
+      </button>
+    </div>
+  </div>
+
+  <!-- Info Box -->
+  <div class="info-box">
+    <p><strong>Subscription Details:</strong></p>
+    <ul style="margin:10px 0 10px 20px">
+      <li>Price: $1 every 4 weeks ($13/year)</li>
+      <li>Next billing: Varies by signup date</li>
+      <li>Cancel anytime via billing portal</li>
+      <li>Refund policy: Contact hello@death2data.com</li>
+    </ul>
+
+    <p style="margin-top:20px"><strong>Privacy Guarantee:</strong></p>
+    <p>We only store your email for recovery and billing. Your identity keys are stored client-side on your device only. We cannot access your private keys.</p>
+
+    <p style="margin-top:20px"><strong>Need Help?</strong></p>
+    <p>Email: <a href="mailto:hello@death2data.com" style="color:#0f0">hello@death2data.com</a></p>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// LOAD IDENTITY INFO
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function loadIdentityInfo() {
+  const anonName = localStorage.getItem('d2d_anon_name');
+  const accessToken = localStorage.getItem('d2d_access_token');
+  const email = localStorage.getItem('d2d_email');
+
+  // Display identity
+  if (anonName) {
+    document.getElementById('anon-name').textContent = anonName;
+  } else {
+    document.getElementById('anon-name').textContent = 'Not Generated';
+  }
+
+  if (accessToken) {
+    document.getElementById('token').textContent = accessToken.slice(0, 32) + '...';
+  } else {
+    document.getElementById('token').textContent = 'Not Generated';
+  }
+
+  // Display email
+  if (email) {
+    document.getElementById('email-display').innerHTML =
+      `Recovery email: <strong style="color:#0f0">${email}</strong>`;
+  }
+
+  // TODO: Check subscription status via API
+  // For now, assume active
+  document.getElementById('sub-status').textContent = 'ACTIVE';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function manageSubscription() {
+  // Redirect to manage.html (which opens Stripe billing portal)
+  const email = localStorage.getItem('d2d_email');
+
+  if (email) {
+    // Pre-fill email in URL param
+    window.location.href = `/manage.html?email=${encodeURIComponent(email)}`;
+  } else {
+    window.location.href = '/manage.html';
+  }
+}
+
+function recoverIdentity() {
+  window.location.href = '/recover.html';
+}
+
+function downloadBackup() {
+  const privateKey = localStorage.getItem('d2d_private_key');
+  const publicKey = localStorage.getItem('d2d_public_key');
+  const anonName = localStorage.getItem('d2d_anon_name');
+  const accessToken = localStorage.getItem('d2d_access_token');
+  const created = localStorage.getItem('d2d_created');
+  const email = localStorage.getItem('d2d_email');
+
+  if (!privateKey || !publicKey) {
+    alert('No identity found in localStorage. Generate one first by visiting /success.html after payment.');
+    return;
+  }
+
+  const backup = {
+    anon_name: anonName,
+    access_token: accessToken,
+    public_key: publicKey,
+    private_key: privateKey,
+    created: created,
+    email: email,
+    exported: new Date().toISOString(),
+    warning: 'KEEP THIS FILE SECURE. Anyone with your private key can impersonate you.'
+  };
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-identity-backup-${anonName || 'unknown'}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  alert('✓ Identity backup downloaded!\n\nStore this file in a secure location (password manager, encrypted drive, etc.).');
+}
+
+function updateEmail() {
+  const currentEmail = localStorage.getItem('d2d_email');
+  const newEmail = prompt(
+    'Enter your email for account recovery:\n\n' +
+    (currentEmail ? `Current: ${currentEmail}` : 'No email currently saved'),
+    currentEmail || ''
+  );
+
+  if (newEmail && newEmail.includes('@')) {
+    localStorage.setItem('d2d_email', newEmail);
+    document.getElementById('email-display').innerHTML =
+      `Recovery email: <strong style="color:#0f0">${newEmail}</strong>`;
+    alert('✓ Email updated!');
+  } else if (newEmail !== null) {
+    alert('Invalid email address');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+loadIdentityInfo();
+</script>
+
+</body>
+</html>

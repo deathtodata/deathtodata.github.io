@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DEATH2DATA - Scan to Join</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: #000;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Courier New', monospace;
+      padding: 40px;
+    }
+    h1 {
+      color: #fff;
+      font-size: 72px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      letter-spacing: 4px;
+      text-align: center;
+    }
+    .tagline {
+      color: #888;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .price {
+      color: #0f0;
+      font-size: 96px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+    .price-detail {
+      color: #0f0;
+      font-size: 28px;
+      margin-bottom: 60px;
+      text-align: center;
+    }
+    #qrcode {
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 0 60px rgba(0, 255, 0, 0.3);
+      margin-bottom: 40px;
+    }
+    .url {
+      color: #fff;
+      margin-top: 30px;
+      font-size: 36px;
+      text-align: center;
+      font-weight: 700;
+    }
+    .cta {
+      color: #0f0;
+      margin-top: 25px;
+      font-size: 32px;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      text-align: center;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    .features {
+      margin-top: 60px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 30px;
+      max-width: 800px;
+    }
+    .feature {
+      color: #888;
+      font-size: 18px;
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #333;
+      background: #0a0a0a;
+    }
+    .feature strong {
+      color: #0f0;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    /* Print styles */
+    @media print {
+      body { background: #000; }
+      .features { display: none; }
+    }
+  </style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Event Display - Death2Data</title>
+<meta name="description" content="Event Display page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="event-display, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/event-display.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Event Display - Death2Data">
+<meta property="og:description" content="Event Display page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/event-display.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Event Display - Death2Data">
+<meta name="twitter:description" content="Event Display page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Event Display - Death2Data",
+  "description": "Event Display page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/event-display.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+  <h1>DEATH2DATA</h1>
+  <div class="tagline">Own Your Data. Zero Tracking.</div>
+
+  <div class="price">$1</div>
+  <div class="price-detail">Every 4 Weeks ($13/year)</div>
+
+  <div id="qrcode"></div>
+
+  <div class="cta">⬆ SCAN TO JOIN ⬆</div>
+  <div class="url">death2data.com</div>
+
+  <div class="features">
+    <div class="feature">
+      <strong>Zero Tracking</strong>
+      We architecturally cannot track you
+    </div>
+    <div class="feature">
+      <strong>No Accounts</strong>
+      Cryptographic identity only
+    </div>
+    <div class="feature">
+      <strong>Open Source</strong>
+      Audit all the code
+    </div>
+    <div class="feature">
+      <strong>Cancel Anytime</strong>
+      Self-service billing portal
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+  <script>
+    // Use 4-week billing link (test mode for now)
+    var qr = qrcode(0, 'H'); // High error correction
+    qr.addData('https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00
+    qr.make();
+
+    // Render large QR code for events
+    document.getElementById('qrcode').innerHTML = qr.createSvgTag(12, 0);
+  </script>
+</body>
+</html>

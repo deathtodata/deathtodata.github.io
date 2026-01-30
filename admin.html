@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Admin</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --surface-hover: #1a1a1a;
+  --border: #222;
+  --green: #00ff00;
+  --green-dim: rgba(0, 255, 0, 0.1);
+  --red: #ff4444;
+  --yellow: #ffaa00;
+  --white: #fff;
+  --gray: #888;
+  --muted: #444;
+}
+
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 220px;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.sidebar-brand {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.sidebar-brand h1 {
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 2px;
+}
+
+.sidebar-brand .env {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.nav-section {
+  margin-bottom: 20px;
+}
+
+.nav-section-title {
+  font-size: 10px;
+  color: var(--muted);
+  padding: 0 20px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.nav-item:hover {
+  background: var(--surface-hover);
+  color: var(--white);
+}
+
+.nav-item.active {
+  background: var(--green-dim);
+  color: var(--green);
+  border-right: 2px solid var(--green);
+}
+
+.nav-item .shortcut {
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.nav-item:hover .shortcut {
+  color: var(--gray);
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.sidebar-footer a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 11px;
+  margin-bottom: 8px;
+}
+
+.sidebar-footer a:hover {
+  color: var(--gray);
+}
+
+/* MAIN CONTENT */
+.main {
+  flex: 1;
+  margin-left: 220px;
+  padding: 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 6px;
+  width: 300px;
+}
+
+.search-box input {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 13px;
+  width: 100%;
+  outline: none;
+}
+
+.search-box .hint {
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn:hover {
+  background: var(--surface-hover);
+  border-color: var(--gray);
+}
+
+.btn.primary {
+  background: var(--green);
+  color: var(--bg);
+  border-color: var(--green);
+}
+
+.btn.primary:hover {
+  background: #00cc00;
+}
+
+/* PAGE HEADER */
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.page-header p {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+/* STATS GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.stat-card .label {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.stat-card .value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.stat-card .change {
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.stat-card .change.up { color: var(--green); }
+.stat-card .change.down { color: var(--red); }
+
+/* DATA TABLE */
+.data-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.table-header h3 {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.table-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.table-tab {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--gray);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.table-tab:hover {
+  background: var(--surface-hover);
+}
+
+.table-tab.active {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 10px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 1px;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 16px 20px;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border);
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover {
+  background: var(--surface-hover);
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.status.active {
+  background: var(--green-dim);
+  color: var(--green);
+}
+
+.status.canceled {
+  background: rgba(255, 68, 68, 0.1);
+  color: var(--red);
+}
+
+.status.pending {
+  background: rgba(255, 170, 0, 0.1);
+  color: var(--yellow);
+}
+
+.email {
+  color: var(--gray);
+}
+
+.amount {
+  font-weight: 500;
+}
+
+/* COMMAND PALETTE */
+.command-palette {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 100px;
+}
+
+.command-palette.open {
+  display: flex;
+}
+
+.command-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  width: 500px;
+  max-height: 400px;
+  overflow: hidden;
+}
+
+.command-input {
+  display: flex;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.command-input input {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 16px;
+  width: 100%;
+  outline: none;
+}
+
+.command-results {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.command-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  cursor: pointer;
+}
+
+.command-result:hover, .command-result.selected {
+  background: var(--green-dim);
+}
+
+.command-result .label {
+  font-size: 14px;
+}
+
+.command-result .shortcut {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* SHORTCUTS HELP */
+.shortcuts-help {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortcuts-help.open {
+  display: flex;
+}
+
+.shortcuts-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.shortcuts-box h3 {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: var(--green);
+}
+
+.shortcut-group {
+  margin-bottom: 24px;
+}
+
+.shortcut-group h4 {
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  font-size: 13px;
+}
+
+.shortcut-row .keys {
+  display: flex;
+  gap: 4px;
+}
+
+.shortcut-row kbd {
+  background: var(--bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--gray);
+}
+
+/* LOADING */
+.loading {
+  opacity: 0.5;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
+}
+
+.loading .stat-card .value {
+  animation: pulse 1.5s infinite;
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Admin - Death2Data</title>
+<meta name="description" content="Admin page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="admin, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/admin.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Admin - Death2Data">
+<meta property="og:description" content="Admin page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/admin.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Admin - Death2Data">
+<meta name="twitter:description" content="Admin page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Admin - Death2Data",
+  "description": "Admin page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/admin.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-brand">
+    <h1>DEATH2DATA</h1>
+    <div class="env">Live Mode</div>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-item active" data-page="home" data-shortcut="g h">
+      Home
+      <span class="shortcut">G H</span>
+    </div>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-title">PAYMENTS</div>
+    <div class="nav-item" data-page="payments" data-shortcut="g p">
+      Payments
+      <span class="shortcut">G P</span>
+    </div>
+    <div class="nav-item" data-page="subscriptions" data-shortcut="g s">
+      Subscriptions
+      <span class="shortcut">G S</span>
+    </div>
+    <div class="nav-item" data-page="customers" data-shortcut="g c">
+      Customers
+      <span class="shortcut">G C</span>
+    </div>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-title">TOOLS</div>
+    <div class="nav-item" data-page="notebooks" data-shortcut="g n">
+      Notebooks
+      <span class="shortcut">G N</span>
+    </div>
+    <div class="nav-item" data-page="sites" data-shortcut="g w">
+      Sites
+      <span class="shortcut">G W</span>
+    </div>
+  </div>
+  
+  <div class="nav-section">
+    <div class="nav-section-title">SETTINGS</div>
+    <div class="nav-item" data-page="settings" data-shortcut="g ,">
+      Settings
+      <span class="shortcut">G ,</span>
+    </div>
+  </div>
+  
+  <div class="sidebar-footer">
+    <a href="#" onclick="toggleShortcuts()">Keyboard shortcuts (?)</a>
+    <a href="https://dashboard.stripe.com" target="_blank">Open Stripe →</a>
+    <a href="/revenue">Public Dashboard →</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main">
+  
+  <div class="topbar">
+    <div class="search-box">
+      <input type="text" placeholder="Search customers, payments..." id="search">
+      <span class="hint">⌘K</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" onclick="createPaymentLink()">
+        <span>+</span> Create Payment Link
+      </button>
+    </div>
+  </div>
+  
+  <!-- HOME PAGE -->
+  <div class="page" id="page-home">
+    <div class="page-header">
+      <h2>Dashboard</h2>
+      <p>Your D2D metrics at a glance</p>
+    </div>
+    
+    <div class="stats-grid loading" id="stats-grid">
+      <div class="stat-card">
+        <div class="label">MRR</div>
+        <div class="value" id="stat-mrr">$--</div>
+        <div class="change up" id="stat-mrr-change">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ACTIVE MEMBERS</div>
+        <div class="value" id="stat-members">--</div>
+        <div class="change up" id="stat-members-change">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">ALL-TIME REVENUE</div>
+        <div class="value" id="stat-revenue">$--</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">GOAL PROGRESS</div>
+        <div class="value" id="stat-goal">--%</div>
+        <div class="change">4,200 members</div>
+      </div>
+    </div>
+    
+    <div class="data-table">
+      <div class="table-header">
+        <h3>Recent Activity</h3>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>AMOUNT</th>
+            <th>CUSTOMER</th>
+            <th>STATUS</th>
+            <th>DATE</th>
+          </tr>
+        </thead>
+        <tbody id="activity-table">
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--muted);">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- SUBSCRIPTIONS PAGE -->
+  <div class="page" id="page-subscriptions" style="display: none;">
+    <div class="page-header">
+      <h2>Subscriptions</h2>
+      <p>Manage recurring memberships</p>
+    </div>
+    
+    <div class="data-table">
+      <div class="table-header">
+        <h3>All Subscriptions</h3>
+        <div class="table-tabs">
+          <div class="table-tab active">Active</div>
+          <div class="table-tab">Canceled</div>
+          <div class="table-tab">All</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>CUSTOMER</th>
+            <th>PLAN</th>
+            <th>STATUS</th>
+            <th>NEXT BILLING</th>
+            <th>CREATED</th>
+          </tr>
+        </thead>
+        <tbody id="subscriptions-table">
+          <tr>
+            <td colspan="5" style="text-align: center; color: var(--muted);">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- CUSTOMERS PAGE -->
+  <div class="page" id="page-customers" style="display: none;">
+    <div class="page-header">
+      <h2>Customers</h2>
+      <p>Everyone who's ever paid</p>
+    </div>
+    
+    <div class="data-table">
+      <div class="table-header">
+        <h3>All Customers</h3>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>EMAIL</th>
+            <th>TOTAL SPENT</th>
+            <th>SUBSCRIPTIONS</th>
+            <th>CREATED</th>
+          </tr>
+        </thead>
+        <tbody id="customers-table">
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--muted);">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- PAYMENTS PAGE -->
+  <div class="page" id="page-payments" style="display: none;">
+    <div class="page-header">
+      <h2>Payments</h2>
+      <p>All transactions</p>
+    </div>
+    
+    <div class="data-table">
+      <div class="table-header">
+        <h3>All Payments</h3>
+        <div class="table-tabs">
+          <div class="table-tab active">Succeeded</div>
+          <div class="table-tab">Failed</div>
+          <div class="table-tab">All</div>
+        </div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>AMOUNT</th>
+            <th>CUSTOMER</th>
+            <th>STATUS</th>
+            <th>DATE</th>
+          </tr>
+        </thead>
+        <tbody id="payments-table">
+          <tr>
+            <td colspan="4" style="text-align: center; color: var(--muted);">Loading...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- OTHER PAGES -->
+  <div class="page" id="page-notebooks" style="display: none;">
+    <div class="page-header">
+      <h2>Notebooks</h2>
+      <p>Member notebook progress</p>
+    </div>
+    <p style="color: var(--muted);">Coming soon...</p>
+  </div>
+  
+  <div class="page" id="page-sites" style="display: none;">
+    <div class="page-header">
+      <h2>Sites</h2>
+      <p>Your 230 domains</p>
+    </div>
+    <p style="color: var(--muted);">Coming soon...</p>
+  </div>
+  
+  <div class="page" id="page-settings" style="display: none;">
+    <div class="page-header">
+      <h2>Settings</h2>
+      <p>Configure your D2D instance</p>
+    </div>
+    <p style="color: var(--muted);">Coming soon...</p>
+  </div>
+  
+</main>
+
+<!-- COMMAND PALETTE -->
+<div class="command-palette" id="commandPalette">
+  <div class="command-box">
+    <div class="command-input">
+      <input type="text" placeholder="Type a command..." id="commandInput">
+    </div>
+    <div class="command-results" id="commandResults">
+      <div class="command-result" data-action="goto:home">
+        <span class="label">Go to Home</span>
+        <span class="shortcut">G H</span>
+      </div>
+      <div class="command-result" data-action="goto:payments">
+        <span class="label">Go to Payments</span>
+        <span class="shortcut">G P</span>
+      </div>
+      <div class="command-result" data-action="goto:subscriptions">
+        <span class="label">Go to Subscriptions</span>
+        <span class="shortcut">G S</span>
+      </div>
+      <div class="command-result" data-action="goto:customers">
+        <span class="label">Go to Customers</span>
+        <span class="shortcut">G C</span>
+      </div>
+      <div class="command-result" data-action="create:payment-link">
+        <span class="label">Create Payment Link</span>
+        <span class="shortcut">C L</span>
+      </div>
+      <div class="command-result" data-action="open:stripe">
+        <span class="label">Open Stripe Dashboard</span>
+        <span class="shortcut"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SHORTCUTS HELP -->
+<div class="shortcuts-help" id="shortcutsHelp">
+  <div class="shortcuts-box">
+    <h3>Keyboard Shortcuts</h3>
+    
+    <div class="shortcut-group">
+      <h4>NAVIGATION</h4>
+      <div class="shortcut-row">
+        <span>Home</span>
+        <div class="keys"><kbd>G</kbd><kbd>H</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Payments</span>
+        <div class="keys"><kbd>G</kbd><kbd>P</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Subscriptions</span>
+        <div class="keys"><kbd>G</kbd><kbd>S</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Customers</span>
+        <div class="keys"><kbd>G</kbd><kbd>C</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Settings</span>
+        <div class="keys"><kbd>G</kbd><kbd>,</kbd></div>
+      </div>
+    </div>
+    
+    <div class="shortcut-group">
+      <h4>ACTIONS</h4>
+      <div class="shortcut-row">
+        <span>Command Palette</span>
+        <div class="keys"><kbd>⌘</kbd><kbd>K</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Search</span>
+        <div class="keys"><kbd>/</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Create Payment Link</span>
+        <div class="keys"><kbd>C</kbd><kbd>L</kbd></div>
+      </div>
+    </div>
+    
+    <div class="shortcut-group">
+      <h4>OTHER</h4>
+      <div class="shortcut-row">
+        <span>Show Shortcuts</span>
+        <div class="keys"><kbd>?</kbd></div>
+      </div>
+      <div class="shortcut-row">
+        <span>Close Modal</span>
+        <div class="keys"><kbd>ESC</kbd></div>
+      </div>
+    </div>
+    
+    <p style="margin-top: 20px; color: var(--muted); font-size: 12px;">
+      Press <kbd>ESC</kbd> to close
+    </p>
+  </div>
+</div>
+
+<script>
+// STATE
+let currentPage = 'home';
+let keyBuffer = '';
+let keyTimeout = null;
+
+// NAVIGATION
+function goToPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  
+  const pageEl = document.getElementById('page-' + page);
+  const navEl = document.querySelector(`[data-page="${page}"]`);
+  
+  if (pageEl) pageEl.style.display = 'block';
+  if (navEl) navEl.classList.add('active');
+  
+  currentPage = page;
+}
+
+// NAV CLICK
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    goToPage(item.dataset.page);
+  });
+});
+
+// KEYBOARD SHORTCUTS
+document.addEventListener('keydown', (e) => {
+  // Ignore if in input
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+    if (e.key === 'Escape') e.target.blur();
+    return;
+  }
+  
+  // Command palette
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    toggleCommandPalette();
+    return;
+  }
+  
+  // Close modals
+  if (e.key === 'Escape') {
+    closeModals();
+    return;
+  }
+  
+  // Show shortcuts
+  if (e.key === '?') {
+    toggleShortcuts();
+    return;
+  }
+  
+  // Focus search
+  if (e.key === '/') {
+    e.preventDefault();
+    document.getElementById('search').focus();
+    return;
+  }
+  
+  // Two-key shortcuts (like Stripe)
+  clearTimeout(keyTimeout);
+  keyBuffer += e.key.toLowerCase();
+  
+  keyTimeout = setTimeout(() => {
+    keyBuffer = '';
+  }, 500);
+  
+  // Check buffer for shortcuts
+  const shortcuts = {
+    'gh': () => goToPage('home'),
+    'gp': () => goToPage('payments'),
+    'gs': () => goToPage('subscriptions'),
+    'gc': () => goToPage('customers'),
+    'gn': () => goToPage('notebooks'),
+    'gw': () => goToPage('sites'),
+    'g,': () => goToPage('settings'),
+    'cl': () => createPaymentLink(),
+  };
+  
+  for (const [combo, action] of Object.entries(shortcuts)) {
+    if (keyBuffer.endsWith(combo)) {
+      action();
+      keyBuffer = '';
+      break;
+    }
+  }
+});
+
+// COMMAND PALETTE
+function toggleCommandPalette() {
+  const palette = document.getElementById('commandPalette');
+  palette.classList.toggle('open');
+  if (palette.classList.contains('open')) {
+    document.getElementById('commandInput').focus();
+  }
+}
+
+document.getElementById('commandPalette').addEventListener('click', (e) => {
+  if (e.target.id === 'commandPalette') {
+    toggleCommandPalette();
+  }
+});
+
+document.querySelectorAll('.command-result').forEach(result => {
+  result.addEventListener('click', () => {
+    const action = result.dataset.action;
+    if (action.startsWith('goto:')) {
+      goToPage(action.split(':')[1]);
+    } else if (action === 'create:payment-link') {
+      createPaymentLink();
+    } else if (action === 'open:stripe') {
+      window.open('https://dashboard.stripe.com', '_blank');
+    }
+    toggleCommandPalette();
+  });
+});
+
+// SHORTCUTS HELP
+function toggleShortcuts() {
+  document.getElementById('shortcutsHelp').classList.toggle('open');
+}
+
+document.getElementById('shortcutsHelp').addEventListener('click', (e) => {
+  if (e.target.id === 'shortcutsHelp') {
+    toggleShortcuts();
+  }
+});
+
+function closeModals() {
+  document.getElementById('commandPalette').classList.remove('open');
+  document.getElementById('shortcutsHelp').classList.remove('open');
+}
+
+// ACTIONS
+function createPaymentLink() {
+  window.open('https://dashboard.stripe.com/payment-links/create', '_blank');
+}
+
+// LOAD DATA
+async function loadData() {
+  try {
+    const res = await fetch('/.netlify/functions/admin');
+    const data = await res.json();
+    
+    document.getElementById('stats-grid').classList.remove('loading');
+    
+    // Stats
+    document.getElementById('stat-mrr').textContent = '$' + data.mrr.toFixed(2);
+    document.getElementById('stat-members').textContent = data.customers;
+    document.getElementById('stat-revenue').textContent = '$' + data.allTimeRevenue.toFixed(2);
+    document.getElementById('stat-goal').textContent = ((data.customers / 4200) * 100).toFixed(1) + '%';
+    
+    // Activity table
+    if (data.activity && data.activity.length) {
+      document.getElementById('activity-table').innerHTML = data.activity.map(a => `
+        <tr>
+          <td class="amount">$${a.amount.toFixed(2)}</td>
+          <td class="email">${a.email}</td>
+          <td><span class="status active">Succeeded</span></td>
+          <td>${formatDate(a.date)}</td>
+        </tr>
+      `).join('');
+    }
+    
+    // Subscriptions table
+    if (data.subscriptions && data.subscriptions.length) {
+      document.getElementById('subscriptions-table').innerHTML = data.subscriptions.map(s => `
+        <tr>
+          <td class="email">${s.email}</td>
+          <td>$1/28 days</td>
+          <td><span class="status ${s.status}">${s.status}</span></td>
+          <td>${formatDate(s.currentPeriodEnd)}</td>
+          <td>${formatDate(s.created)}</td>
+        </tr>
+      `).join('');
+    }
+    
+    // Customers table
+    if (data.customerList && data.customerList.length) {
+      document.getElementById('customers-table').innerHTML = data.customerList.map(c => `
+        <tr>
+          <td class="email">${c.email}</td>
+          <td class="amount">$${(c.totalSpent / 100).toFixed(2)}</td>
+          <td>${c.subscriptions}</td>
+          <td>${formatDate(c.created)}</td>
+        </tr>
+      `).join('');
+    }
+    
+    // Payments table
+    if (data.payments && data.payments.length) {
+      document.getElementById('payments-table').innerHTML = data.payments.map(p => `
+        <tr>
+          <td class="amount">$${(p.amount / 100).toFixed(2)}</td>
+          <td class="email">${p.email}</td>
+          <td><span class="status ${p.status === 'succeeded' ? 'active' : 'canceled'}">${p.status}</span></td>
+          <td>${formatDate(p.date)}</td>
+        </tr>
+      `).join('');
+    }
+    
+  } catch (err) {
+    console.error('Failed to load:', err);
+  }
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+// Init
+loadData();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>D2D Platform Architecture</title>
+  <style>
+    @page { 
+      size: 8.5in 11in; 
+      margin: 0; 
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      line-height: 1.4;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .page {
+      width: 8.5in;
+      height: 11in;
+      background: #0a0a0a;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+      page-break-inside: avoid;
+    }
+    
+    /* ========== COVER ========== */
+    .cover {
+      padding: 0.6in;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .cover-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      letter-spacing: 2px;
+      margin-bottom: 1.5in;
+    }
+    
+    .cover-logo { color: #00ff00; font-weight: bold; }
+    .cover-date { color: #666; }
+    
+    .cover-title {
+      font-size: 140px;
+      font-weight: 800;
+      line-height: 0.85;
+      letter-spacing: -6px;
+      color: #fff;
+    }
+    
+    .cover-title span { color: #00ff00; }
+    
+    .cover-sub {
+      font-size: 22px;
+      color: #888;
+      margin-top: 0.4in;
+      max-width: 5in;
+      line-height: 1.4;
+    }
+    
+    .cover-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      border-top: 1px solid #222;
+      display: flex;
+    }
+    
+    .cover-stat {
+      flex: 1;
+      padding: 0.4in 0.6in;
+      border-right: 1px solid #222;
+    }
+    
+    .cover-stat:last-child { border-right: none; }
+    
+    .cover-stat-val {
+      font-size: 56px;
+      font-weight: 800;
+      color: #00ff00;
+      line-height: 1;
+    }
+    
+    .cover-stat-lbl {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+    
+    /* ========== SECTION HEADER ========== */
+    .section {
+      padding: 0.6in;
+    }
+    
+    .section-head {
+      margin-bottom: 0.4in;
+      padding-bottom: 0.25in;
+      border-bottom: 1px solid #222;
+    }
+    
+    .section-num {
+      font-size: 80px;
+      font-weight: 800;
+      color: #00ff00;
+      opacity: 0.3;
+      line-height: 1;
+      margin-bottom: -0.1in;
+    }
+    
+    .section-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+    
+    .section-desc {
+      font-size: 16px;
+      color: #888;
+      margin-top: 0.2in;
+      max-width: 5.5in;
+    }
+    
+    /* ========== DATA CARDS ========== */
+    .cards-row {
+      display: flex;
+      gap: 0.2in;
+      margin: 0.3in 0;
+    }
+    
+    .card {
+      flex: 1;
+      background: #111;
+      border: 1px solid #222;
+      border-left: 4px solid #00ff00;
+      padding: 0.3in;
+    }
+    
+    .card.orange { border-left-color: #ff6b35; }
+    
+    .card-val {
+      font-size: 48px;
+      font-weight: 800;
+      color: #00ff00;
+      line-height: 1;
+    }
+    
+    .card.orange .card-val { color: #ff6b35; }
+    
+    .card-lbl {
+      font-size: 9px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 8px;
+    }
+    
+    .card-detail {
+      font-size: 12px;
+      color: #888;
+      margin-top: 0.15in;
+      padding-top: 0.15in;
+      border-top: 1px solid #222;
+    }
+    
+    /* ========== TABLE ========== */
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.25in 0;
+    }
+    
+    .tbl th {
+      background: #00ff00;
+      color: #000;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 12px 16px;
+      text-align: left;
+    }
+    
+    .tbl td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #222;
+      font-size: 13px;
+    }
+    
+    .tbl-code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: #00ff00;
+    }
+    
+    /* ========== CODE BLOCK ========== */
+    .code {
+      background: #0d0d0d;
+      border: 1px solid #222;
+      border-left: 3px solid #00ff00;
+      padding: 0.2in 0.25in;
+      margin: 0.2in 0;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+    
+    .code .c { color: #666; }
+    .code .k { color: #ff6b35; }
+    .code .s { color: #00ff00; }
+    
+    /* ========== FEATURES ========== */
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.15in;
+      margin: 0.2in 0;
+    }
+    
+    .feature {
+      width: 48%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #111;
+      border: 1px solid #222;
+      padding: 12px 16px;
+    }
+    
+    .feature-icon {
+      width: 22px;
+      height: 22px;
+      background: #00ff00;
+      color: #000;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    
+    .feature-txt { font-size: 13px; color: #ccc; }
+    
+    /* ========== VERTICALS ========== */
+    .verticals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.15in;
+      margin: 0.25in 0;
+    }
+    
+    .vert {
+      width: 31%;
+      background: #111;
+      border: 1px solid #222;
+      padding: 0.2in;
+      position: relative;
+    }
+    
+    .vert::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+    
+    .vert.c1::after { background: #00ff00; }
+    .vert.c2::after { background: #ff6b35; }
+    .vert.c3::after { background: #a855f7; }
+    .vert.c4::after { background: #22c55e; }
+    .vert.c5::after { background: #3b82f6; }
+    .vert.c6::after { background: #f59e0b; }
+    
+    .vert-name {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    
+    .vert-domain {
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      color: #00ff00;
+      margin: 4px 0 10px;
+    }
+    
+    .vert-desc {
+      font-size: 12px;
+      color: #888;
+    }
+    
+    /* ========== HIGHLIGHT BOX ========== */
+    .highlight {
+      background: linear-gradient(135deg, #0a1a0a 0%, #001a00 100%);
+      border: 1px solid #00ff00;
+      padding: 0.25in;
+      margin: 0.25in 0;
+    }
+    
+    .highlight-title {
+      font-size: 10px;
+      color: #00ff00;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    
+    .highlight-content {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    
+    /* ========== COST BAR ========== */
+    .cost-bar {
+      background: #111;
+      border: 1px solid #222;
+      margin: 0.25in 0;
+    }
+    
+    .cost-header {
+      padding: 0.2in 0.25in;
+      border-bottom: 1px solid #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .cost-label {
+      font-size: 10px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .cost-total {
+      font-size: 36px;
+      font-weight: 800;
+      color: #00ff00;
+    }
+    
+    .cost-items { display: flex; }
+    
+    .cost-item {
+      flex: 1;
+      padding: 0.2in 0.25in;
+      border-right: 1px solid #222;
+    }
+    
+    .cost-item:last-child { border-right: none; }
+    
+    .cost-val {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    
+    .cost-txt {
+      font-size: 10px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    /* ========== CHECKLIST ========== */
+    .checks { margin: 0.25in 0; }
+    
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 14px 18px;
+      background: #111;
+      border: 1px solid #222;
+      margin-bottom: 8px;
+    }
+    
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #00ff00;
+      flex-shrink: 0;
+    }
+    
+    .check-txt { font-size: 14px; }
+    
+    /* ========== FOOTER ========== */
+    .footer {
+      position: absolute;
+      bottom: 0.5in;
+      left: 0.6in;
+      right: 0.6in;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #444;
+      padding-top: 0.15in;
+      border-top: 1px solid #222;
+    }
+    
+    .footer-num {
+      font-family: 'Courier New', monospace;
+    }
+    
+    /* ========== ARCH DIAGRAM ========== */
+    .arch {
+      background: #0d0d0d;
+      border: 1px solid #222;
+      padding: 0.3in;
+      margin: 0.2in 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.2in;
+    }
+    
+    .arch-col { flex: 1; }
+    
+    .arch-label {
+      font-size: 9px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+    
+    .arch-item {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      padding: 4px 0;
+    }
+    
+    .arch-item.hl { color: #00ff00; }
+    
+    .arch-arrow {
+      color: #00ff00;
+      font-size: 28px;
+      opacity: 0.4;
+      padding-top: 0.4in;
+    }
+    
+    .arch-box {
+      background: #1a1a1a;
+      border: 1px solid #00ff00;
+      padding: 0.15in 0.2in;
+      margin-bottom: 0.15in;
+    }
+    
+    .arch-box-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #00ff00;
+    }
+    
+    .arch-box-sub {
+      font-size: 10px;
+      color: #666;
+      margin-top: 2px;
+    }
+    
+    /* ========== FINAL CTA ========== */
+    .cta-block {
+      text-align: center;
+      margin-top: 0.5in;
+    }
+    
+    .cta-url {
+      font-size: 42px;
+      font-weight: 800;
+      color: #00ff00;
+    }
+    
+    .cta-sub {
+      font-size: 13px;
+      color: #666;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ==================== PAGE 1: COVER ==================== -->
+<div class="page cover">
+  <div class="cover-top">
+    <div class="cover-logo">DEATH2DATA</div>
+    <div class="cover-date">JANUARY 2026</div>
+  </div>
+  
+  <div class="cover-title">
+    D2D<br><span>PLATFORM</span>
+  </div>
+  
+  <div class="cover-sub">
+    Multi-tenant infrastructure for privacy-first tools. 
+    No tracking. No ads. No bullshit.
+  </div>
+  
+  <div class="cover-bottom">
+    <div class="cover-stat">
+      <div class="cover-stat-val">6</div>
+      <div class="cover-stat-lbl">Verticals</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">$10</div>
+      <div class="cover-stat-lbl">Monthly Cost</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">0</div>
+      <div class="cover-stat-lbl">Cookies</div>
+    </div>
+    <div class="cover-stat">
+      <div class="cover-stat-val">∞</div>
+      <div class="cover-stat-lbl">Scale</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 2: ARCHITECTURE ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">01</div>
+    <div class="section-title">SYSTEM<br>ARCHITECTURE</div>
+    <div class="section-desc">
+      One SDK. Six brands. Complete financial separation.
+    </div>
+  </div>
+  
+  <div class="arch">
+    <div class="arch-col">
+      <div class="arch-label">Domains</div>
+      <div class="arch-item hl">death2data.com</div>
+      <div class="arch-item">cringe.events</div>
+      <div class="arch-item">soul.community</div>
+      <div class="arch-item">deal.club</div>
+      <div class="arch-item">ultra.dev</div>
+      <div class="arch-item">nil.athlete</div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-col">
+      <div class="arch-box">
+        <div class="arch-box-title">ANALYTICS</div>
+        <div class="arch-box-sub">tracker.js + collector</div>
+      </div>
+      <div class="arch-box">
+        <div class="arch-box-title">STRIPE</div>
+        <div class="arch-box-sub">per-vertical accounts</div>
+      </div>
+    </div>
+    <div class="arch-arrow">→</div>
+    <div class="arch-col">
+      <div class="arch-label">Data</div>
+      <div class="arch-item">SQLite / Postgres</div>
+      <div class="arch-item">Webhook handlers</div>
+      <div class="arch-item">Customer records</div>
+      <div class="arch-item">Event streams</div>
+    </div>
+  </div>
+  
+  <div class="highlight">
+    <div class="highlight-title">Unified SDK</div>
+    <div class="highlight-content">
+      <code>await d2d.for('cringe').getMembers()</code><br>
+      <code>await d2d.getDashboard()</code>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">02</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 3: ANALYTICS ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">02</div>
+    <div class="section-title">PRIVACY-FIRST<br>ANALYTICS</div>
+    <div class="section-desc">
+      No cookies. No fingerprinting. No PII. Just useful data.
+    </div>
+  </div>
+  
+  <div class="cards-row">
+    <div class="card">
+      <div class="card-val">2KB</div>
+      <div class="card-lbl">Tracker Size</div>
+      <div class="card-detail">Won't slow your site</div>
+    </div>
+    <div class="card">
+      <div class="card-val">0</div>
+      <div class="card-lbl">Cookies</div>
+      <div class="card-detail">No GDPR banners</div>
+    </div>
+    <div class="card orange">
+      <div class="card-val">24h</div>
+      <div class="card-lbl">Session Scope</div>
+      <div class="card-detail">Can't track across days</div>
+    </div>
+  </div>
+  
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">✓</div>
+      <div class="feature-txt">Respects Do Not Track</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">✓</div>
+      <div class="feature-txt">No personal data stored</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">✓</div>
+      <div class="feature-txt">Self-hosted, you own it</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">✓</div>
+      <div class="feature-txt">Works without JS</div>
+    </div>
+  </div>
+  
+  <div class="code"><span class="c">// Add to any page</span>
+&lt;script src=<span class="s">"https://analytics.death2data.com/t.js"</span>
+        data-site=<span class="s">"yoursite.com"</span> defer&gt;&lt;/script&gt;</div>
+  
+  <table class="tbl">
+    <tr><th>Endpoint</th><th>Method</th><th>Description</th></tr>
+    <tr><td class="tbl-code">/collect</td><td>POST</td><td>Receive events</td></tr>
+    <tr><td class="tbl-code">/api/stats?site=X</td><td>GET</td><td>Stats (7d default)</td></tr>
+    <tr><td class="tbl-code">/api/live?site=X</td><td>GET</td><td>Live visitors</td></tr>
+    <tr><td class="tbl-code">/dashboard</td><td>GET</td><td>Visual dashboard</td></tr>
+  </table>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">03</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 4: STRIPE ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">03</div>
+    <div class="section-title">STRIPE<br>INTEGRATION</div>
+    <div class="section-desc">
+      Each vertical has its own account. Unified management through the SDK.
+    </div>
+  </div>
+  
+  <div class="cards-row">
+    <div class="card">
+      <div class="card-val">$1</div>
+      <div class="card-lbl">Per Member</div>
+      <div class="card-detail">Simple pricing</div>
+    </div>
+    <div class="card">
+      <div class="card-val">$0.90</div>
+      <div class="card-lbl">Net Revenue</div>
+      <div class="card-detail">After Stripe fees</div>
+    </div>
+    <div class="card orange">
+      <div class="card-val">4,200</div>
+      <div class="card-lbl">Break-even</div>
+      <div class="card-detail">Members needed</div>
+    </div>
+  </div>
+  
+  <div class="code"><span class="c">// Per vertical</span>
+<span class="k">await</span> d2d.for(<span class="s">'cringe'</span>).getMembers();
+<span class="k">await</span> d2d.for(<span class="s">'cringe'</span>).getMRR();
+<span class="k">await</span> d2d.for(<span class="s">'cringe'</span>).createPaymentLink();
+
+<span class="c">// Across all verticals</span>
+<span class="k">await</span> d2d.getDashboard();
+<span class="k">await</span> d2d.findCustomer(<span class="s">'email@example.com'</span>);</div>
+  
+  <table class="tbl">
+    <tr><th>Webhook Event</th><th>Action</th></tr>
+    <tr><td class="tbl-code">checkout.session.completed</td><td>Send welcome email, grant access</td></tr>
+    <tr><td class="tbl-code">customer.subscription.deleted</td><td>Revoke access, send win-back</td></tr>
+    <tr><td class="tbl-code">invoice.payment_failed</td><td>Send dunning email sequence</td></tr>
+  </table>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">04</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 5: VERTICALS ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">04</div>
+    <div class="section-title">SIX<br>VERTICALS</div>
+    <div class="section-desc">
+      Same infrastructure. Different communities.
+    </div>
+  </div>
+  
+  <div class="verticals">
+    <div class="vert c1">
+      <div class="vert-name">D2D</div>
+      <div class="vert-domain">death2data.com</div>
+      <div class="vert-desc">Main brand. Privacy tools. The mothership.</div>
+    </div>
+    <div class="vert c2">
+      <div class="vert-name">CRINGE</div>
+      <div class="vert-domain">cringe.events</div>
+      <div class="vert-desc">Founders pitch cringe, iterate fast.</div>
+    </div>
+    <div class="vert c3">
+      <div class="vert-name">SOUL</div>
+      <div class="vert-domain">soul.community</div>
+      <div class="vert-desc">Wellness without the woo-woo.</div>
+    </div>
+    <div class="vert c4">
+      <div class="vert-name">DEAL</div>
+      <div class="vert-domain">deal.club</div>
+      <div class="vert-desc">Real estate for normal people.</div>
+    </div>
+    <div class="vert c5">
+      <div class="vert-name">ULTRA</div>
+      <div class="vert-domain">ultra.dev</div>
+      <div class="vert-desc">Infrastructure nerds. Privacy maximalists.</div>
+    </div>
+    <div class="vert c6">
+      <div class="vert-name">NIL</div>
+      <div class="vert-domain">nil.athlete</div>
+      <div class="vert-desc">Athletes owning their brand and data.</div>
+    </div>
+  </div>
+  
+  <div class="highlight">
+    <div class="highlight-title">Each Domain Needs</div>
+    <div class="highlight-content">
+      DNS → Netlify/Vercel &nbsp;&bull;&nbsp; 
+      Analytics tracker &nbsp;&bull;&nbsp; 
+      Stripe payment link &nbsp;&bull;&nbsp; 
+      Webhook endpoint
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">05</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 6: DEPLOYMENT ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">05</div>
+    <div class="section-title">DEPLOYMENT<br>OPTIONS</div>
+  </div>
+  
+  <div class="cards-row">
+    <div class="card">
+      <div class="card-val">VPS</div>
+      <div class="card-lbl">$5-10/mo</div>
+      <div class="card-detail">DigitalOcean, Vultr. PM2 + Nginx.</div>
+    </div>
+    <div class="card">
+      <div class="card-val">λ</div>
+      <div class="card-lbl">Serverless</div>
+      <div class="card-detail">Vercel/Netlify. Free tier.</div>
+    </div>
+    <div class="card orange">
+      <div class="card-val">PaaS</div>
+      <div class="card-lbl">Railway/Render</div>
+      <div class="card-detail">Git deploy. ~$5-10/mo.</div>
+    </div>
+  </div>
+  
+  <table class="tbl">
+    <tr><th>Database</th><th>Scale</th><th>Notes</th></tr>
+    <tr><td>SQLite</td><td>100k events/day</td><td>Simplest. Start here.</td></tr>
+    <tr><td>PostgreSQL</td><td>Millions/day</td><td>Partition by month.</td></tr>
+    <tr><td>ClickHouse</td><td>Billions/day</td><td>When you're big.</td></tr>
+  </table>
+  
+  <div class="cost-bar">
+    <div class="cost-header">
+      <div class="cost-label">Monthly Infrastructure Cost</div>
+      <div class="cost-total">$10-15</div>
+    </div>
+    <div class="cost-items">
+      <div class="cost-item">
+        <div class="cost-val">$5-10</div>
+        <div class="cost-txt">VPS (Analytics)</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-val">~$5</div>
+        <div class="cost-txt">Domains (6x)</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-val">2.9%</div>
+        <div class="cost-txt">Stripe Fee</div>
+      </div>
+      <div class="cost-item">
+        <div class="cost-val">$0</div>
+        <div class="cost-txt">Netlify Sites</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">06</div>
+  </div>
+</div>
+
+<!-- ==================== PAGE 7: NEXT STEPS ==================== -->
+<div class="page section">
+  <div class="section-head">
+    <div class="section-num">06</div>
+    <div class="section-title">NEXT<br>STEPS</div>
+  </div>
+  
+  <div class="checks">
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Deploy analytics server (VPS or serverless)</div>
+    </div>
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Add tracker to death2data.com</div>
+    </div>
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Configure Stripe webhooks for D2D account</div>
+    </div>
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Purchase remaining vertical domains</div>
+    </div>
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Build unified dashboard</div>
+    </div>
+    <div class="check">
+      <div class="check-box"></div>
+      <div class="check-txt">Set up CI/CD for multi-site deploys</div>
+    </div>
+  </div>
+  
+  <div class="highlight">
+    <div class="highlight-title">Scale Economics</div>
+    <div class="highlight-content">
+      At 100 members ($100 MRR) → Infrastructure is ~10-15% of revenue<br>
+      At 1,000 members ($1,000 MRR) → Infrastructure is ~1-1.5% of revenue<br>
+      At 4,200 members → Full sustainability. No investors needed.
+    </div>
+  </div>
+  
+  <div class="cta-block">
+    <div class="cta-url">death2data.com</div>
+    <div class="cta-sub">$1/month. Privacy tools. No bullshit.</div>
+  </div>
+  
+  <div class="footer">
+    <div>D2D PLATFORM ARCHITECTURE</div>
+    <div class="footer-num">07</div>
+  </div>
+</div>
+
+</body>
+</html>

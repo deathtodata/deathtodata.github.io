@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" class="f0-dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join | Death2Data - $1/month</title>
+<link rel="stylesheet" href="/css/fortune0.css">
+<style>
+/* Page-specific styles */
+.checkout-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.brand {
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: var(--f0-text-muted);
+  margin-bottom: 40px;
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+.price {
+  color: var(--f0-green);
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--f0-text-secondary);
+  margin-bottom: 40px;
+}
+
+/* Features list */
+.features {
+  margin-bottom: 40px;
+}
+
+.feature {
+  display: flex;
+  gap: 12px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--f0-gray-2);
+}
+
+.feature:first-child {
+  border-top: 1px solid var(--f0-gray-2);
+}
+
+.check {
+  color: var(--f0-green);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.feature-text {
+  flex: 1;
+}
+
+.feature-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--f0-text-primary);
+}
+
+.feature-desc {
+  font-size: 0.9rem;
+  color: var(--f0-text-muted);
+}
+
+/* CTA Button */
+.cta {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background: var(--f0-green);
+  color: var(--f0-black);
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+}
+
+.cta:hover {
+  background: var(--f0-green-dim);
+}
+
+.billing-note {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--f0-text-muted);
+  margin-bottom: 40px;
+}
+
+/* Terms section */
+.terms {
+  background: var(--f0-gray-1);
+  border: 1px solid var(--f0-gray-2);
+  padding: 24px;
+  font-size: 0.85rem;
+  color: var(--f0-text-secondary);
+  margin-bottom: 40px;
+}
+
+.terms h3 {
+  color: var(--f0-text-primary);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.terms p {
+  margin-bottom: 12px;
+  color: var(--f0-text-secondary);
+}
+
+.terms ul {
+  margin-left: 20px;
+  margin-bottom: 12px;
+}
+
+.terms li {
+  margin-bottom: 8px;
+}
+
+.terms strong {
+  color: var(--f0-text-primary);
+}
+
+/* Footer */
+.checkout-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--f0-text-dark);
+  padding-top: 40px;
+  border-top: 1px solid var(--f0-gray-2);
+}
+
+.checkout-footer a {
+  color: var(--f0-text-muted);
+  text-decoration: none;
+}
+
+.checkout-footer a:hover {
+  color: var(--f0-green);
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Checkout - Death2Data</title>
+<meta name="description" content="Checkout page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="checkout, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/checkout.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Checkout - Death2Data">
+<meta property="og:description" content="Checkout page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/checkout.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Checkout - Death2Data">
+<meta name="twitter:description" content="Checkout page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Checkout - Death2Data",
+  "description": "Checkout page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/checkout.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="checkout-container">
+
+  <div class="brand">DEATH2DATA</div>
+
+  <h1><span class="price">$1</span>/month<br>Privacy tools.</h1>
+
+  <p class="subtitle">No tracking. No ads. No bullshit. Cancel anytime.</p>
+
+  <div class="features">
+    <div class="feature">
+      <span class="check">✓</span>
+      <div class="feature-text">
+        <div class="feature-title">Privacy-First Search</div>
+        <div class="feature-desc">Self-hosted search that doesn't track you</div>
+      </div>
+    </div>
+    <div class="feature">
+      <span class="check">✓</span>
+      <div class="feature-text">
+        <div class="feature-title">Member Tools</div>
+        <div class="feature-desc">QR generator, analytics, business cards</div>
+      </div>
+    </div>
+    <div class="feature">
+      <span class="check">✓</span>
+      <div class="feature-text">
+        <div class="feature-title">28-Day Notebook</div>
+        <div class="feature-desc">Daily prompts. We print & mail your completed notebook.</div>
+      </div>
+    </div>
+    <div class="feature">
+      <span class="check">✓</span>
+      <div class="feature-text">
+        <div class="feature-title">No Data Harvesting</div>
+        <div class="feature-desc">We don't sell your info. Ever. That's the whole point.</div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    ═══════════════════════════════════════════════════════════════════════════════
+    SETUP INSTRUCTIONS:
+    ═══════════════════════════════════════════════════════════════════════════════
+
+    1. Go to your Stripe Dashboard: https://dashboard.stripe.com
+    2. Products → Create Product:
+       - Name: "D2D Membership"
+       - Price: $1.00
+       - Recurring: Every 28 days (custom)
+
+    3. Payment Links → Create payment link:
+       - Select your D2D Membership product
+       - Success URL: https://death2data.com/welcome.html
+       - Copy the payment link (looks like: https://buy.stripe.com/xxxxx)
+
+    4. Replace cNieVd5Vjb6N2ZY6Fq4wM00 below with your actual link
+
+    ═══════════════════════════════════════════════════════════════════════════════
+  -->
+  <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="cta">
+    Join for $1 →
+  </a>
+
+  <p class="billing-note">
+    Billed every 28 days. Cancel anytime in 2 clicks.
+  </p>
+
+  <!-- Terms & Conditions -->
+  <div class="terms">
+    <h3>Terms & Conditions</h3>
+
+    <p><strong>What you get:</strong></p>
+    <ul>
+      <li>Access to all Death2Data member tools</li>
+      <li>Daily notebook prompts on any topic you choose</li>
+      <li>Physical notebook mailed after 28 days of entries</li>
+      <li>Priority support via email</li>
+    </ul>
+
+    <p><strong>Billing:</strong></p>
+    <ul>
+      <li>$1.00 USD charged every 28 days</li>
+      <li>Cancel anytime from your Stripe customer portal</li>
+      <li>No refunds for partial periods</li>
+    </ul>
+
+    <p><strong>Privacy (the whole point):</strong></p>
+    <ul>
+      <li>We don't track you</li>
+      <li>We don't sell your data</li>
+      <li>We don't show you ads</li>
+      <li>Your notebook content is yours - we only see it to print it</li>
+      <li>Stripe handles payments - we never see your card number</li>
+    </ul>
+
+    <p><strong>By clicking "Join", you agree to these terms.</strong></p>
+  </div>
+
+  <div class="checkout-footer">
+    <p>&copy; 2025 Death2Data. All rights reserved.</p>
+    <p><a href="mailto:matt@death2data.com">matt@death2data.com</a></p>
+  </div>
+
+</div>
+
+</body>
+</html>

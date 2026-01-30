@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Identity Vault | D2D</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:ui-monospace,monospace;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  padding:20px;
+}
+
+header{
+  background:#0a0a0a;
+  border-bottom:1px solid #222;
+  padding:20px;
+  margin:-20px -20px 30px -20px;
+}
+.logo{
+  font-size:1.2rem;
+  font-weight:700;
+  color:#0f0;
+}
+.identity-status{
+  margin-top:10px;
+  font-size:0.85rem;
+  color:#666;
+}
+.identity-status.loaded{color:#0f0}
+
+main{
+  max-width:1200px;
+  margin:0 auto;
+}
+
+h1{
+  font-size:2rem;
+  margin-bottom:30px;
+  color:#0f0;
+}
+
+.tabs{
+  display:flex;
+  gap:10px;
+  margin-bottom:30px;
+  border-bottom:1px solid #222;
+  padding-bottom:10px;
+}
+.tab{
+  padding:10px 20px;
+  background:none;
+  border:1px solid #333;
+  color:#666;
+  cursor:pointer;
+  font-family:inherit;
+  font-size:0.9rem;
+}
+.tab:hover{
+  border-color:#0f0;
+  color:#0f0;
+}
+.tab.active{
+  background:#0f0;
+  color:#000;
+  border-color:#0f0;
+}
+
+.tab-content{
+  display:none;
+}
+.tab-content.active{
+  display:block;
+}
+
+.section{
+  background:#0a0a0a;
+  border:1px solid #222;
+  padding:30px;
+  margin-bottom:20px;
+}
+.section h2{
+  font-size:1.3rem;
+  margin-bottom:15px;
+  color:#0f0;
+}
+.section p{
+  color:#888;
+  line-height:1.7;
+  margin-bottom:15px;
+}
+
+textarea{
+  width:100%;
+  min-height:150px;
+  background:#050505;
+  border:1px solid #333;
+  color:#0f0;
+  font-family:ui-monospace,monospace;
+  font-size:0.85rem;
+  padding:15px;
+  margin:10px 0;
+  resize:vertical;
+}
+textarea:focus{
+  outline:none;
+  border-color:#0f0;
+}
+
+input[type="text"]{
+  width:100%;
+  background:#050505;
+  border:1px solid #333;
+  color:#0f0;
+  font-family:ui-monospace,monospace;
+  font-size:0.85rem;
+  padding:12px 15px;
+  margin:10px 0;
+}
+input[type="text"]:focus{
+  outline:none;
+  border-color:#0f0;
+}
+
+button{
+  padding:12px 24px;
+  background:#0f0;
+  color:#000;
+  border:none;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  margin:10px 5px 10px 0;
+}
+button:hover{
+  background:#fff;
+}
+button.secondary{
+  background:#222;
+  color:#666;
+}
+button.secondary:hover{
+  background:#333;
+  color:#0f0;
+}
+
+.output{
+  background:#050505;
+  border:1px solid #222;
+  padding:15px;
+  margin:15px 0;
+  word-break:break-all;
+  font-size:0.8rem;
+  color:#666;
+  max-height:300px;
+  overflow-y:auto;
+}
+.output.success{
+  border-color:#0f0;
+  color:#0f0;
+}
+.output.error{
+  border-color:#f00;
+  color:#f00;
+}
+
+.identity-card{
+  background:#0a0a0a;
+  border:2px solid #0f0;
+  padding:20px;
+  margin:20px 0;
+}
+.identity-card .anon-name{
+  font-size:1.5rem;
+  color:#0f0;
+  font-weight:700;
+  letter-spacing:0.1em;
+  margin-bottom:10px;
+}
+.identity-card .detail{
+  font-size:0.75rem;
+  color:#666;
+  margin:5px 0;
+}
+
+.key-display{
+  background:#050505;
+  border:1px solid #222;
+  padding:15px;
+  margin:10px 0;
+  max-height:200px;
+  overflow:auto;
+}
+.key-display pre{
+  font-size:0.7rem;
+  color:#666;
+  white-space:pre-wrap;
+  word-break:break-all;
+}
+
+.trust-item{
+  background:#050505;
+  border:1px solid #222;
+  padding:15px;
+  margin:10px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.trust-item .name{
+  font-size:1.1rem;
+  color:#0f0;
+  font-weight:700;
+}
+.trust-item .date{
+  font-size:0.75rem;
+  color:#666;
+}
+.trust-item button{
+  padding:8px 16px;
+  margin:0;
+}
+
+@media(max-width:768px){
+  .tabs{
+    flex-direction:column;
+  }
+  .tab{
+    width:100%;
+  }
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Identity Vault - Secure Ed25519 Key Management</title>
+<meta name="description" content="Generate and manage Ed25519 cryptographic identities. Client-side only. Your private keys never leave your browser.">
+<meta name="keywords" content="identity vault, ed25519, cryptographic keys, privacy identity">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/tools/identity-vault.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Identity Vault - Secure Ed25519 Key Management">
+<meta property="og:description" content="Generate and manage Ed25519 cryptographic identities. Client-side only. Your private keys never leave your browser.">
+<meta property="og:url" content="https://death2data.com/tools/identity-vault.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Identity Vault - Secure Ed25519 Key Management">
+<meta name="twitter:description" content="Generate and manage Ed25519 cryptographic identities. Client-side only. Your private keys never leave your browser.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Identity Vault - Secure Ed25519 Key Management",
+  "description": "Generate and manage Ed25519 cryptographic identities. Client-side only. Your private keys never leave your browser.",
+  "url": "https://death2data.com/tools/identity-vault.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<header>
+  <div class="logo">D2D IDENTITY VAULT</div>
+  <div class="identity-status" id="identity-status">Loading identity...</div>
+</header>
+
+<main>
+  <h1>MANAGE YOUR CRYPTOGRAPHIC IDENTITY</h1>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="overview">Overview</button>
+    <button class="tab" data-tab="sign">Sign Message</button>
+    <button class="tab" data-tab="verify">Verify Signature</button>
+    <button class="tab" data-tab="export">Export/Import</button>
+    <button class="tab" data-tab="trust">Trust Circle</button>
+  </div>
+
+  <!-- TAB 1: OVERVIEW -->
+  <div class="tab-content active" id="overview">
+    <div class="section">
+      <h2>YOUR IDENTITY</h2>
+      <div class="identity-card" id="identity-card">
+        <div class="anon-name" id="anon-name-display">Loading...</div>
+        <div class="detail">Created: <span id="created-date">Unknown</span></div>
+        <div class="detail">Public Key Hash: <span id="pubkey-hash">Loading...</span></div>
+      </div>
+
+      <button onclick="showKeys()">Show Keys</button>
+      <button class="secondary" onclick="downloadIdentity()">Download Identity File</button>
+
+      <div id="keys-display" style="display:none">
+        <div class="key-display">
+          <label style="color:#f00;font-size:0.75rem;letter-spacing:0.1em">PRIVATE KEY (KEEP SECRET)</label>
+          <pre id="private-key-display"></pre>
+          <button onclick="copyKey('private')">Copy Private Key</button>
+        </div>
+
+        <div class="key-display">
+          <label style="color:#0f0;font-size:0.75rem;letter-spacing:0.1em">PUBLIC KEY (SHARE FREELY)</label>
+          <pre id="public-key-display"></pre>
+          <button onclick="copyKey('public')">Copy Public Key</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>WHAT YOU CAN DO</h2>
+      <p><strong>Sign messages:</strong> Prove you wrote something using your private key</p>
+      <p><strong>Verify signatures:</strong> Check if someone else really wrote a message</p>
+      <p><strong>Export identity:</strong> Backup your keys to use on another device</p>
+      <p><strong>Build trust:</strong> Verify other members' identities and create your trust circle</p>
+    </div>
+  </div>
+
+  <!-- TAB 2: SIGN MESSAGE -->
+  <div class="tab-content" id="sign">
+    <div class="section">
+      <h2>SIGN A MESSAGE</h2>
+      <p>Use your private key to cryptographically sign a message. Anyone with your public key can verify you wrote it.</p>
+
+      <label style="color:#888;font-size:0.85rem">YOUR MESSAGE:</label>
+      <textarea id="message-to-sign" placeholder="Type your message here..."></textarea>
+
+      <button onclick="signMessage()">Sign Message</button>
+      <button class="secondary" onclick="clearSign()">Clear</button>
+
+      <div id="signature-output" class="output" style="display:none"></div>
+
+      <div id="signed-package" style="display:none">
+        <label style="color:#888;font-size:0.85rem;margin-top:20px;display:block">SIGNED PACKAGE (share this):</label>
+        <textarea id="signed-package-text" readonly></textarea>
+        <button onclick="copySignedPackage()">Copy Signed Package</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: VERIFY SIGNATURE -->
+  <div class="tab-content" id="verify">
+    <div class="section">
+      <h2>VERIFY A SIGNATURE</h2>
+      <p>Paste a signed message package to verify the signature is authentic.</p>
+
+      <label style="color:#888;font-size:0.85rem">SIGNED PACKAGE:</label>
+      <textarea id="package-to-verify" placeholder="Paste signed message package here..."></textarea>
+
+      <button onclick="verifySignature()">Verify Signature</button>
+      <button class="secondary" onclick="clearVerify()">Clear</button>
+
+      <div id="verification-output" class="output" style="display:none"></div>
+    </div>
+
+    <div class="section">
+      <h2>MANUAL VERIFICATION</h2>
+      <p>Or verify components separately:</p>
+
+      <label style="color:#888;font-size:0.85rem">MESSAGE:</label>
+      <textarea id="manual-message" placeholder="Original message"></textarea>
+
+      <label style="color:#888;font-size:0.85rem">SIGNATURE (hex):</label>
+      <input type="text" id="manual-signature" placeholder="Signature in hex format">
+
+      <label style="color:#888;font-size:0.85rem">PUBLIC KEY (PEM):</label>
+      <textarea id="manual-pubkey" placeholder="-----BEGIN PUBLIC KEY-----..."></textarea>
+
+      <button onclick="verifyManual()">Verify</button>
+      <button class="secondary" onclick="clearManual()">Clear</button>
+
+      <div id="manual-output" class="output" style="display:none"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: EXPORT/IMPORT -->
+  <div class="tab-content" id="export">
+    <div class="section">
+      <h2>EXPORT IDENTITY</h2>
+      <p>Download your identity as a JSON file. Save this somewhere safe!</p>
+
+      <button onclick="exportIdentity()">Export to JSON</button>
+      <button onclick="exportKeys()">Export Keys Only (PEM)</button>
+
+      <div class="output" style="margin-top:20px;color:#f00">
+        <strong>⚠️ WARNING:</strong> Your private key is in this export. Keep it secret. Anyone with your private key IS you.
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>IMPORT IDENTITY</h2>
+      <p>Restore your identity from a backup file.</p>
+
+      <input type="file" id="import-file" accept=".json,.txt">
+      <button onclick="importIdentity()">Import Identity</button>
+
+      <div id="import-output" class="output" style="display:none"></div>
+
+      <div class="output" style="margin-top:20px;color:#f00">
+        <strong>⚠️ WARNING:</strong> This will REPLACE your current identity. Make sure you've backed up first!
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: TRUST CIRCLE -->
+  <div class="tab-content" id="trust">
+    <div class="section">
+      <h2>YOUR TRUST CIRCLE</h2>
+      <p>Members you've verified and trust.</p>
+
+      <div id="trust-list">
+        <div style="color:#666;font-size:0.9rem;padding:20px;text-align:center">
+          No trusted members yet. Add someone below.
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>ADD TO TRUST CIRCLE</h2>
+      <p>Manually verify someone's identity (meet them IRL, scan QR code, etc.)</p>
+
+      <label style="color:#888;font-size:0.85rem">ANONYMOUS NAME:</label>
+      <input type="text" id="trust-anon-name" placeholder="GHOST-VOID-2163">
+
+      <label style="color:#888;font-size:0.85rem">PUBLIC KEY (PEM):</label>
+      <textarea id="trust-pubkey" placeholder="-----BEGIN PUBLIC KEY-----..."></textarea>
+
+      <label style="color:#888;font-size:0.85rem">NOTES (optional):</label>
+      <input type="text" id="trust-notes" placeholder="Met at HOLLOWTOWN event">
+
+      <button onclick="addToTrust()">Add to Trust Circle</button>
+      <button class="secondary" onclick="clearTrust()">Clear</button>
+
+      <div id="trust-output" class="output" style="display:none"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// GLOBALS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let privateKeyPEM = '';
+let publicKeyPEM = '';
+let anonName = '';
+let createdDate = '';
+let privateKey = null;
+let publicKey = null;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function init() {
+  // Load identity from localStorage
+  privateKeyPEM = localStorage.getItem('d2d_private_key');
+  publicKeyPEM = localStorage.getItem('d2d_public_key');
+  anonName = localStorage.getItem('d2d_anon_name');
+  createdDate = localStorage.getItem('d2d_created');
+
+  if (!privateKeyPEM || !publicKeyPEM || !anonName) {
+    document.getElementById('identity-status').textContent = '✗ No identity found. Please complete signup first.';
+    return;
+  }
+
+  // Import keys
+  try {
+    privateKey = await importPrivateKey(privateKeyPEM);
+    publicKey = await importPublicKey(publicKeyPEM);
+  } catch (e) {
+    document.getElementById('identity-status').textContent = '✗ Error loading keys';
+    console.error(e);
+    return;
+  }
+
+  // Update UI
+  document.getElementById('identity-status').textContent = `✓ Loaded: ${anonName}`;
+  document.getElementById('identity-status').className = 'identity-status loaded';
+  document.getElementById('anon-name-display').textContent = anonName;
+  document.getElementById('created-date').textContent = createdDate ? new Date(createdDate).toLocaleDateString() : 'Unknown';
+  document.getElementById('pubkey-hash').textContent = await getPublicKeyHash();
+
+  // Load trust circle
+  loadTrustCircle();
+}
+
+function showKeys() {
+  const display = document.getElementById('keys-display');
+  if (display.style.display === 'none') {
+    document.getElementById('private-key-display').textContent = privateKeyPEM;
+    document.getElementById('public-key-display').textContent = publicKeyPEM;
+    display.style.display = 'block';
+  } else {
+    display.style.display = 'none';
+  }
+}
+
+async function getPublicKeyHash() {
+  const keyBuffer = await crypto.subtle.exportKey('spki', publicKey);
+  const hash = await crypto.subtle.digest('SHA-256', keyBuffer);
+  return Array.from(new Uint8Array(hash).slice(0, 16))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Deactivate all tabs
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+    // Activate clicked tab
+    tab.classList.add('active');
+    const tabName = tab.getAttribute('data-tab');
+    document.getElementById(tabName).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CRYPTO UTILITIES
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function arrayBufferToBase64(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+
+function base64ToArrayBuffer(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return bytes.buffer;
+}
+
+function pemToArrayBuffer(pem, type) {
+  const b64 = pem
+    .replace(`-----BEGIN ${type}-----`, '')
+    .replace(`-----END ${type}-----`, '')
+    .replace(/\s/g, '');
+  return base64ToArrayBuffer(b64);
+}
+
+async function importPrivateKey(pemKey) {
+  const keyData = pemToArrayBuffer(pemKey, 'PRIVATE KEY');
+  return await crypto.subtle.importKey(
+    'pkcs8',
+    keyData,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    true,
+    ['sign']
+  );
+}
+
+async function importPublicKey(pemKey) {
+  const keyData = pemToArrayBuffer(pemKey, 'PUBLIC KEY');
+  return await crypto.subtle.importKey(
+    'spki',
+    keyData,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    true,
+    ['verify']
+  );
+}
+
+function arrayBufferToHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function hexToArrayBuffer(hex) {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return bytes.buffer;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SIGN MESSAGE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function signMessage() {
+  const message = document.getElementById('message-to-sign').value;
+  if (!message) {
+    alert('Please enter a message to sign');
+    return;
+  }
+
+  try {
+    const signature = await crypto.subtle.sign(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      privateKey,
+      new TextEncoder().encode(message)
+    );
+
+    const signatureHex = arrayBufferToHex(signature);
+
+    // Create signed package
+    const signedPackage = {
+      message: message,
+      signature: signatureHex,
+      publicKey: publicKeyPEM,
+      anonName: anonName,
+      timestamp: new Date().toISOString()
+    };
+
+    document.getElementById('signature-output').textContent = `✓ Message signed!\n\nSignature (hex):\n${signatureHex}`;
+    document.getElementById('signature-output').className = 'output success';
+    document.getElementById('signature-output').style.display = 'block';
+
+    document.getElementById('signed-package-text').value = JSON.stringify(signedPackage, null, 2);
+    document.getElementById('signed-package').style.display = 'block';
+
+  } catch (e) {
+    document.getElementById('signature-output').textContent = `✗ Error signing message: ${e.message}`;
+    document.getElementById('signature-output').className = 'output error';
+    document.getElementById('signature-output').style.display = 'block';
+  }
+}
+
+function copySignedPackage() {
+  const text = document.getElementById('signed-package-text').value;
+  navigator.clipboard.writeText(text);
+  alert('✓ Signed package copied to clipboard!');
+}
+
+function clearSign() {
+  document.getElementById('message-to-sign').value = '';
+  document.getElementById('signature-output').style.display = 'none';
+  document.getElementById('signed-package').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// VERIFY SIGNATURE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function verifySignature() {
+  const packageText = document.getElementById('package-to-verify').value;
+  if (!packageText) {
+    alert('Please paste a signed package');
+    return;
+  }
+
+  try {
+    const pkg = JSON.parse(packageText);
+
+    if (!pkg.message || !pkg.signature || !pkg.publicKey) {
+      throw new Error('Invalid package format');
+    }
+
+    const pubKey = await importPublicKey(pkg.publicKey);
+    const signatureBuffer = hexToArrayBuffer(pkg.signature);
+
+    const isValid = await crypto.subtle.verify(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      pubKey,
+      signatureBuffer,
+      new TextEncoder().encode(pkg.message)
+    );
+
+    if (isValid) {
+      document.getElementById('verification-output').textContent =
+        `✓ SIGNATURE VALID\n\n` +
+        `Message: "${pkg.message}"\n` +
+        `Signed by: ${pkg.anonName || 'Unknown'}\n` +
+        `Timestamp: ${pkg.timestamp || 'Unknown'}\n\n` +
+        `This message was cryptographically signed by the holder of this public key.`;
+      document.getElementById('verification-output').className = 'output success';
+    } else {
+      document.getElementById('verification-output').textContent =
+        `✗ SIGNATURE INVALID\n\n` +
+        `This signature does not match the message and public key.\n` +
+        `Either the message was tampered with or the signature is forged.`;
+      document.getElementById('verification-output').className = 'output error';
+    }
+    document.getElementById('verification-output').style.display = 'block';
+
+  } catch (e) {
+    document.getElementById('verification-output').textContent = `✗ Error verifying: ${e.message}`;
+    document.getElementById('verification-output').className = 'output error';
+    document.getElementById('verification-output').style.display = 'block';
+  }
+}
+
+async function verifyManual() {
+  const message = document.getElementById('manual-message').value;
+  const signatureHex = document.getElementById('manual-signature').value;
+  const pubKeyPEM = document.getElementById('manual-pubkey').value;
+
+  if (!message || !signatureHex || !pubKeyPEM) {
+    alert('Please fill in all fields');
+    return;
+  }
+
+  try {
+    const pubKey = await importPublicKey(pubKeyPEM);
+    const signatureBuffer = hexToArrayBuffer(signatureHex);
+
+    const isValid = await crypto.subtle.verify(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      pubKey,
+      signatureBuffer,
+      new TextEncoder().encode(message)
+    );
+
+    if (isValid) {
+      document.getElementById('manual-output').textContent = '✓ SIGNATURE VALID';
+      document.getElementById('manual-output').className = 'output success';
+    } else {
+      document.getElementById('manual-output').textContent = '✗ SIGNATURE INVALID';
+      document.getElementById('manual-output').className = 'output error';
+    }
+    document.getElementById('manual-output').style.display = 'block';
+
+  } catch (e) {
+    document.getElementById('manual-output').textContent = `✗ Error: ${e.message}`;
+    document.getElementById('manual-output').className = 'output error';
+    document.getElementById('manual-output').style.display = 'block';
+  }
+}
+
+function clearVerify() {
+  document.getElementById('package-to-verify').value = '';
+  document.getElementById('verification-output').style.display = 'none';
+}
+
+function clearManual() {
+  document.getElementById('manual-message').value = '';
+  document.getElementById('manual-signature').value = '';
+  document.getElementById('manual-pubkey').value = '';
+  document.getElementById('manual-output').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// EXPORT/IMPORT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function exportIdentity() {
+  const identityData = {
+    version: '1.0',
+    anonName: anonName,
+    created: createdDate,
+    privateKey: privateKeyPEM,
+    publicKey: publicKeyPEM,
+    token: localStorage.getItem('d2d_access_token'),
+    exportedAt: new Date().toISOString()
+  };
+
+  const blob = new Blob([JSON.stringify(identityData, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-identity-${anonName.toLowerCase()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportKeys() {
+  const keysData = `D2D IDENTITY: ${anonName}
+Created: ${createdDate}
+Exported: ${new Date().toISOString()}
+
+=== PRIVATE KEY (KEEP SECRET) ===
+${privateKeyPEM}
+
+=== PUBLIC KEY (SHARE FREELY) ===
+${publicKeyPEM}
+
+IMPORTANT: Your private key IS your identity.
+If you lose it, you cannot recover your account.
+Save this file somewhere safe.
+`;
+
+  const blob = new Blob([keysData], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-keys-${anonName.toLowerCase()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadIdentity() {
+  exportIdentity();
+}
+
+async function importIdentity() {
+  const fileInput = document.getElementById('import-file');
+  if (!fileInput.files.length) {
+    alert('Please select a file to import');
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const reader = new FileReader();
+
+  reader.onload = async (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      if (!data.privateKey || !data.publicKey || !data.anonName) {
+        throw new Error('Invalid identity file format');
+      }
+
+      // Save to localStorage
+      localStorage.setItem('d2d_private_key', data.privateKey);
+      localStorage.setItem('d2d_public_key', data.publicKey);
+      localStorage.setItem('d2d_anon_name', data.anonName);
+      localStorage.setItem('d2d_created', data.created || new Date().toISOString());
+      if (data.token) {
+        localStorage.setItem('d2d_access_token', data.token);
+      }
+
+      document.getElementById('import-output').textContent = `✓ Identity imported successfully!\n\nWelcome back, ${data.anonName}\n\nReload the page to see your identity.`;
+      document.getElementById('import-output').className = 'output success';
+      document.getElementById('import-output').style.display = 'block';
+
+    } catch (e) {
+      document.getElementById('import-output').textContent = `✗ Import failed: ${e.message}`;
+      document.getElementById('import-output').className = 'output error';
+      document.getElementById('import-output').style.display = 'block';
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function copyKey(type) {
+  const text = type === 'private' ? privateKeyPEM : publicKeyPEM;
+  navigator.clipboard.writeText(text);
+  alert(`✓ ${type === 'private' ? 'Private' : 'Public'} key copied to clipboard!`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TRUST CIRCLE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function loadTrustCircle() {
+  const trustData = localStorage.getItem('d2d_trust_circle');
+  if (!trustData) return;
+
+  try {
+    const trustList = JSON.parse(trustData);
+    if (trustList.length === 0) return;
+
+    const container = document.getElementById('trust-list');
+    container.innerHTML = '';
+
+    trustList.forEach((member, index) => {
+      const item = document.createElement('div');
+      item.className = 'trust-item';
+      item.innerHTML = `
+        <div>
+          <div class="name">${member.anonName}</div>
+          <div class="date">Verified: ${new Date(member.verifiedDate).toLocaleDateString()}</div>
+          ${member.notes ? `<div class="date">${member.notes}</div>` : ''}
+        </div>
+        <button onclick="removeTrust(${index})">Remove</button>
+      `;
+      container.appendChild(item);
+    });
+
+  } catch (e) {
+    console.error('Error loading trust circle:', e);
+  }
+}
+
+function addToTrust() {
+  const anonName = document.getElementById('trust-anon-name').value;
+  const pubKey = document.getElementById('trust-pubkey').value;
+  const notes = document.getElementById('trust-notes').value;
+
+  if (!anonName || !pubKey) {
+    alert('Please enter both anonymous name and public key');
+    return;
+  }
+
+  try {
+    // Validate public key format
+    if (!pubKey.includes('BEGIN PUBLIC KEY')) {
+      throw new Error('Invalid public key format');
+    }
+
+    const trustEntry = {
+      anonName: anonName,
+      publicKey: pubKey,
+      verifiedDate: new Date().toISOString(),
+      notes: notes
+    };
+
+    // Get existing trust circle
+    const trustData = localStorage.getItem('d2d_trust_circle');
+    const trustList = trustData ? JSON.parse(trustData) : [];
+
+    // Add new entry
+    trustList.push(trustEntry);
+
+    // Save
+    localStorage.setItem('d2d_trust_circle', JSON.stringify(trustList));
+
+    document.getElementById('trust-output').textContent = `✓ ${anonName} added to your trust circle!`;
+    document.getElementById('trust-output').className = 'output success';
+    document.getElementById('trust-output').style.display = 'block';
+
+    // Clear form
+    clearTrust();
+
+    // Reload list
+    loadTrustCircle();
+
+  } catch (e) {
+    document.getElementById('trust-output').textContent = `✗ Error: ${e.message}`;
+    document.getElementById('trust-output').className = 'output error';
+    document.getElementById('trust-output').style.display = 'block';
+  }
+}
+
+function removeTrust(index) {
+  const trustData = localStorage.getItem('d2d_trust_circle');
+  if (!trustData) return;
+
+  const trustList = JSON.parse(trustData);
+  trustList.splice(index, 1);
+
+  localStorage.setItem('d2d_trust_circle', JSON.stringify(trustList));
+  loadTrustCircle();
+}
+
+function clearTrust() {
+  document.getElementById('trust-anon-name').value = '';
+  document.getElementById('trust-pubkey').value = '';
+  document.getElementById('trust-notes').value = '';
+  document.getElementById('trust-output').style.display = 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+
+init();
+</script>
+
+</body>
+</html>

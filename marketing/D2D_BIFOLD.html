@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>D2D Bifold Brochure</title>
+<style>
+@page { size: letter landscape; margin: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+}
+
+/* Landscape letter = 11" x 8.5" */
+/* Fold in half = two 5.5" x 8.5" panels */
+
+.brochure {
+  width: 11in;
+  height: 8.5in;
+  display: flex;
+}
+
+/* LEFT PANEL (Back when folded) */
+.panel.left {
+  width: 5.5in;
+  height: 8.5in;
+  padding: 0.5in;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px dashed #ccc; /* Fold line */
+}
+
+.panel.left h2 {
+  font-size: 16pt;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.panel.left .features {
+  text-align: left;
+  max-width: 3.5in;
+  margin: 0 auto 30px;
+  font-size: 12pt;
+  line-height: 1.8;
+}
+
+.panel.left .features li {
+  margin-bottom: 8px;
+}
+
+.panel.left .contact {
+  margin-top: auto;
+  padding-top: 30px;
+  border-top: 1px solid #ddd;
+}
+
+.panel.left .url {
+  font-size: 18pt;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.panel.left .email {
+  font-size: 11pt;
+  color: #666;
+}
+
+.panel.left .location {
+  font-size: 10pt;
+  color: #888;
+  margin-top: 8px;
+}
+
+/* RIGHT PANEL (Front when folded) */
+.panel.right {
+  width: 5.5in;
+  height: 8.5in;
+  padding: 0.5in;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel.right .header {
+  text-align: center;
+  padding-bottom: 24px;
+  border-bottom: 3px solid #000;
+  margin-bottom: 24px;
+}
+
+.panel.right h1 {
+  font-size: 36pt;
+  font-weight: 900;
+  letter-spacing: -2px;
+}
+
+.panel.right .tagline {
+  font-size: 13pt;
+  color: #555;
+  font-style: italic;
+  margin-top: 8px;
+}
+
+/* THE TABLE */
+.comparison {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid #000;
+  flex: 1;
+}
+
+.col {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.col.them {
+  background: #fff5f5;
+  border-right: 2px solid #000;
+}
+
+.col.us {
+  background: #f5fff5;
+}
+
+.col h3 {
+  font-size: 11pt;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.col.them h3 { color: #990000; }
+.col.us h3 { color: #006600; }
+
+.col ul {
+  list-style: none;
+  font-size: 11pt;
+  line-height: 1.7;
+  flex: 1;
+}
+
+.col li {
+  margin-bottom: 6px;
+  padding-left: 18px;
+  position: relative;
+}
+
+.col.them li::before {
+  content: "✗";
+  position: absolute;
+  left: 0;
+  color: #cc0000;
+  font-weight: bold;
+}
+
+.col.us li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #00aa00;
+  font-weight: bold;
+}
+
+/* Price */
+.price-bar {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 16px;
+  margin-top: 20px;
+}
+
+.price-bar .price {
+  font-size: 28pt;
+  font-weight: 900;
+}
+
+.price-bar .note {
+  font-size: 10pt;
+  opacity: 0.8;
+}
+
+@media print {
+  .col.them, .col.us, .price-bar {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="brochure">
+  
+  <!-- LEFT PANEL (Back when folded) -->
+  <div class="panel left">
+    <h2>What You Get</h2>
+    
+    <ul class="features">
+      <li>🔍 <strong>Private Search</strong><br>
+          <small>Search without being tracked</small></li>
+      <li>📓 <strong>Private Notebook</strong><br>
+          <small>Notes stored on YOUR device only</small></li>
+      <li>🤖 <strong>Private AI</strong><br>
+          <small>AI tools without logging</small></li>
+      <li>📊 <strong>Bot Detection</strong><br>
+          <small>See who's crawling your sites</small></li>
+    </ul>
+    
+    <div class="contact">
+      <div class="url">death2data.com</div>
+      <div class="email">matt@death2data.com</div>
+      <div class="location">Based in Florida, USA<br>Open source. No venture capital.</div>
+    </div>
+  </div>
+  
+  <!-- RIGHT PANEL (Front when folded) -->
+  <div class="panel right">
+    
+    <div class="header">
+      <h1>DEATH2DATA</h1>
+      <p class="tagline">Your data is yours. Keep it that way.</p>
+    </div>
+    
+    <div class="comparison">
+      <div class="comparison-grid">
+        <div class="col them">
+          <h3>Big Tech Takes</h3>
+          <ul>
+            <li>Your search history</li>
+            <li>Your location data</li>
+            <li>Your browsing habits</li>
+            <li>Your messages</li>
+            <li>Your photos</li>
+            <li>Your contacts</li>
+            <li>Trains AI on you</li>
+            <li>Keeps it forever</li>
+          </ul>
+        </div>
+        <div class="col us">
+          <h3>D2D Keeps Nothing</h3>
+          <ul>
+            <li>No search history</li>
+            <li>No tracking cookies</li>
+            <li>No user profiles</li>
+            <li>No data collection</li>
+            <li>No selling to anyone</li>
+            <li>No sharing</li>
+            <li>No AI training</li>
+            <li>Your data = yours</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="price-bar">
+        <span class="price">$1/month</span>
+        <span class="note"> — No contracts. Cancel anytime.</span>
+      </div>
+    </div>
+    
+  </div>
+  
+</div>
+
+</body>
+</html>

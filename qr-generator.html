@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D2D - QR Code Generator</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0a0a0a;
+            color: #fff;
+            padding: 40px 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #0f0;
+        }
+        .subtitle {
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+        .qr-item {
+            background: #000;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .qr-item h3 {
+            color: #0f0;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .qr-code {
+            background: #fff;
+            padding: 20px;
+            display: inline-block;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .qr-code svg {
+            display: block;
+        }
+        .qr-url {
+            font-size: 11px;
+            color: #666;
+            word-break: break-all;
+            margin-bottom: 15px;
+            font-family: monospace;
+        }
+        .download-btn {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .download-btn:hover {
+            background: #fff;
+        }
+        .instructions {
+            margin-top: 50px;
+            padding: 30px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        .instructions h3 {
+            color: #0f0;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .instructions p {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+        .instructions ul {
+            list-style: none;
+            margin-left: 0;
+            color: #888;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .instructions li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #0f0;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Qr Generator - Death2Data</title>
+<meta name="description" content="Qr Generator page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="qr-generator, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/qr-generator.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Qr Generator - Death2Data">
+<meta property="og:description" content="Qr Generator page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/qr-generator.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Qr Generator - Death2Data">
+<meta name="twitter:description" content="Qr Generator page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Qr Generator - Death2Data",
+  "description": "Qr Generator page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/qr-generator.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+    <h1>D2D QR CODES</h1>
+    <div class="subtitle">Right-click to save, or use download buttons</div>
+
+    <div class="qr-grid">
+        <div class="qr-item">
+            <h3>💳 Payment Link</h3>
+            <div class="qr-code" id="qr-payment"></div>
+            <div class="qr-url">buy.stripe.com/cNi...</div>
+            <button class="download-btn" onclick="downloadQR('qr-payment', 'd2d-payment-qr.svg')">
+                Download SVG
+            </button>
+        </div>
+
+        <div class="qr-item">
+            <h3>🌐 Website</h3>
+            <div class="qr-code" id="qr-site"></div>
+            <div class="qr-url">death2data.com</div>
+            <button class="download-btn" onclick="downloadQR('qr-site', 'd2d-website-qr.svg')">
+                Download SVG
+            </button>
+        </div>
+
+        <div class="qr-item">
+            <h3>🔧 Member Tools</h3>
+            <div class="qr-code" id="qr-tools"></div>
+            <div class="qr-url">death2data.com/tools.html</div>
+            <button class="download-btn" onclick="downloadQR('qr-tools', 'd2d-tools-qr.svg')">
+                Download SVG
+            </button>
+        </div>
+
+        <div class="qr-item">
+            <h3>📊 Analytics</h3>
+            <div class="qr-code" id="qr-analytics"></div>
+            <div class="qr-url">death2data.com/analytics.html</div>
+            <button class="download-btn" onclick="downloadQR('qr-analytics', 'd2d-analytics-qr.svg')">
+                Download SVG
+            </button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <h3>📋 HOW TO USE</h3>
+
+        <p><strong>For Business Cards:</strong></p>
+        <ul>
+            <li>Download "Payment Link" QR code</li>
+            <li>Import into your card design software</li>
+            <li>Print on 100lb+ cardstock</li>
+            <li>Test scan before printing full batch</li>
+        </ul>
+
+        <p><strong>For Events:</strong></p>
+        <ul>
+            <li>Use event-display.html for fullscreen QR</li>
+            <li>Or download any QR and print large format (11"×17" or bigger)</li>
+            <li>Place on table, wall, or projector screen</li>
+        </ul>
+
+        <p><strong>For Sponsors/Investors:</strong></p>
+        <ul>
+            <li>Include QR in pitch deck slides</li>
+            <li>Add to one-pagers and handouts</li>
+            <li>Share analytics QR to show traction</li>
+        </ul>
+
+        <p><strong>Download Formats:</strong></p>
+        <ul>
+            <li>SVG = Vector (scales infinitely, best for print)</li>
+            <li>Right-click QR → "Save image as PNG" for web use</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+// Generate QR codes
+function makeQR(text, elementId, size = 6) {
+    var qr = qrcode(0, 'M');
+    qr.addData(text);
+    qr.make();
+    document.getElementById(elementId).innerHTML = qr.createSvgTag(size, 0);
+}
+
+// Payment link (4-week billing)
+makeQR('https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00
+
+// Website
+makeQR('https://death2data.com', 'qr-site');
+
+// Member tools
+makeQR('https://death2data.com/tools.html', 'qr-tools');
+
+// Analytics
+makeQR('https://death2data.com/analytics.html', 'qr-analytics');
+
+// Download function
+function downloadQR(elementId, filename) {
+    const svgElement = document.getElementById(elementId).querySelector('svg');
+    const svgData = new XMLSerializer().serializeToString(svgElement);
+    const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+    const url = URL.createObjectURL(svgBlob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>

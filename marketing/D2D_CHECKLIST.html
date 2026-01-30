@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>D2D - PRINT THIS AND DO IT WITH A PEN</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @page { size: letter; margin: 0.5in; }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 0.5in;
+            max-width: 8.5in;
+        }
+        
+        h1 {
+            font-size: 24px;
+            border-bottom: 3px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            margin-bottom: 24px;
+            padding: 16px;
+            border: 2px solid #000;
+        }
+        
+        .step-header {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #000;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        
+        .substep {
+            margin: 8px 0 8px 36px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        .substep .checkbox {
+            width: 16px;
+            height: 16px;
+            border-width: 2px;
+            margin-top: 2px;
+        }
+        
+        .write-line {
+            border-bottom: 1px solid #000;
+            min-height: 24px;
+            margin: 8px 0 8px 36px;
+        }
+        
+        .note {
+            background: #f0f0f0;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 12px;
+        }
+        
+        .bignum {
+            font-size: 24px;
+            font-weight: bold;
+            width: 36px;
+        }
+        
+        @media print {
+            .no-print { display: none; }
+        }
+        
+        .no-print {
+            background: #ffffcc;
+            border: 2px solid #000;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <strong>PRINT THIS PAGE.</strong> Get a pen. Do each step. Check the box when done. No screens needed until Step 3.
+</div>
+
+<h1>D2D LAUNCH CHECKLIST</h1>
+<p style="margin-bottom: 24px;">Date: _______________ </p>
+
+<!-- STEP 1 -->
+<div class="step">
+    <div class="step-header">
+        <span class="bignum">1</span>
+        <span class="checkbox"></span>
+        <span>GET YOUR EMAILS FROM NETLIFY</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Open laptop. Go to: <strong>app.netlify.com</strong></span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Log in (or create account if needed)</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click on your site (death2data)</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click "Forms" in the left sidebar</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click on the form name</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>You see emails! Write them below:</span>
+    </div>
+    
+    <p style="margin: 12px 0 4px 36px; font-weight: bold;">EMAILS:</p>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+    
+    <p style="margin: 12px 0 4px 36px;">Total emails: _______</p>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+    <div class="step-header">
+        <span class="bignum">2</span>
+        <span class="checkbox"></span>
+        <span>SEND ONE EMAIL</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Open your email (Gmail or whatever)</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click Compose</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>TO: Pick ONE email from your list above</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>SUBJECT: <strong>Quick question about D2D</strong></span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>BODY: Type this exactly:</span>
+    </div>
+    
+    <div class="note">
+        Hey - you signed up for Death2Data.<br><br>
+        Quick question: What's your biggest privacy frustration?<br><br>
+        Just reply with one sentence. I read every response.<br><br>
+        - Matt
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click Send</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Write who you sent it to: ___________________</span>
+    </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+    <div class="step-header">
+        <span class="bignum">3</span>
+        <span class="checkbox"></span>
+        <span>ADD THE JOURNAL PAGE TO YOUR SITE</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Download the prompt.html file Claude made</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Go to app.netlify.com</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click your site</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Click "Deploys"</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Drag prompt.html onto the deploy area</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Wait for deploy to finish</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Test it: Go to death2data.com/prompt</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Does it work? YES / NO (circle one)</span>
+    </div>
+</div>
+
+<!-- STEP 4 -->
+<div class="step">
+    <div class="step-header">
+        <span class="bignum">4</span>
+        <span class="checkbox"></span>
+        <span>TEXT ONE FRIEND</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Open your phone</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Pick one friend who would be honest</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Write their name: ___________________</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Send this text:</span>
+    </div>
+    
+    <div class="note">
+        Hey - building a privacy thing called Death2Data. Would you pay $1 for this? Be honest. death2data.com
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Text sent</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>What did they say? Write it:</span>
+    </div>
+    <div class="write-line"></div>
+    <div class="write-line"></div>
+</div>
+
+<!-- STEP 5 -->
+<div class="step">
+    <div class="step-header">
+        <span class="bignum">5</span>
+        <span class="checkbox"></span>
+        <span>DONE FOR TODAY</span>
+    </div>
+    
+    <p style="margin-left: 36px;">You did:</p>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Got emails from Netlify</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Sent one email</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Added journal page</span>
+    </div>
+    
+    <div class="substep">
+        <span class="checkbox"></span>
+        <span>Texted one friend</span>
+    </div>
+    
+    <p style="margin: 16px 0 0 36px; font-weight: bold;">TOMORROW: Send emails to everyone else on the list. One at a time.</p>
+</div>
+
+<div style="margin-top: 32px; text-align: center; font-size: 12px; color: #666;">
+    D2D Launch Checklist v1 • Print this • Use a pen • Check boxes • Done
+</div>
+
+</body>
+</html>

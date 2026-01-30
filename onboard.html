@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Welcome to D2D | Onboarding</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:ui-monospace,monospace;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  width:100%;
+}
+
+h1{
+  font-size:2.5rem;
+  margin-bottom:10px;
+  color:#0f0;
+}
+
+.subtitle{
+  color:#666;
+  font-size:0.9rem;
+  margin-bottom:40px;
+}
+
+.form-section{
+  background:#0a0a0a;
+  border:1px solid #222;
+  padding:30px;
+  margin-bottom:20px;
+}
+
+.form-section h2{
+  font-size:1rem;
+  color:#0f0;
+  margin-bottom:20px;
+  letter-spacing:0.1em;
+}
+
+label{
+  display:block;
+  color:#666;
+  font-size:0.85rem;
+  margin-bottom:8px;
+  letter-spacing:0.05em;
+}
+
+input, textarea{
+  width:100%;
+  padding:12px;
+  background:#000;
+  border:1px solid #222;
+  color:#fff;
+  font-family:inherit;
+  font-size:0.95rem;
+  margin-bottom:20px;
+}
+
+input:focus, textarea:focus{
+  outline:none;
+  border-color:#0f0;
+}
+
+textarea{
+  min-height:120px;
+  resize:vertical;
+}
+
+.radio-group{
+  margin-bottom:20px;
+}
+
+.radio-option{
+  background:#000;
+  border:1px solid #222;
+  padding:15px;
+  margin-bottom:10px;
+  cursor:pointer;
+  transition:border-color 0.2s;
+}
+
+.radio-option:hover{
+  border-color:#0f0;
+}
+
+.radio-option input{
+  margin:0 10px 0 0;
+  width:auto;
+}
+
+.radio-option label{
+  display:inline;
+  margin:0;
+  cursor:pointer;
+}
+
+button{
+  width:100%;
+  padding:18px;
+  background:#0f0;
+  color:#000;
+  border:none;
+  font-family:inherit;
+  font-weight:700;
+  font-size:1.1rem;
+  cursor:pointer;
+  letter-spacing:0.1em;
+}
+
+button:hover{
+  background:#fff;
+}
+
+button:disabled{
+  background:#222;
+  color:#666;
+  cursor:not-allowed;
+}
+
+.note{
+  background:#050505;
+  border:1px solid #222;
+  padding:15px;
+  margin-top:20px;
+  color:#666;
+  font-size:0.85rem;
+  line-height:1.6;
+}
+
+.success{
+  background:#050505;
+  border:1px solid #0f0;
+  padding:30px;
+  text-align:center;
+}
+
+.success h2{
+  color:#0f0;
+  margin-bottom:15px;
+}
+
+@media(max-width:768px){
+  h1{
+    font-size:1.8rem;
+  }
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>Onboard - Death2Data</title>
+<meta name="description" content="Onboard page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="onboard, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/onboard.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Onboard - Death2Data">
+<meta property="og:description" content="Onboard page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/onboard.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Onboard - Death2Data">
+<meta name="twitter:description" content="Onboard page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Onboard - Death2Data",
+  "description": "Onboard page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/onboard.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  <h1>WELCOME TO D2D</h1>
+  <p class="subtitle">You paid $1. Now let's build something.</p>
+
+  <div id="form-container">
+    <form id="onboarding-form">
+      <!-- Section 1: Basic Info -->
+      <div class="form-section">
+        <h2>1. WHO ARE YOU?</h2>
+        <label>Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required>
+
+        <label>Email</label>
+        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+      </div>
+
+      <!-- Section 2: What do you want to build? -->
+      <div class="form-section">
+        <h2>2. WHAT DO YOU WANT TO BUILD?</h2>
+        <label>Describe your project idea</label>
+        <textarea id="project_idea" name="project_idea" placeholder="Example: A privacy-focused search engine that doesn't track users..." required></textarea>
+
+        <label>What's the main problem you're solving?</label>
+        <textarea id="problem" name="problem" placeholder="Example: People don't have private alternatives to Google..." required></textarea>
+      </div>
+
+      <!-- Section 3: Technical Level -->
+      <div class="form-section">
+        <h2>3. YOUR TECHNICAL LEVEL</h2>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="level_beginner" name="technical_level" value="beginner" required>
+            <label for="level_beginner">Beginner - I can use a computer, that's it</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="level_some" name="technical_level" value="some_coding">
+            <label for="level_some">Some coding - I know HTML/CSS/basic Python</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="level_intermediate" name="technical_level" value="intermediate">
+            <label for="level_intermediate">Intermediate - I can build websites/apps</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="level_advanced" name="technical_level" value="advanced">
+            <label for="level_advanced">Advanced - I ship code for a living</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Timeline -->
+      <div class="form-section">
+        <h2>4. WHEN DO YOU WANT TO LAUNCH?</h2>
+        <div class="radio-group">
+          <div class="radio-option">
+            <input type="radio" id="timeline_asap" name="timeline" value="asap" required>
+            <label for="timeline_asap">ASAP - I need this working this week</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="timeline_month" name="timeline" value="1_month">
+            <label for="timeline_month">1 month - I have time to iterate</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="timeline_3months" name="timeline" value="3_months">
+            <label for="timeline_3months">3 months - Building something complex</label>
+          </div>
+          <div class="radio-option">
+            <input type="radio" id="timeline_exploring" name="timeline" value="exploring">
+            <label for="timeline_exploring">Just exploring - No rush</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 5: Help Needed -->
+      <div class="form-section">
+        <h2>5. WHAT DO YOU NEED HELP WITH?</h2>
+        <label>Check all that apply (type 'x' in brackets)</label>
+        <textarea id="help_needed" name="help_needed" placeholder="[ ] I need help with the technical stuff
+[ ] I have the code, I need deployment help
+[ ] I need design/UX
+[ ] I need to figure out if this idea is worth building
+[ ] Other: _____"></textarea>
+      </div>
+
+      <button type="submit">SUBMIT → GET STARTED</button>
+    </form>
+
+    <div class="note">
+      <strong>What happens next?</strong><br>
+      We'll review your project and email you within 24 hours with:<br>
+      - Technical recommendations<br>
+      - Tools/resources you need<br>
+      - Step-by-step plan<br>
+      - Ollama AI agent to help you build
+    </div>
+  </div>
+
+  <div id="success-message" style="display:none">
+    <div class="success">
+      <h2>✓ SUBMISSION RECEIVED</h2>
+      <p style="color:#666;margin-top:15px">
+        We'll email you within 24 hours with your personalized build plan.
+      </p>
+      <p style="color:#666;margin-top:20px">
+        <strong>Next:</strong> Check your email (check spam folder too)<br>
+        <strong>Questions:</strong> hello@death2data.com
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// FORM HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  // Add timestamp
+  data.timestamp = new Date().toISOString();
+
+  try {
+    // Send to Netlify Function (or your backend)
+    const response = await fetch('/.netlify/functions/onboarding-submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error('Submission failed');
+    }
+
+    // Show success message
+    document.getElementById('form-container').style.display = 'none';
+    document.getElementById('success-message').style.display = 'block';
+
+  } catch (error) {
+    alert('Submission failed. Please email us at hello@death2data.com with your project details.');
+    console.error('Error:', error);
+  }
+});
+</script>
+
+</body>
+</html>

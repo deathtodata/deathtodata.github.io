@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>404 - Page Not Found | Death2Data</title>
+<script src="/js/tracker.js" data-site="death2data.com" defer></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:ui-monospace,monospace;
+  background:#000;
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
+
+.container{
+  max-width:600px;
+  text-align:center;
+}
+
+.error-code{
+  font-size:120px;
+  font-weight:bold;
+  color:#f00;
+  line-height:1;
+  margin-bottom:20px;
+  text-shadow:0 0 20px #f00;
+}
+
+h1{
+  font-size:32px;
+  margin-bottom:20px;
+  color:#fff;
+}
+
+p{
+  font-size:18px;
+  line-height:1.6;
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+.btn{
+  display:inline-block;
+  background:#f00;
+  color:#fff;
+  text-decoration:none;
+  padding:15px 40px;
+  font-size:18px;
+  border:2px solid #f00;
+  transition:all 0.3s;
+}
+
+.btn:hover{
+  background:transparent;
+  color:#f00;
+}
+
+.countdown{
+  margin-top:40px;
+  font-size:14px;
+  color:#666;
+}
+
+.countdown strong{
+  color:#f00;
+}
+
+@media (max-width:600px){
+  .error-code{
+    font-size:80px;
+  }
+  h1{
+    font-size:24px;
+  }
+  p{
+    font-size:16px;
+  }
+}
+</style>
+<!-- SEO/AEO/LLMEO Head -->
+<title>404 - Death2Data</title>
+<meta name="description" content="404 page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="keywords" content="404, death2data, privacy tools">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/404.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="404 - Death2Data">
+<meta property="og:description" content="404 page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/404.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="404 - Death2Data">
+<meta name="twitter:description" content="404 page. Privacy-first tools for $1/month. No tracking. No ads.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "404 - Death2Data",
+  "description": "404 page. Privacy-first tools for $1/month. No tracking. No ads.",
+  "url": "https://death2data.com/404.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+</head>
+<body>
+
+<div class="container">
+  <div class="error-code">404</div>
+  <h1>Page Not Found</h1>
+  <p>
+    The page you're looking for doesn't exist.<br>
+    It may have been moved or deleted.
+  </p>
+
+  <a href="/" class="btn">← Go Home</a>
+
+  <div class="countdown">
+    Redirecting in <strong id="timer">5</strong> seconds...
+  </div>
+</div>
+
+<script>
+// Auto-redirect to homepage after 5 seconds
+let seconds = 5;
+const timer = document.getElementById('timer');
+
+const countdown = setInterval(() => {
+  seconds--;
+  timer.textContent = seconds;
+
+  if (seconds <= 0) {
+    clearInterval(countdown);
+    window.location.href = '/';
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
