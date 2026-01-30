@@ -300,59 +300,110 @@ h1 {
 </div>
 
 <script>
-// Payment links (replace with your actual Stripe links)
-const PAYMENT_LINKS = {
-  onetime: '#',     // $1 one-time - main offer
-  supporter: '#',   // $10 one-time - support
-  sponsor: '#'      // $50 one-time - sponsor
-};
+// Load products from Stripe catalog
+let catalog = null;
+const WORKER_API = 'https://d2d-api.mattmauersp.workers.dev';
 
-// Try to load from API
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname.includes('192.168')
-  ? 'http://localhost:8000'
-  : 'https://api.death2data.com';
-
-async function loadPaymentLinks() {
+async function loadProducts() {
   try {
-    const res = await fetch(`${API_BASE}/api/payment-links-simple`);
-    const data = await res.json();
-    if (data.monthly) {
-      Object.assign(PAYMENT_LINKS, data);
+    const res = await fetch('./products.json');
+    catalog = await res.json();
+    console.log('✅ Loaded product catalog:', catalog);
+
+    // Find "Death2Data Lifetime Access" product
+    const d2dProduct = catalog.products.find(p => p.name.includes('Death2Data'));
+
+    if (d2dProduct) {
+      // Display in-stock status (future feature)
+      const inStockCount = d2dProduct.prices.filter(p => p.in_stock).length;
+      console.log(`📦 ${inStockCount} prices available`);
     }
   } catch (err) {
-    console.log('Using default payment links');
+    console.error('❌ Failed to load products:', err);
   }
 }
 
-// Handle clicks
+// Create checkout session via Cloudflare Worker
+async function checkout(priceId) {
+  try {
+    console.log('Creating checkout for price:', priceId);
+
+    const res = await fetch(`${WORKER_API}/checkout`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        priceId,
+        successUrl: window.location.origin + '/?payment=success',
+        cancelUrl: window.location.href
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      throw new Error(data.error || 'Unknown error');
+    }
+  } catch (err) {
+    console.error('Checkout error:', err);
+    alert('Payment error. Email matt@death2data.com or try again.');
+  }
+}
+
+// Get price ID by amount
+function getPriceId(amount) {
+  if (!catalog) {
+    console.error('Catalog not loaded yet');
+    return null;
+  }
+
+  const d2dProduct = catalog.products.find(p => p.name.includes('Death2Data'));
+  if (!d2dProduct) {
+    console.error('Death2Data product not found');
+    return null;
+  }
+
+  const price = d2dProduct.prices.find(p =>
+    p.amount_dollars === amount && p.type === 'one_time' && p.in_stock
+  );
+
+  return price ? price.id : null;
+}
+
+// Button handlers
 document.getElementById('cta-onetime').addEventListener('click', (e) => {
   e.preventDefault();
-  if (PAYMENT_LINKS.onetime !== '#') {
-    window.location.href = PAYMENT_LINKS.onetime;
+  const priceId = getPriceId(1.0);
+  if (priceId) {
+    checkout(priceId);
   } else {
-    alert('Payment link not configured. Email matt@death2data.com to join!');
+    alert('Product unavailable. Email matt@death2data.com');
   }
 });
 
 document.getElementById('cta-supporter').addEventListener('click', (e) => {
   e.preventDefault();
-  if (PAYMENT_LINKS.supporter !== '#') {
-    window.location.href = PAYMENT_LINKS.supporter;
+  const priceId = getPriceId(10.0);
+  if (priceId) {
+    checkout(priceId);
   } else {
-    alert('Payment link not configured. Email matt@death2data.com to join!');
+    alert('Product unavailable. Email matt@death2data.com');
   }
 });
 
 document.getElementById('cta-sponsor').addEventListener('click', (e) => {
   e.preventDefault();
-  if (PAYMENT_LINKS.sponsor !== '#') {
-    window.location.href = PAYMENT_LINKS.sponsor;
+  const priceId = getPriceId(50.0);
+  if (priceId) {
+    checkout(priceId);
   } else {
-    alert('Payment link not configured. Email matt@death2data.com to join!');
+    alert('Product unavailable. Email matt@death2data.com');
   }
 });
 
-loadPaymentLinks();
+// Load products on page load
+loadProducts();
 </script>
 
 </body>

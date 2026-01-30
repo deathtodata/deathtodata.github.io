@@ -1,0 +1,95 @@
+{
+  "products": [
+    {
+      "id": "prod_Tm3WTKZ087kNck",
+      "name": "$1-AI-Agent",
+      "description": "Template System Agent",
+      "active": true,
+      "prices": [
+        {
+          "id": "price_1SvNKEG7fHl88NQ8GPLCTtxp",
+          "amount_cents": 100,
+          "amount_dollars": 1.0,
+          "currency": "usd",
+          "type": "recurring",
+          "nickname": null,
+          "in_stock": true,
+          "interval": "month",
+          "interval_count": 1
+        },
+        {
+          "id": "price_1SoVPVG7fHl88NQ8E9KAaaMG",
+          "amount_cents": 100,
+          "amount_dollars": 1.0,
+          "currency": "usd",
+          "type": "one_time",
+          "nickname": null,
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "id": "prod_TtBAXDTO3T7b9e",
+      "name": "Death2Data Lifetime Access",
+      "description": "Privacy tools: search, notebook, QR codes, grant finder - lifetime access",
+      "active": true,
+      "prices": [
+        {
+          "id": "price_1SvOpPG7fHl88NQ8jtjUXKKH",
+          "amount_cents": 100,
+          "amount_dollars": 1.0,
+          "currency": "usd",
+          "type": "one_time",
+          "nickname": "D2D  One-time",
+          "in_stock": true
+        },
+        {
+          "id": "price_1SvOpaG7fHl88NQ892LvwHKP",
+          "amount_cents": 1000,
+          "amount_dollars": 10.0,
+          "currency": "usd",
+          "type": "one_time",
+          "nickname": "D2D  Supporter",
+          "in_stock": true
+        },
+        {
+          "id": "price_1SvOpjG7fHl88NQ8uIyMKNEN",
+          "amount_cents": 5000,
+          "amount_dollars": 50.0,
+          "currency": "usd",
+          "type": "one_time",
+          "nickname": "D2D  Sponsor",
+          "in_stock": true
+        }
+      ]
+    },
+    {
+      "id": "prod_Tt6Y0aXY58yrFA",
+      "name": "myproduct",
+      "description": "(created by Stripe CLI)",
+      "active": true,
+      "prices": [
+        {
+          "id": "price_1SvKLpG7fHl88NQ8jqbSm8xG",
+          "amount_cents": 1500,
+          "amount_dollars": 15.0,
+          "currency": "usd",
+          "type": "one_time",
+          "nickname": null,
+          "in_stock": true
+        }
+      ]
+    }
+  ],
+  "payment_links": {
+    "plink_1SvNLKG7fHl88NQ84CRZzP6d": {
+      "url": "https://buy.stripe.com/test_8x2eVdabz5Mt1VU2pa4wM01",
+      "active": true
+    },
+    "plink_1SoVR0G7fHl88NQ8FOHGXMcD": {
+      "url": "https://buy.stripe.com/test_cNieVd5Vjb6N2ZY6Fq4wM00",
+      "active": true
+    }
+  },
+  "generated_at": "2026-01-30T22:32:57Z"
+}
