@@ -48,6 +48,11 @@ h1 { color: #0f0; font-size: 1.8rem; margin-bottom: 10px; }
 .engine:hover { border-color: #0f0; color: #0f0; }
 .search-note { color: #555; font-size: 13px; margin-top: 20px; line-height: 1.6; }
 
+/* Search Mode Toggle */
+.search-mode-btn { background: #111; border: 1px solid #222; color: #666; padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500; border-radius: 4px; transition: all 0.2s; }
+.search-mode-btn:hover { border-color: #333; color: #888; }
+.search-mode-btn.active { background: #0f0; color: #000; border-color: #0f0; }
+
 /* Search History */
 .search-history { margin-top: 30px; padding-top: 20px; border-top: 1px solid #222; }
 .search-history h3 { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
@@ -136,17 +141,37 @@ h1 { color: #0f0; font-size: 1.8rem; margin-bottom: 10px; }
 
   <!-- SEARCH PANEL -->
   <div id="search" class="panel active">
+    <!-- Search Mode Toggle -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;">
+      <button id="web-search-btn" class="search-mode-btn active" onclick="switchSearchMode('web')">🌐 Web Search</button>
+      <button id="site-search-btn" class="search-mode-btn" onclick="switchSearchMode('site')">🔍 Search This Site</button>
+    </div>
+
     <div class="search-box">
       <input type="text" id="query" placeholder="Search privately..." autofocus>
       <button onclick="doSearch()">Search</button>
     </div>
 
-    <p style="color:#888;margin-bottom:15px;">Pick a private search engine:</p>
+    <!-- Web Search Engines -->
+    <div id="web-search-options">
+      <p style="color:#888;margin-bottom:15px;">Pick a private search engine:</p>
 
-    <div class="search-engines">
-      <a href="#" class="engine" data-url="https://searx.be/search?q=">SearX.be</a>
-      <a href="#" class="engine" data-url="https://search.brave.com/search?q=">Brave</a>
-      <a href="#" class="engine" data-url="https://duckduckgo.com/?q=">DuckDuckGo</a>
+      <div class="search-engines">
+        <a href="#" class="engine" data-url="https://searx.be/search?q=">SearX.be</a>
+        <a href="#" class="engine" data-url="https://search.brave.com/search?q=">Brave</a>
+        <a href="#" class="engine" data-url="https://duckduckgo.com/?q=">DuckDuckGo</a>
+      </div>
+    </div>
+
+    <!-- Site Search Options -->
+    <div id="site-search-options" style="display:none;">
+      <p style="color:#888;margin-bottom:15px;">Search death2data.com pages:</p>
+      <div class="search-engines">
+        <a href="#" class="engine site-engine" data-url="https://searx.be/search?q=site:death2data.com+">SearX</a>
+        <a href="#" class="engine site-engine" data-url="https://search.brave.com/search?q=site:death2data.com+">Brave</a>
+        <a href="#" class="engine site-engine" data-url="https://duckduckgo.com/?q=site:death2data.com+">DuckDuckGo</a>
+        <a href="#" class="engine site-engine" data-url="https://www.google.com/search?q=site:death2data.com+">Google</a>
+      </div>
     </div>
 
     <p class="search-note">
@@ -379,6 +404,24 @@ document.querySelectorAll('.tab').forEach(tab => {
 // ========================================
 // SEARCH
 // ========================================
+let searchMode = 'web'; // 'web' or 'site'
+
+function switchSearchMode(mode) {
+  searchMode = mode;
+
+  // Update button states
+  document.getElementById('web-search-btn').classList.toggle('active', mode === 'web');
+  document.getElementById('site-search-btn').classList.toggle('active', mode === 'site');
+
+  // Toggle search options visibility
+  document.getElementById('web-search-options').style.display = mode === 'web' ? 'block' : 'none';
+  document.getElementById('site-search-options').style.display = mode === 'site' ? 'block' : 'none';
+
+  // Update placeholder
+  const queryInput = document.getElementById('query');
+  queryInput.placeholder = mode === 'web' ? 'Search privately...' : 'Search death2data.com...';
+}
+
 function doSearch() {
   const query = document.getElementById('query').value.trim();
   if (!query) return;
