@@ -454,6 +454,16 @@ function doSearch() {
     .catch(function() { resultsDiv.innerHTML = '<p style="color:#f66;">Search failed</p>'; });
 }
 
+// Engine click handlers - open in new tab
+document.querySelectorAll('.engine').forEach(engine => {
+  engine.addEventListener('click', (e) => {
+    e.preventDefault();
+    const query = document.getElementById('query').value.trim();
+    if (!query) {
+      alert('Please enter a search query first');
+      return;
+    }
+
     // Log with specific engine
     const engineName = engine.textContent;
     searches.unshift({
@@ -463,7 +473,7 @@ function doSearch() {
     });
     if (searches.length > 100) searches = searches.slice(0, 100);
     localStorage.setItem('d2d_searches', JSON.stringify(searches));
-    
+
     renderSearchHistory();
     window.open(engine.dataset.url + encodeURIComponent(query), '_blank');
   });
