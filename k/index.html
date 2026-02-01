@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D - Word of the Day</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: system-ui, sans-serif;
+  background: #000;
+  color: #fff;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.container { max-width: 500px; width: 100%; }
+.word { font-size: 48px; font-weight: 900; color: #0f0; margin-bottom: 10px; }
+.prompt { font-size: 18px; color: #888; margin-bottom: 30px; }
+textarea {
+  width: 100%;
+  height: 150px;
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 15px;
+  font-size: 16px;
+  resize: none;
+  margin-bottom: 20px;
+}
+textarea:focus { outline: none; border-color: #0f0; }
+button {
+  background: #0f0;
+  color: #000;
+  border: none;
+  padding: 15px 40px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+}
+button:hover { background: #0ff; }
+.others { margin-top: 40px; padding-top: 30px; border-top: 1px solid #222; }
+.others h3 { color: #666; font-size: 14px; margin-bottom: 15px; }
+.perspective { background: #111; padding: 15px; margin-bottom: 10px; border-left: 2px solid #333; }
+.perspective p { color: #aaa; font-size: 14px; }
+.meta { font-size: 12px; color: #444; margin-top: 5px; }
+.success { color: #0f0; text-align: center; padding: 20px; }
+.local-note { font-size: 12px; color: #444; margin-top: 10px; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="word" id="word">LOADING...</div>
+  <div class="prompt" id="prompt"></div>
+  
+  <div id="form-area">
+    <textarea id="response" placeholder="Share your perspective..."></textarea>
+    <button onclick="submit()">Submit Anonymously</button>
+    <div class="local-note">Your response is public. Your identity is not.</div>
+  </div>
+  
+  <div id="success" class="success" style="display:none;">
+    ✓ Perspective saved. Thank you.
+  </div>
+  
+  <div class="others" id="others" style="display:none;">
+    <h3>Other perspectives</h3>
+    <div id="perspectives"></div>
+  </div>
+</div>
+
+<script>
+const keyword = window.location.pathname.split('/k/')[1] || getUrlParam('w') || 'privacy';
+
+// Load word data
+async function load() {
+  document.getElementById('word').textContent = keyword.toUpperCase();
+  
+  // Get prompt from WOTD or use default
+  try {
+    const wotd = await fetch('https://api.death2data.com/wotd').then(r => r.json());
+    if (wotd.word === keyword) {
+      document.getElementById('prompt').textContent = wotd.prompt;
+    } else {
+      document.getElementById('prompt').textContent = `What does "${keyword}" mean to you?`;
+    }
+  } catch {
+    document.getElementById('prompt').textContent = `What does "${keyword}" mean to you?`;
+  }
+  
+  // Load existing perspectives
+  try {
+    const data = await fetch(`https://api.death2data.com/perspectives?keyword=${keyword}`).then(r => r.json());
+    if (data.perspectives && data.perspectives.length > 0) {
+      document.getElementById('others').style.display = 'block';
+      document.getElementById('perspectives').innerHTML = data.perspectives
+        .slice(0, 5)
+        .map(p => `<div class="perspective"><p>${escapeHtml(p.perspective)}</p></div>`)
+        .join('');
+    }
+  } catch {}
+}
+
+async function submit() {
+  const response = document.getElementById('response').value.trim();
+  if (!response) return;
+  
+  await fetch('https://api.death2data.com/perspective', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ keyword, perspective: response })
+  });
+  
+  // Also save locally
+  const local = JSON.parse(localStorage.getItem('d2d_perspectives') || '[]');
+  local.push({ keyword, perspective: response, timestamp: Date.now() });
+  localStorage.setItem('d2d_perspectives', JSON.stringify(local));
+  
+  document.getElementById('form-area').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+  
+  setTimeout(() => location.reload(), 2000);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+function getUrlParam(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+load();
+</script>
+
+</body>
+</html>

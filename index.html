@@ -444,15 +444,50 @@ function doSearch() {
   }
   resultsDiv.innerHTML = '<p style="color:#0f0;">Searching...</p>';
 
-  fetch('https://d2d-api.mattmauersp.workers.dev/search?q=' + encodeURIComponent(query))
+  fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
     .then(r => r.json())
     .then(data => {
-      let html = data.abstract ? '<div style="margin-bottom:15px;padding:15px;background:#1a1a1a;border-radius:4px;"><p style="color:#fff;">' + data.abstract + '</p><a href="' + data.url + '" target="_blank" style="color:#0f0;font-size:13px;">Source: ' + data.source + '</a></div>' : '';
+      let html = '';
+
+      // ARK RESEARCH INSIGHT (if available)
+      if (data.ark) {
+        html += '<div style="background:#001a00;border-left:3px solid #0f0;padding:18px;margin-bottom:20px;border-radius:4px;">';
+        html += '<div style="display:flex;align-items:center;margin-bottom:10px;">';
+        html += '<span style="font-size:24px;margin-right:10px;">📊</span>';
+        html += '<strong style="color:#0f0;font-size:16px;">ARK Research Insight</strong>';
+        html += '</div>';
+        html += '<p style="color:#fff;margin-bottom:8px;line-height:1.6;">' + data.ark.prediction + '</p>';
+        html += '<p style="color:#666;font-size:12px;">Source: ARK Big Ideas 2026, Page ' + data.ark.page + '</p>';
+        html += '</div>';
+      }
+
+      // COMMUNITY TREND
+      if (data.community_trend > 0) {
+        html += '<div style="background:#0a0a0a;border:1px solid #222;padding:12px;margin-bottom:15px;border-radius:4px;">';
+        html += '<span style="color:#0f0;font-weight:bold;">' + data.community_trend + ' subscribers</span>';
+        html += '<span style="color:#888;"> searched this topic</span>';
+        html += '</div>';
+      }
+
+      // DUCKDUCKGO RESULTS
+      if (data.abstract) {
+        html += '<div style="margin-bottom:15px;padding:15px;background:#1a1a1a;border-radius:4px;">';
+        html += '<p style="color:#fff;line-height:1.6;margin-bottom:10px;">' + data.abstract + '</p>';
+        html += '<a href="' + data.url + '" target="_blank" style="color:#0f0;font-size:13px;">Source: ' + data.source + '</a>';
+        html += '</div>';
+      }
+
+      // RELATED TOPICS
       if (data.related && data.related.length) {
         html += '<p style="color:#888;font-size:12px;margin:15px 0 10px;">RELATED:</p>';
-        data.related.forEach(function(r) { if(r.Text) html += '<a href="' + r.FirstURL + '" target="_blank" style="color:#0f0;display:block;margin-bottom:8px;">' + r.Text + '</a>'; });
+        data.related.forEach(function(r) {
+          if(r.Text) html += '<a href="' + r.FirstURL + '" target="_blank" style="color:#0f0;display:block;margin-bottom:8px;font-size:14px;">' + r.Text + '</a>';
+        });
       }
-      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'s\',\'width=900,height=700\')" style="background:#0f0;color:#000;border:none;padding:10px 20px;margin-top:15px;cursor:pointer;font-weight:bold;">Deep Search →</button>';
+
+      // DEEP SEARCH BUTTON
+      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'_blank\')" style="background:#0f0;color:#000;border:none;padding:12px 24px;margin-top:15px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Deep Search on SearX →</button>';
+
       resultsDiv.innerHTML = html || '<p style="color:#888;">No results</p>';
 
       // Show AI widget after 3 searches
@@ -463,7 +498,7 @@ function doSearch() {
     .catch(function() { resultsDiv.innerHTML = '<p style="color:#f66;">Search failed</p>'; });
 }
 
-// Engine click handlers - open in new tab
+// Engine click handlers - show results inline (pop-in, not pop-out)
 document.querySelectorAll('.engine').forEach(engine => {
   engine.addEventListener('click', (e) => {
     e.preventDefault();
@@ -483,12 +518,14 @@ document.querySelectorAll('.engine').forEach(engine => {
     if (searches.length > 100) searches = searches.slice(0, 100);
     localStorage.setItem('d2d_searches', JSON.stringify(searches));
 
-    // NEW: Log to backend (privacy-safe analytics)
+    // Log to backend (privacy-safe analytics)
     fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
       .catch(() => {}); // Silent fail
 
     renderSearchHistory();
-    window.open(engine.dataset.url + encodeURIComponent(query), '_blank');
+
+    // NEW: Show results inline instead of opening new tab
+    doSearch();
 
     // Show AI widget after 3 searches
     if (searches.length === 3) {
@@ -906,13 +943,27 @@ function showAIWidget() {
   fetch('https://api.death2data.com/analytics')
     .then(r => r.json())
     .then(stats => {
-      const topQuery = stats.topQueries[0]?.query || 'privacy tools';
+      const topQuery = stats.topQueries[0]?.query || 'privacy';
       const topCount = stats.topQueries[0]?.count || 0;
-      const totalSearches = stats.totalSearches || 0;
+
+      // ARK insights for top trending topics
+      const arkInsights = {
+        'bitcoin': 'ARK predicts 45% blockchain revenue growth',
+        'crypto': 'ARK predicts 45% blockchain revenue growth',
+        'blockchain': 'ARK predicts 45% blockchain revenue growth',
+        'ai': 'ARK predicts $1.4T AI infrastructure by 2030',
+        'robotics': 'ARK predicts $6T GDP boost from robotics',
+        'robot': 'ARK predicts $6T GDP boost from robotics',
+        'privacy': 'Growing trend as AI surveillance scales',
+        'energy': 'Clean energy storage costs dropping rapidly',
+        'battery': 'Clean energy storage costs dropping rapidly'
+      };
+
+      const arkText = arkInsights[topQuery] || 'Trending in privacy-focused community';
 
       const widget = document.createElement('div');
       widget.id = 'ai-widget';
-      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:350px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;animation:slideIn 0.3s ease-out;';
+      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:380px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;animation:slideIn 0.3s ease-out;';
 
       widget.innerHTML = `
         <style>
@@ -922,18 +973,23 @@ function showAIWidget() {
         }
         </style>
         <div style="display:flex;align-items:center;margin-bottom:15px;">
-          <span style="font-size:32px;margin-right:12px;">🤖</span>
-          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D Assistant</h3>
+          <span style="font-size:32px;margin-right:12px;">📊</span>
+          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D + ARK Intelligence</h3>
         </div>
-        <p style="color:#fff;font-size:15px;line-height:1.6;margin-bottom:15px;">
-          Your community has searched <strong style="color:#0f0;">"${topQuery}"</strong> ${topCount} times.
-          ${totalSearches} total searches this week.
+        <p style="color:#fff;font-size:15px;line-height:1.6;margin-bottom:8px;">
+          Your community is searching <strong style="color:#0f0;">"${topQuery}"</strong>
         </p>
-        <p style="color:#aaa;font-size:14px;line-height:1.6;margin-bottom:20px;">
-          Subscribe for $1/month to get AI-curated results and personalized tool recommendations.
+        <p style="color:#aaa;font-size:14px;line-height:1.6;margin-bottom:15px;">
+          ${arkText}
+        </p>
+        <p style="color:#888;font-size:13px;line-height:1.6;margin-bottom:20px;">
+          Subscribe for $1/month to get:<br>
+          • Full ARK research access<br>
+          • AI-curated trend alerts<br>
+          • Personalized recommendations
         </p>
         <div style="display:flex;gap:10px;">
-          <a href="/join.html" style="flex:1;background:#0f0;color:#000;border:none;padding:12px 20px;text-align:center;cursor:pointer;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
+          <a href="/join.html" style="flex:1;background:#0f0;color:#000;padding:12px 20px;text-align:center;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
           <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
         </div>
       `;
@@ -949,14 +1005,14 @@ function showAIWidget() {
 
       widget.innerHTML = `
         <div style="display:flex;align-items:center;margin-bottom:15px;">
-          <span style="font-size:32px;margin-right:12px;">🤖</span>
-          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D Assistant</h3>
+          <span style="font-size:32px;margin-right:12px;">📊</span>
+          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D + ARK Intelligence</h3>
         </div>
         <p style="color:#fff;font-size:15px;line-height:1.6;margin-bottom:15px;">
-          Want AI-curated search results and personalized tool recommendations?
+          Get AI-curated search results powered by ARK institutional research.
         </p>
         <div style="display:flex;gap:10px;">
-          <a href="/join.html" style="flex:1;background:#0f0;color:#000;border:none;padding:12px 20px;text-align:center;cursor:pointer;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
+          <a href="/join.html" style="flex:1;background:#0f0;color:#000;padding:12px 20px;text-align:center;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
           <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
         </div>
       `;
