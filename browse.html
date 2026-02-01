@@ -298,12 +298,38 @@ async function loadRemotePage() {
       const text = el.textContent.trim();
       if (!text || text.length < 3) return;
       const tag = el.tagName.toLowerCase();
-      if (tag.startsWith('h')) readable += '<h2 style="color:#0f0;margin:25px 0 10px;">' + text + '</h2>';
+      if (tag.startsWith('h')) summaryHTML + readable += '<h2 style="color:#0f0;margin:25px 0 10px;">' + text + '</h2>';
       else if (tag === 'li') readable += '<p style="padding-left:20px;">- ' + text + '</p>';
       else if (tag === 'blockquote') readable += '<blockquote style="border-left:2px solid #0f0;padding-left:15px;color:#aaa;margin:15px 0;">' + text + '</blockquote>';
       else readable += '<p style="margin:10px 0;line-height:1.7;">' + text + '</p>';
     });
     if (!readable) readable = '<p style="color:#888;">Could not extract readable content from this page.</p>';
+
+    // Build summary - headers + first sentence of each section
+    let summary = '';
+    let headings = main.querySelectorAll('h1,h2,h3');
+    let summaryPoints = [];
+    headings.forEach(h => {
+      let text = h.textContent.trim();
+      if (!text || text.length < 3 || text.length > 100) return;
+      let next = h.nextElementSibling;
+      let snippet = '';
+      while (next && !['H1','H2','H3'].includes(next.tagName)) {
+        if (next.tagName === 'P' && next.textContent.trim().length > 20) {
+          snippet = next.textContent.trim().split('.')[0] + '.';
+          break;
+        }
+        next = next.nextElementSibling;
+      }
+      if (snippet) summaryPoints.push('<p style="margin:8px 0;"><span style="color:#0f0;font-weight:bold;">' + text + '</span> - ' + snippet + '</p>');
+    });
+    let summaryHTML = '';
+    if (summaryPoints.length > 2) {
+      summaryHTML = '<div style="background:#001a00;border:1px solid #0f03;padding:20px;border-radius:8px;margin-bottom:30px;">' +
+        '<p style="color:#0f0;font-size:12px;font-family:monospace;margin-bottom:15px;">KEY POINTS</p>' +
+        summaryPoints.slice(0, 8).join('') +
+        '</div>';
+    }
     const readerHTML = '<div style="max-width:700px;margin:0 auto;padding:40px 20px;font-family:Georgia,serif;background:#0a0a0a;color:#ddd;min-height:100vh;">' +
       '<p style="color:#0f0;font-family:monospace;font-size:12px;margin-bottom:20px;">READER VIEW - ' + url + '</p>' +
       '<h1 style="color:#fff;font-size:28px;margin-bottom:30px;font-family:system-ui;">' + title + '</h1>' +
