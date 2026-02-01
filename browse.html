@@ -224,6 +224,8 @@ function checkAccess() {
     tierBadge.textContent = 'PAID TIER';
     tierBadge.style.borderColor = '#0f0';
     tierBadge.style.background = '#001a00';
+    document.getElementById('usage-warning').style.display = 'none';
+    document.getElementById('usage').textContent = 'unlimited';
   } else {
     tierBadge.textContent = 'FREE TIER';
     document.getElementById('usage-warning').style.display = 'block';
