@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html><head><title>D2D Check</title>
+<style>
+body { background:#000; color:#0f0; font-family:monospace; padding:40px; }
+.item { margin:10px 0; padding:10px; background:#111; border:1px solid #333; }
+.val { color:#fff; }
+.missing { color:#f66; }
+button { background:#0f0; color:#000; border:none; padding:10px 20px; cursor:pointer; font-weight:bold; margin:5px; border-radius:4px; }
+</style></head><body>
+<h1>localStorage Check</h1>
+<div id="out"></div>
+<br>
+<button onclick="fixAccess()">Fix: Set Paid Tier</button>
+<button onclick="resetUsage()">Fix: Reset Browse Usage</button>
+<button onclick="location.href='/browse.html'">Go to Browse</button>
+<script>
+var keys = ['d2d_email','d2d_paid','d2d_access','d2d_browse_usage','d2d_browse_date'];
+var html = '';
+keys.forEach(function(k){
+  var v = localStorage.getItem(k);
+  if(v) html += '<div class="item">'+k+' = <span class="val">'+v+'</span></div>';
+  else html += '<div class="item">'+k+' = <span class="missing">NOT SET</span></div>';
+});
+document.getElementById('out').innerHTML = html;
+function fixAccess(){
+  localStorage.setItem('d2d_access', JSON.stringify({tier:100}));
+  localStorage.setItem('d2d_paid','true');
+  location.reload();
+}
+function resetUsage(){
+  localStorage.setItem('d2d_browse_usage','0');
+  localStorage.setItem('d2d_browse_date','');
+  location.reload();
+}
+</script></body></html>
