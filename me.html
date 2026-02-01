@@ -178,7 +178,7 @@
         function init() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('paid') === 'true') {
-                localStorage.setItem('d2d_paid', 'true');
+                localStorage.setItem('d2d_paid', 'true'); localStorage.setItem('d2d_access', JSON.stringify({tier:100}));
                 window.history.replaceState({}, '', '/me.html');
             }
 
