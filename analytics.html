@@ -262,28 +262,28 @@ h1{
       </div>
 
       <div class="stat-card">
-        <h2>GROWTH RATE</h2>
-        <div class="number" id="growth-rate">--%</div>
+        <h2>TOTAL SEARCHES</h2>
+        <div class="number" id="growth-rate">--</div>
         <div class="change" id="growth-change">--</div>
       </div>
     </div>
 
     <div class="chart-section">
-      <h2>MEMBER TIERS</h2>
-      <p style="color:#666;font-size:0.85rem;margin-bottom:20px">Early supporters locked in lower rates</p>
+      <h2>TOP SEARCH QUERIES (Privacy-Safe)</h2>
+      <p style="color:#666;font-size:0.85rem;margin-bottom:20px">Queries logged anonymously - no user IDs</p>
 
       <div class="simple-bar">
         <div class="bar">
-          <div class="label">FOUNDING ($1/mo)</div>
-          <div class="value" id="tier-1">0</div>
+          <div class="label">#1</div>
+          <div class="value" id="tier-1">none</div>
         </div>
         <div class="bar">
-          <div class="label">EARLY ($2/mo)</div>
-          <div class="value" id="tier-2">0</div>
+          <div class="label">#2</div>
+          <div class="value" id="tier-2">none</div>
         </div>
         <div class="bar">
-          <div class="label">STANDARD ($12/mo)</div>
-          <div class="value" id="tier-3">0</div>
+          <div class="label">#3</div>
+          <div class="value" id="tier-3">none</div>
         </div>
       </div>
     </div>
@@ -331,8 +331,8 @@ async function loadStats() {
   document.getElementById('stats-content').style.display = 'none';
 
   try {
-    // Fetch real stats from Netlify Function
-    const response = await fetch('/.netlify/functions/get-analytics');
+    // Fetch real stats from worker API
+    const response = await fetch('https://api.death2data.com/analytics');
 
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -340,28 +340,28 @@ async function loadStats() {
 
     const stats = await response.json();
 
-    // Update UI
-    document.getElementById('total-members').textContent = stats.totalMembers;
-    document.getElementById('members-change').textContent = `+${stats.newMembersThisWeek} this week`;
+    // Update UI - Membership Stats
+    document.getElementById('total-members').textContent = stats.totalMembers || 0;
+    document.getElementById('members-change').textContent = `+${stats.newMembersThisWeek || 0} this week`;
     document.getElementById('members-change').className = 'change positive';
 
-    document.getElementById('mrr').textContent = `$${stats.mrr.toFixed(2)}`;
-    document.getElementById('mrr-change').textContent = `+$${stats.mrrGrowth.toFixed(2)} this week`;
-    document.getElementById('mrr-change').className = stats.mrrGrowth > 0 ? 'change positive' : 'change';
+    document.getElementById('mrr').textContent = `$${stats.mrr || '0.00'}`;
+    document.getElementById('mrr-change').textContent = stats.newMembersThisWeek > 0 ? 'Growing' : 'Stable';
+    document.getElementById('mrr-change').className = stats.newMembersThisWeek > 0 ? 'change positive' : 'change';
 
-    document.getElementById('active-subs').textContent = stats.activeSubs;
-    document.getElementById('subs-change').textContent = stats.canceledSubs > 0 ?
-      `-${stats.canceledSubs} canceled` : 'All active';
-    document.getElementById('subs-change').className = stats.canceledSubs === 0 ? 'change positive' : 'change';
+    document.getElementById('active-subs').textContent = stats.activeSubs || 0;
+    document.getElementById('subs-change').textContent = 'All active';
+    document.getElementById('subs-change').className = 'change positive';
 
-    document.getElementById('growth-rate').textContent = `${stats.growthRate.toFixed(1)}%`;
-    document.getElementById('growth-change').textContent = 'Weekly growth';
+    document.getElementById('growth-rate').textContent = `${stats.totalSearches || 0}`;
+    document.getElementById('growth-change').textContent = `${stats.searchesThisWeek || 0} this week`;
     document.getElementById('growth-change').className = 'change positive';
 
-    // Tiers
-    document.getElementById('tier-1').textContent = stats.tiers.founding;
-    document.getElementById('tier-2').textContent = stats.tiers.early;
-    document.getElementById('tier-3').textContent = stats.tiers.standard;
+    // Tiers - show top queries instead
+    const topQueries = stats.topQueries || [];
+    document.getElementById('tier-1').textContent = topQueries[0]?.query || 'none';
+    document.getElementById('tier-2').textContent = topQueries[1]?.query || 'none';
+    document.getElementById('tier-3').textContent = topQueries[2]?.query || 'none';
 
     // Timestamp
     document.getElementById('timestamp').textContent = `Last updated: ${new Date().toLocaleString()}`;
