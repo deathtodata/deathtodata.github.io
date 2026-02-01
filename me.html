@@ -160,10 +160,19 @@
     <div class="container">
         <!-- Not logged in state -->
         <div id="notLoggedIn" class="not-logged-in" style="display:none;">
-            <h2>You're not logged in</h2>
-            <p>You need a SoulFra identity to access your account.</p>
+            <h2>Welcome back</h2>
+            <p>Enter the email you used to subscribe.</p>
             <br>
-            <a href="/join">Create your identity →</a>
+            <input type="email" id="loginEmail" placeholder="your@email.com" style="
+                background: #000; border: 1px solid #333; color: #fff;
+                padding: 12px; border-radius: 4px; font-size: 1rem;
+                width: 100%; max-width: 300px; margin-bottom: 10px;
+            ">
+            <br>
+            <button onclick="loginWithEmail()" id="loginBtn">Check Membership</button>
+            <p id="loginError" style="color: #f00; margin-top: 10px; display: none;"></p>
+            <br><br>
+            <p style="color: #666;">Don't have an account? <a href="/join" style="color: #0f0;">Join for $1/mo</a></p>
         </div>
 
         <!-- Logged in state -->
@@ -244,12 +253,71 @@
         const adjectives = ['swift', 'dark', 'bright', 'silent', 'wild', 'calm', 'bold', 'free', 'true', 'deep', 'raw', 'cold', 'hot', 'void', 'zero', 'null', 'ghost', 'shadow', 'light', 'stark'];
         const nouns = ['wolf', 'hawk', 'byte', 'node', 'core', 'flux', 'pulse', 'wave', 'spark', 'storm', 'blade', 'edge', 'root', 'seed', 'soul', 'mind', 'data', 'void', 'null', 'zero'];
         
+        async function loginWithEmail() {
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const btn = document.getElementById('loginBtn');
+            const error = document.getElementById('loginError');
+            
+            if (!email) { error.textContent = 'Enter your email'; error.style.display = 'block'; return; }
+            
+            btn.textContent = 'Checking...';
+            btn.disabled = true;
+            error.style.display = 'none';
+            
+            try {
+                const res = await fetch('https://api.death2data.com/check', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const data = await res.json();
+                
+                if (data.paying) {
+                    // Save login locally
+                    localStorage.setItem('d2d_email', email);
+                    localStorage.setItem('d2d_paid', 'true');
+                    localStorage.setItem('d2d_tier', data.tier.toString());
+                    
+                    // Generate keypair if they don't have one
+                    if (!localStorage.getItem('d2d_pubkey')) {
+                        const key = Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                            .map(b => b.toString(16).padStart(2, '0')).join('');
+                        localStorage.setItem('d2d_pubkey', key);
+                        localStorage.setItem('d2d_privkey', Array.from(crypto.getRandomValues(new Uint8Array(32)))
+                            .map(b => b.toString(16).padStart(2, '0')).join(''));
+                    }
+                    
+                    window.location.reload();
+                } else {
+                    error.textContent = 'No active subscription found for this email. ';
+                    error.style.display = 'block';
+                    btn.textContent = 'Check Membership';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                error.textContent = 'Something went wrong. Try again.';
+                error.style.display = 'block';
+                btn.textContent = 'Check Membership';
+                btn.disabled = false;
+            }
+        }
+
         // Check login state
         function init() {
+            // Catch Stripe redirect: /me?paid=true or /me.html?paid=true
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('paid') === 'true') {
+                localStorage.setItem('d2d_paid', 'true');
+                localStorage.setItem('d2d_paid_at', Date.now().toString());
+                // Clean URL
+                window.history.replaceState({}, '', '/me.html');
+            }
+
             const pubkey = localStorage.getItem('d2d_pubkey');
             const privkey = localStorage.getItem('d2d_privkey');
+            const email = localStorage.getItem('d2d_email');
             
-            if (!pubkey || !privkey) {
+            if (!pubkey && !email) {
                 document.getElementById('notLoggedIn').style.display = 'block';
                 document.getElementById('loggedIn').style.display = 'none';
                 return;
