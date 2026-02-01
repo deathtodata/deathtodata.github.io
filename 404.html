@@ -1,31 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D2D</title>
-<script>
-const path = window.location.pathname;
-
-// Only handle special routes
-if (path.startsWith('/k/')) {
-  sessionStorage.setItem('d2d_keyword', path.split('/k/')[1]);
-  window.location.replace('/keyword.html');
-} else if (path.startsWith('/n/')) {
-  sessionStorage.setItem('d2d_notebook', path.split('/n/')[1]);
-  window.location.replace('/notebook.html');
-}
-// Otherwise show 404, don't redirect
-</script>
-<style>
-body { font-family: monospace; background: #000; color: #0f0; padding: 40px; }
-a { color: #0f0; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Death2Data</title>
 </head>
 <body>
-<h1>404</h1>
-<p>Not found: <code id="path"></code></p>
-<p><a href="/">← Back to Death2Data</a></p>
-<script>document.getElementById('path').textContent = window.location.pathname;</script>
+    <script>
+        // GitHub Pages serves this for any unknown URL
+        // We use it to route /r/, /k/, /n/, /i/
+        
+        const path = window.location.pathname;
+        
+        // REFERRAL: /r/abc123
+        if (path.startsWith('/r/')) {
+            const code = path.split('/r/')[1];
+            if (code) {
+                localStorage.setItem('d2d_referrer', code);
+                localStorage.setItem('d2d_referrer_time', Date.now().toString());
+            }
+            window.location.href = '/join';
+        }
+        
+        // KEYWORD: /k/privacy
+        else if (path.startsWith('/k/')) {
+            const word = path.split('/k/')[1];
+            if (word) {
+                localStorage.setItem('d2d_keyword', word);
+            }
+            window.location.href = '/keyword.html';
+        }
+        
+        // NOTEBOOK: /n/abc123
+        else if (path.startsWith('/n/')) {
+            const id = path.split('/n/')[1];
+            if (id) {
+                localStorage.setItem('d2d_notebook', id);
+            }
+            window.location.href = '/notebook.html';
+        }
+        
+        // ACCOUNT: /i/ or /me/
+        else if (path.startsWith('/i') || path.startsWith('/me')) {
+            window.location.href = '/me.html';
+        }
+        
+        // DEFAULT: go home
+        else {
+            window.location.href = '/';
+        }
+    </script>
 </body>
 </html>

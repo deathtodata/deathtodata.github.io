@@ -94,10 +94,21 @@ function updateStatus(access) {
   const status = document.getElementById('status');
   const tier = access.tier || 0;
   const contributions = access.contributions || 0;
-  
+  const expires = access.expires || 0;
+
+  // Check if access expired
+  if (tier >= 1 && expires && Date.now() > expires) {
+    status.className = 'status';
+    status.innerHTML = `ACCESS: EXPIRED | Your 24hr free access expired. Contribute again or <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" style="color:#0f0;">pay $1/month</a>`;
+    document.getElementById('enter-link').style.display = 'none';
+    document.getElementById('form-area').style.display = 'block';
+    return;
+  }
+
   if (tier >= 1) {
+    const hoursLeft = Math.floor((expires - Date.now()) / (1000 * 60 * 60));
     status.className = 'status unlocked';
-    status.innerHTML = `ACCESS: TIER ${tier} | CONTRIBUTIONS: ${contributions} | <span style="color:#0f0">UNLOCKED</span>`;
+    status.innerHTML = `ACCESS: TIER ${tier} | CONTRIBUTIONS: ${contributions} | <span style="color:#0f0">UNLOCKED</span> (${hoursLeft}h remaining)`;
     document.getElementById('enter-link').style.display = 'block';
     document.getElementById('form-area').style.display = 'none';
   } else {
@@ -126,15 +137,16 @@ async function submit() {
       body: JSON.stringify({ keyword: word, perspective: response })
     });
     
-    // Update local access
+    // Update local access with 24hr timer
     const access = JSON.parse(localStorage.getItem('d2d_access') || '{}');
     access.tier = Math.min((access.tier || 0) + 1, 3);
     access.contributions = (access.contributions || 0) + 1;
     access.lastContribution = Date.now();
+    access.expires = Date.now() + (24 * 60 * 60 * 1000);  // 24hr access
     access.history = access.history || [];
     access.history.push({ word, response, timestamp: Date.now() });
     localStorage.setItem('d2d_access', JSON.stringify(access));
-    
+
     updateStatus(access);
     
   } catch (e) {

@@ -482,8 +482,11 @@ function doSearch() {
         });
       }
 
-      // DEEP SEARCH BUTTON
-      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'_blank\')" style="background:#0f0;color:#000;border:none;padding:12px 24px;margin-top:15px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Deep Search on SearX →</button>';
+      // BROWSE BUTTONS
+      html += '<div style="display:flex;gap:10px;margin-top:15px;">';
+      html += '<button onclick="window.location=\'/browse.html?url=' + encodeURIComponent(data.url || query) + '\'" style="background:#0f0;color:#000;border:none;padding:12px 24px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Browse Full Page →</button>';
+      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'_blank\')" style="background:transparent;color:#0f0;border:1px solid #0f0;padding:12px 24px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Deep Search →</button>';
+      html += '</div>';
 
       resultsDiv.innerHTML = html || '<p style="color:#888;">No results</p>';
 

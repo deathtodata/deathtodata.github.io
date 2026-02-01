@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Remote Browse</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: monospace;
+  background: #000;
+  color: #0f0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* D2D Header */
+.header {
+  background: #000;
+  border-bottom: 1px solid #333;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand { font-size: 18px; font-weight: 900; color: #0f0; }
+.url-bar {
+  flex: 1;
+  margin: 0 20px;
+  display: flex;
+  gap: 10px;
+}
+.url-input {
+  flex: 1;
+  background: #111;
+  border: 1px solid #333;
+  color: #0f0;
+  padding: 8px 12px;
+  font-family: monospace;
+  font-size: 14px;
+}
+.url-input:focus { outline: none; border-color: #0f0; }
+.browse-btn {
+  background: #0f0;
+  color: #000;
+  border: none;
+  padding: 8px 20px;
+  font-family: monospace;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+}
+.browse-btn:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+.close-btn {
+  background: transparent;
+  border: 1px solid #333;
+  color: #888;
+  padding: 8px 15px;
+  font-family: monospace;
+  cursor: pointer;
+  font-size: 14px;
+}
+.close-btn:hover { color: #0f0; border-color: #0f0; }
+
+/* Status Bar */
+.status-bar {
+  background: #111;
+  border-bottom: 1px solid #333;
+  padding: 8px 20px;
+  font-size: 12px;
+  color: #888;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.status-left { display: flex; gap: 20px; }
+.status-item { color: #666; }
+.status-value { color: #0f0; margin-left: 5px; }
+.tier-badge {
+  background: #001a00;
+  border: 1px solid #0f0;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: #0f0;
+}
+
+/* Content Area */
+.content {
+  flex: 1;
+  position: relative;
+  background: #111;
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #0f0;
+  font-size: 14px;
+}
+.error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  max-width: 500px;
+  padding: 30px;
+  background: #1a0000;
+  border: 1px solid #f00;
+  color: #f00;
+}
+.error-title { font-size: 16px; margin-bottom: 10px; }
+.error-msg { font-size: 12px; color: #888; line-height: 1.6; }
+
+/* Sandboxed iframe */
+.frame-container {
+  width: 100%;
+  height: 100%;
+  display: none;
+}
+.frame-container.visible { display: block; }
+.remote-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #fff;
+}
+
+/* Usage Warning */
+.usage-warning {
+  background: #1a1a00;
+  border-top: 1px solid #333;
+  padding: 12px 20px;
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+}
+.usage-warning .limit { color: #ff0; }
+.usage-warning a { color: #0f0; text-decoration: none; }
+.usage-warning a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand">DEATH2DATA</div>
+  <div class="url-bar">
+    <input
+      type="text"
+      id="url-input"
+      class="url-input"
+      placeholder="Enter URL to browse remotely (https://example.com)"
+      value="">
+    <button id="browse-btn" class="browse-btn" onclick="loadRemotePage()">Browse</button>
+  </div>
+  <button class="close-btn" onclick="window.location='/index.html'">Close</button>
+</div>
+
+<div class="status-bar">
+  <div class="status-left">
+    <div class="status-item">
+      STATUS: <span class="status-value" id="status">Ready</span>
+    </div>
+    <div class="status-item">
+      USAGE: <span class="status-value" id="usage">0/5</span>
+    </div>
+  </div>
+  <div class="tier-badge" id="tier">FREE TIER</div>
+</div>
+
+<div class="content">
+  <div class="loading" id="loading" style="display:none;">
+    Loading remote content...<br>
+    <span style="font-size:11px;color:#666;margin-top:10px;display:block;">Fetching through D2D privacy layer</span>
+  </div>
+
+  <div class="error" id="error" style="display:none;">
+    <div class="error-title">Browse Failed</div>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <div class="frame-container" id="frame-container">
+    <iframe
+      id="remote-frame"
+      class="remote-frame"
+      sandbox="allow-scripts allow-same-origin allow-forms"
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+</div>
+
+<div class="usage-warning" id="usage-warning" style="display:none;">
+  Free tier: <span class="limit" id="limit-text">3 more browses today</span> ·
+  <a href="/join.html">Upgrade to $1/month for unlimited</a>
+</div>
+
+<script>
+const API = 'https://api.death2data.com';
+
+// Check access tier on load
+function checkAccess() {
+  const access = JSON.parse(localStorage.getItem('d2d_access') || '{}');
+  const tier = access.tier || 0;
+  const usage = parseInt(localStorage.getItem('d2d_browse_usage') || '0');
+  const usageDate = localStorage.getItem('d2d_browse_date') || '';
+  const today = new Date().toDateString();
+
+  // Reset usage if new day
+  if (usageDate !== today) {
+    localStorage.setItem('d2d_browse_usage', '0');
+    localStorage.setItem('d2d_browse_date', today);
+  }
+
+  // Update UI
+  const tierBadge = document.getElementById('tier');
+  if (tier >= 2) {
+    tierBadge.textContent = 'PAID TIER';
+    tierBadge.style.borderColor = '#0f0';
+    tierBadge.style.background = '#001a00';
+  } else {
+    tierBadge.textContent = 'FREE TIER';
+    document.getElementById('usage-warning').style.display = 'block';
+    updateUsageDisplay();
+  }
+
+  return { tier, usage };
+}
+
+function updateUsageDisplay() {
+  const usage = parseInt(localStorage.getItem('d2d_browse_usage') || '0');
+  const limit = 5;
+  document.getElementById('usage').textContent = usage + '/' + limit;
+
+  const remaining = limit - usage;
+  if (remaining > 0) {
+    document.getElementById('limit-text').textContent = remaining + ' more browses today';
+  } else {
+    document.getElementById('limit-text').textContent = 'Daily limit reached';
+  }
+}
+
+async function loadRemotePage() {
+  const input = document.getElementById('url-input');
+  const url = input.value.trim();
+
+  if (!url) {
+    showError('Please enter a URL');
+    return;
+  }
+
+  // Check usage limits
+  const { tier, usage } = checkAccess();
+  if (tier < 2 && usage >= 5) {
+    showError('Daily browse limit reached (5/5). <a href="/join.html" style="color:#0f0;">Upgrade to $1/month</a> for unlimited access.');
+    return;
+  }
+
+  // Show loading
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('error').style.display = 'none';
+  document.getElementById('frame-container').classList.remove('visible');
+  document.getElementById('status').textContent = 'Fetching...';
+  document.getElementById('browse-btn').disabled = true;
+
+  try {
+    // Fetch through D2D privacy layer
+    const response = await fetch(`${API}/fetch?url=${encodeURIComponent(url)}`);
+    const data = await response.json();
+
+    if (data.error) {
+      showError(data.error + ' (Status: ' + (data.status || 'unknown') + ')');
+      return;
+    }
+
+    // Increment usage for free tier
+    if (tier < 2) {
+      const newUsage = usage + 1;
+      localStorage.setItem('d2d_browse_usage', newUsage.toString());
+      updateUsageDisplay();
+    }
+
+    // Display content in sandboxed iframe
+    const frame = document.getElementById('remote-frame');
+    const blob = new Blob([data.content], { type: data.content_type || 'text/html' });
+    const blobUrl = URL.createObjectURL(blob);
+
+    frame.onload = () => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('frame-container').classList.add('visible');
+      document.getElementById('status').textContent = 'Connected';
+      document.getElementById('browse-btn').disabled = false;
+
+      // Try to inject D2D watermark (may fail due to sandbox)
+      try {
+        const frameDoc = frame.contentDocument || frame.contentWindow.document;
+        const watermark = frameDoc.createElement('div');
+        watermark.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#000;color:#0f0;padding:8px 12px;font-size:11px;font-family:monospace;border:1px solid #0f0;z-index:999999;';
+        watermark.textContent = 'Browsing via Death2Data';
+        frameDoc.body.appendChild(watermark);
+      } catch (e) {
+        // Sandbox prevents access - expected behavior
+      }
+    };
+
+    frame.src = blobUrl;
+
+  } catch (e) {
+    showError('Network error: ' + e.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('frame-container').classList.remove('visible');
+  document.getElementById('error').style.display = 'block';
+  document.getElementById('error-msg').innerHTML = msg;
+  document.getElementById('status').textContent = 'Error';
+  document.getElementById('browse-btn').disabled = false;
+}
+
+// Handle URL from query parameter
+window.addEventListener('load', () => {
+  const params = new URLSearchParams(window.location.search);
+  const url = params.get('url');
+  if (url) {
+    document.getElementById('url-input').value = url;
+    loadRemotePage();
+  }
+  checkAccess();
+});
+
+// Enter key to browse
+document.getElementById('url-input').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') {
+    loadRemotePage();
+  }
+});
+</script>
+
+</body>
+</html>
