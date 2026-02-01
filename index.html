@@ -431,6 +431,10 @@ function doSearch() {
   localStorage.setItem('d2d_searches', JSON.stringify(searches));
   renderSearchHistory();
 
+  // NEW: Log to backend (privacy-safe analytics)
+  fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
+    .catch(() => {}); // Silent fail - don't break search if API down
+
   let resultsDiv = document.getElementById('search-results');
   if (!resultsDiv) {
     resultsDiv = document.createElement('div');
@@ -450,6 +454,11 @@ function doSearch() {
       }
       html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'s\',\'width=900,height=700\')" style="background:#0f0;color:#000;border:none;padding:10px 20px;margin-top:15px;cursor:pointer;font-weight:bold;">Deep Search →</button>';
       resultsDiv.innerHTML = html || '<p style="color:#888;">No results</p>';
+
+      // Show AI widget after 3 searches
+      if (searches.length === 3) {
+        showAIWidget();
+      }
     })
     .catch(function() { resultsDiv.innerHTML = '<p style="color:#f66;">Search failed</p>'; });
 }
@@ -474,8 +483,17 @@ document.querySelectorAll('.engine').forEach(engine => {
     if (searches.length > 100) searches = searches.slice(0, 100);
     localStorage.setItem('d2d_searches', JSON.stringify(searches));
 
+    // NEW: Log to backend (privacy-safe analytics)
+    fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
+      .catch(() => {}); // Silent fail
+
     renderSearchHistory();
     window.open(engine.dataset.url + encodeURIComponent(query), '_blank');
+
+    // Show AI widget after 3 searches
+    if (searches.length === 3) {
+      showAIWidget();
+    }
   });
 });
 
@@ -876,6 +894,82 @@ async function loadStats() {
 }
 
 loadStats();
+
+// ========================================
+// AI WIDGET (Flywheel Component)
+// ========================================
+function showAIWidget() {
+  // Check if already shown
+  if (localStorage.getItem('d2d_widget_shown')) return;
+
+  // Fetch community trends
+  fetch('https://api.death2data.com/analytics')
+    .then(r => r.json())
+    .then(stats => {
+      const topQuery = stats.topQueries[0]?.query || 'privacy tools';
+      const topCount = stats.topQueries[0]?.count || 0;
+      const totalSearches = stats.totalSearches || 0;
+
+      const widget = document.createElement('div');
+      widget.id = 'ai-widget';
+      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:350px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;animation:slideIn 0.3s ease-out;';
+
+      widget.innerHTML = `
+        <style>
+        @keyframes slideIn {
+          from { transform: translateY(100px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        </style>
+        <div style="display:flex;align-items:center;margin-bottom:15px;">
+          <span style="font-size:32px;margin-right:12px;">🤖</span>
+          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D Assistant</h3>
+        </div>
+        <p style="color:#fff;font-size:15px;line-height:1.6;margin-bottom:15px;">
+          Your community has searched <strong style="color:#0f0;">"${topQuery}"</strong> ${topCount} times.
+          ${totalSearches} total searches this week.
+        </p>
+        <p style="color:#aaa;font-size:14px;line-height:1.6;margin-bottom:20px;">
+          Subscribe for $1/month to get AI-curated results and personalized tool recommendations.
+        </p>
+        <div style="display:flex;gap:10px;">
+          <a href="/join.html" style="flex:1;background:#0f0;color:#000;border:none;padding:12px 20px;text-align:center;cursor:pointer;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
+          <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
+        </div>
+      `;
+
+      document.body.appendChild(widget);
+      localStorage.setItem('d2d_widget_shown', 'true');
+    })
+    .catch(() => {
+      // Fallback if analytics API fails
+      const widget = document.createElement('div');
+      widget.id = 'ai-widget';
+      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:350px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;';
+
+      widget.innerHTML = `
+        <div style="display:flex;align-items:center;margin-bottom:15px;">
+          <span style="font-size:32px;margin-right:12px;">🤖</span>
+          <h3 style="color:#0f0;margin:0;font-size:18px;">D2D Assistant</h3>
+        </div>
+        <p style="color:#fff;font-size:15px;line-height:1.6;margin-bottom:15px;">
+          Want AI-curated search results and personalized tool recommendations?
+        </p>
+        <div style="display:flex;gap:10px;">
+          <a href="/join.html" style="flex:1;background:#0f0;color:#000;border:none;padding:12px 20px;text-align:center;cursor:pointer;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
+          <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
+        </div>
+      `;
+
+      document.body.appendChild(widget);
+      localStorage.setItem('d2d_widget_shown', 'true');
+    });
+}
+
+function closeAIWidget() {
+  const widget = document.getElementById('ai-widget');
+  if (widget) widget.remove();
+}
 </script>
 
 </body>
