@@ -14,12 +14,8 @@
             padding: 40px 20px;
         }
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
-        }
-        h1 {
-            color: #0f0;
-            margin-bottom: 30px;
         }
         .card {
             background: #111;
@@ -28,242 +24,199 @@
             padding: 20px;
             margin-bottom: 20px;
         }
-        .card h2 {
-            color: #0f0;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 15px;
-        }
-        .moniker {
-            font-size: 2rem;
-            font-family: monospace;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-        .pubkey {
-            font-family: monospace;
-            font-size: 0.8rem;
-            color: #666;
-            word-break: break-all;
-        }
-        .tier {
-            display: inline-block;
-            padding: 5px 15px;
-            background: #0f02;
-            border: 1px solid #0f0;
-            color: #0f0;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-        .tier.free {
-            background: #3332;
-            border-color: #666;
-            color: #999;
-        }
-        .referral-link {
-            background: #000;
-            border: 1px solid #333;
-            padding: 15px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 0.9rem;
-            color: #0f0;
-            word-break: break-all;
-            margin-bottom: 10px;
-        }
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-        }
-        .stat {
+        .member-status {
             text-align: center;
+            padding: 30px 20px;
         }
-        .stat-value {
-            font-size: 2rem;
+        .member-status .check {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .member-status h2 {
             color: #0f0;
+            margin-bottom: 5px;
         }
-        .stat-label {
-            font-size: 0.8rem;
+        .member-status .email {
             color: #666;
+            font-size: 0.9rem;
         }
+        .tools-list a {
+            display: block;
+            padding: 15px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+        .tools-list a:hover { border-color: #0f0; }
+        .tools-list .tool-name { font-weight: bold; margin-bottom: 3px; }
+        .tools-list .tool-desc { color: #666; font-size: 0.85rem; }
         button {
             background: #0f0;
             color: #000;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            margin-right: 10px;
-            margin-bottom: 10px;
+            font-size: 1rem;
+            width: 100%;
         }
-        button:hover {
-            background: #0c0;
-        }
+        button:hover { background: #0c0; }
+        button:disabled { background: #333; color: #666; }
         button.secondary {
             background: transparent;
             border: 1px solid #333;
-            color: #fff;
+            color: #999;
+            font-size: 0.85rem;
+            width: auto;
+            padding: 8px 16px;
         }
-        button.secondary:hover {
-            border-color: #0f0;
-        }
-        .not-logged-in {
+        button.secondary:hover { border-color: #666; color: #fff; }
+        .login-box {
             text-align: center;
             padding: 60px 20px;
         }
-        .not-logged-in h2 {
-            margin-bottom: 20px;
-        }
-        .not-logged-in a {
-            color: #0f0;
-        }
-        .generate-moniker {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-        .generate-moniker input {
-            flex: 1;
-            background: #000;
+        .login-box h2 { margin-bottom: 8px; }
+        .login-box p { color: #666; margin-bottom: 20px; }
+        .login-box input {
+            background: #111;
             border: 1px solid #333;
             color: #fff;
-            padding: 10px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 1rem;
+            width: 100%;
+            max-width: 320px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .login-box input:focus { outline: none; border-color: #0f0; }
+        .error { color: #f44; margin-top: 10px; font-size: 0.9rem; }
+        .referral-box {
+            background: #000;
+            border: 1px solid #333;
+            padding: 12px;
             border-radius: 4px;
             font-family: monospace;
-            font-size: 1.2rem;
+            font-size: 0.85rem;
+            color: #0f0;
+            word-break: break-all;
+            text-align: center;
+            margin-bottom: 12px;
+            cursor: pointer;
         }
-        .actions {
+        .referral-box:hover { border-color: #0f0; }
+        .footer {
             margin-top: 30px;
             padding-top: 20px;
             border-top: 1px solid #222;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .upgrade-banner {
-            background: linear-gradient(135deg, #0f02, #00f1);
-            border: 1px solid #0f0;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-        .upgrade-banner h3 {
-            margin-bottom: 10px;
-        }
-        .upgrade-banner p {
-            color: #ccc;
-            margin-bottom: 15px;
-        }
+        .join-link { color: #0f0; text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Not logged in state -->
-        <div id="notLoggedIn" class="not-logged-in" style="display:none;">
-            <h2>Welcome back</h2>
+
+        <!-- LOGIN -->
+        <div id="loginView" class="login-box" style="display:none;">
+            <h2>Welcome</h2>
             <p>Enter the email you used to subscribe.</p>
+            <input type="email" id="loginEmail" placeholder="you@email.com" autofocus>
             <br>
-            <input type="email" id="loginEmail" placeholder="your@email.com" style="
-                background: #000; border: 1px solid #333; color: #fff;
-                padding: 12px; border-radius: 4px; font-size: 1rem;
-                width: 100%; max-width: 300px; margin-bottom: 10px;
-            ">
-            <br>
-            <button onclick="loginWithEmail()" id="loginBtn">Check Membership</button>
-            <p id="loginError" style="color: #f00; margin-top: 10px; display: none;"></p>
+            <button onclick="login()" id="loginBtn">Check Membership</button>
+            <p id="loginError" class="error" style="display:none;"></p>
             <br><br>
-            <p style="color: #666;">Don't have an account? <a href="/join" style="color: #0f0;">Join for $1/mo</a></p>
+            <p style="color:#666;">No account yet? <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="join-link">Join for $1/mo →</a></p>
         </div>
 
-        <!-- Logged in state -->
-        <div id="loggedIn" style="display:none;">
-            <h1>My Account</h1>
-
-            <!-- Identity Card -->
-            <div class="card">
-                <h2>Your Identity</h2>
-                <div class="generate-moniker">
-                    <input type="text" id="monikerInput" placeholder="your-moniker" maxlength="20">
-                    <button onclick="generateMoniker()">🎲</button>
-                    <button onclick="saveMoniker()">Save</button>
-                </div>
-                <br>
-                <div class="pubkey" id="pubkeyDisplay">Loading...</div>
+        <!-- ACCOUNT -->
+        <div id="accountView" style="display:none;">
+            <div class="card member-status">
+                <div class="check">✓</div>
+                <h2>You're a member</h2>
+                <div class="email" id="memberEmail"></div>
             </div>
 
-            <!-- Tier Card -->
             <div class="card">
-                <h2>Your Tier</h2>
-                <span class="tier" id="tierBadge">Free</span>
-                <p style="margin-top:15px; color:#999;" id="tierDesc">
-                    Limited access. Upgrade for unlimited.
-                </p>
-            </div>
-
-            <!-- Upgrade Banner (show if free) -->
-            <div class="upgrade-banner" id="upgradeBanner">
-                <h3>Upgrade to Pro</h3>
-                <p>$1/month for unlimited access to all tools.</p>
-                <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00">
-                    <button>Upgrade for $1/mo</button>
-                </a>
-            </div>
-
-            <!-- Referral Card -->
-            <div class="card">
-                <h2>Your Referral Link</h2>
-                <div class="referral-link" id="referralLink">Loading...</div>
-                <button onclick="copyReferral()">Copy Link</button>
-                <button class="secondary" onclick="shareReferral()">Share</button>
-                <p style="margin-top:15px; color:#666; font-size:0.85rem;">
-                    Friends who sign up through your link → you both get points
-                </p>
-            </div>
-
-            <!-- Stats Card -->
-            <div class="card">
-                <h2>Your Stats</h2>
-                <div class="stats">
-                    <div class="stat">
-                        <div class="stat-value" id="pointsValue">0</div>
-                        <div class="stat-label">Points</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="referralsValue">0</div>
-                        <div class="stat-label">Referrals</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="streakValue">0</div>
-                        <div class="stat-label">Day Streak</div>
-                    </div>
+                <div class="tools-list">
+                    <a href="/">
+                        <div class="tool-name">🔍 Private Search</div>
+                        <div class="tool-desc">Unlimited searches, no tracking</div>
+                    </a>
+                    <a href="/tools">
+                        <div class="tool-name">🛠 Tools</div>
+                        <div class="tool-desc">QR codes, notebooks, exports</div>
+                    </a>
+                    <a href="/k/privacy">
+                        <div class="tool-name">💬 Word of the Day</div>
+                        <div class="tool-desc">Today's topic + community perspectives</div>
+                    </a>
                 </div>
             </div>
 
-            <!-- Actions -->
-            <div class="actions">
-                <button class="secondary" onclick="exportData()">Export My Data</button>
-                <button class="secondary" onclick="showKeys()">Show Private Key</button>
+            <div class="card">
+                <p style="color:#999; font-size:0.85rem; margin-bottom:10px;">Share this link — friends who join get you both points.</p>
+                <div class="referral-box" id="referralBox" onclick="copyRef()" title="Click to copy">Loading...</div>
+                <p id="copyMsg" style="color:#0f0; font-size:0.8rem; text-align:center; display:none;">Copied!</p>
+            </div>
+
+            <div class="footer">
+                <button class="secondary" onclick="manageBilling()">Manage Billing</button>
                 <button class="secondary" onclick="logout()">Logout</button>
             </div>
         </div>
+
     </div>
 
     <script>
-        // Moniker word lists
-        const adjectives = ['swift', 'dark', 'bright', 'silent', 'wild', 'calm', 'bold', 'free', 'true', 'deep', 'raw', 'cold', 'hot', 'void', 'zero', 'null', 'ghost', 'shadow', 'light', 'stark'];
-        const nouns = ['wolf', 'hawk', 'byte', 'node', 'core', 'flux', 'pulse', 'wave', 'spark', 'storm', 'blade', 'edge', 'root', 'seed', 'soul', 'mind', 'data', 'void', 'null', 'zero'];
-        
-        async function loginWithEmail() {
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('paid') === 'true') {
+                localStorage.setItem('d2d_paid', 'true');
+                window.history.replaceState({}, '', '/me.html');
+            }
+
+            const email = localStorage.getItem('d2d_email');
+            const paid = localStorage.getItem('d2d_paid');
+
+            if (email && paid) {
+                showAccount(email);
+            } else {
+                document.getElementById('loginView').style.display = 'block';
+            }
+        }
+
+        function showAccount(email) {
+            document.getElementById('loginView').style.display = 'none';
+            document.getElementById('accountView').style.display = 'block';
+            document.getElementById('memberEmail').textContent = email;
+
+            let hash = 0;
+            for (let i = 0; i < email.length; i++) {
+                hash = ((hash << 5) - hash) + email.charCodeAt(i);
+                hash |= 0;
+            }
+            const code = Math.abs(hash).toString(36).substring(0, 8);
+            document.getElementById('referralBox').textContent = 'https://death2data.com/r/' + code;
+        }
+
+        async function login() {
             const email = document.getElementById('loginEmail').value.trim().toLowerCase();
             const btn = document.getElementById('loginBtn');
-            const error = document.getElementById('loginError');
-            
-            if (!email) { error.textContent = 'Enter your email'; error.style.display = 'block'; return; }
-            
+            const err = document.getElementById('loginError');
+
+            if (!email) { err.textContent = 'Enter your email'; err.style.display = 'block'; return; }
+
             btn.textContent = 'Checking...';
             btn.disabled = true;
-            error.style.display = 'none';
-            
+            err.style.display = 'none';
+
             try {
                 const res = await fetch('https://api.death2data.com/check', {
                     method: 'POST',
@@ -271,185 +224,51 @@
                     body: JSON.stringify({ email })
                 });
                 const data = await res.json();
-                
+
                 if (data.paying) {
-                    // Save login locally
                     localStorage.setItem('d2d_email', email);
                     localStorage.setItem('d2d_paid', 'true');
-                    localStorage.setItem('d2d_tier', data.tier.toString());
-                    
-                    // Generate keypair if they don't have one
-                    if (!localStorage.getItem('d2d_pubkey')) {
-                        const key = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                            .map(b => b.toString(16).padStart(2, '0')).join('');
-                        localStorage.setItem('d2d_pubkey', key);
-                        localStorage.setItem('d2d_privkey', Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                            .map(b => b.toString(16).padStart(2, '0')).join(''));
-                    }
-                    
-                    window.location.reload();
+                    showAccount(email);
                 } else {
-                    error.textContent = 'No active subscription found for this email. ';
-                    error.style.display = 'block';
+                    err.textContent = 'No active subscription for this email.';
+                    err.style.display = 'block';
                     btn.textContent = 'Check Membership';
                     btn.disabled = false;
                 }
             } catch (e) {
-                error.textContent = 'Something went wrong. Try again.';
-                error.style.display = 'block';
+                err.textContent = 'Something went wrong. Try again.';
+                err.style.display = 'block';
                 btn.textContent = 'Check Membership';
                 btn.disabled = false;
             }
         }
 
-        // Check login state
-        function init() {
-            // Catch Stripe redirect: /me?paid=true or /me.html?paid=true
-            const params = new URLSearchParams(window.location.search);
-            if (params.get('paid') === 'true') {
-                localStorage.setItem('d2d_paid', 'true');
-                localStorage.setItem('d2d_paid_at', Date.now().toString());
-                // Clean URL
-                window.history.replaceState({}, '', '/me.html');
-            }
+        function copyRef() {
+            const text = document.getElementById('referralBox').textContent;
+            navigator.clipboard.writeText(text);
+            const msg = document.getElementById('copyMsg');
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 2000);
+        }
 
-            const pubkey = localStorage.getItem('d2d_pubkey');
-            const privkey = localStorage.getItem('d2d_privkey');
-            const email = localStorage.getItem('d2d_email');
-            
-            if (!pubkey && !email) {
-                document.getElementById('notLoggedIn').style.display = 'block';
-                document.getElementById('loggedIn').style.display = 'none';
-                return;
-            }
-            
-            document.getElementById('notLoggedIn').style.display = 'none';
-            document.getElementById('loggedIn').style.display = 'block';
-            
-            // Load moniker or generate one
-            let moniker = localStorage.getItem('d2d_moniker');
-            if (!moniker) {
-                moniker = generateMonikerText();
-                localStorage.setItem('d2d_moniker', moniker);
-            }
-            document.getElementById('monikerInput').value = moniker;
-            
-            // Show pubkey (truncated)
-            const shortKey = pubkey.substring(0, 16) + '...' + pubkey.substring(pubkey.length - 8);
-            document.getElementById('pubkeyDisplay').textContent = shortKey;
-            
-            // Set referral link
-            const referralCode = pubkey.substring(0, 8);
-            document.getElementById('referralLink').textContent = 
-                `https://death2data.com/r/${referralCode}`;
-            
-            // Check tier
-            const paid = localStorage.getItem('d2d_paid');
-            const tierBadge = document.getElementById('tierBadge');
-            const tierDesc = document.getElementById('tierDesc');
-            const upgradeBanner = document.getElementById('upgradeBanner');
-            
-            if (paid) {
-                tierBadge.textContent = 'Pro';
-                tierBadge.classList.remove('free');
-                tierDesc.textContent = 'Unlimited access to all tools.';
-                upgradeBanner.style.display = 'none';
-            } else {
-                tierBadge.textContent = 'Free';
-                tierBadge.classList.add('free');
-                tierDesc.textContent = '5 searches per day. Upgrade for unlimited.';
-                upgradeBanner.style.display = 'block';
-            }
-            
-            // Load stats
-            const points = localStorage.getItem('d2d_points') || 0;
-            const referrals = localStorage.getItem('d2d_referrals') || 0;
-            const streak = localStorage.getItem('d2d_streak') || 0;
-            
-            document.getElementById('pointsValue').textContent = points;
-            document.getElementById('referralsValue').textContent = referrals;
-            document.getElementById('streakValue').textContent = streak;
+        function manageBilling() {
+            window.open('mailto:matt@death2data.com?subject=Billing Help', '_blank');
         }
-        
-        function generateMonikerText() {
-            const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
-            const noun = nouns[Math.floor(Math.random() * nouns.length)];
-            const num = Math.floor(Math.random() * 99);
-            return `${adj}-${noun}-${num}`;
-        }
-        
-        function generateMoniker() {
-            document.getElementById('monikerInput').value = generateMonikerText();
-        }
-        
-        function saveMoniker() {
-            const moniker = document.getElementById('monikerInput').value.trim().toLowerCase()
-                .replace(/[^a-z0-9-]/g, '-')
-                .replace(/-+/g, '-');
-            if (moniker.length < 3) {
-                alert('Moniker must be at least 3 characters');
-                return;
-            }
-            localStorage.setItem('d2d_moniker', moniker);
-            document.getElementById('monikerInput').value = moniker;
-            alert('Saved!');
-        }
-        
-        function copyReferral() {
-            const link = document.getElementById('referralLink').textContent;
-            navigator.clipboard.writeText(link);
-            alert('Copied!');
-        }
-        
-        function shareReferral() {
-            const link = document.getElementById('referralLink').textContent;
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Join Death2Data',
-                    text: 'Privacy tools that don\'t spy on you',
-                    url: link
-                });
-            } else {
-                copyReferral();
-            }
-        }
-        
-        function exportData() {
-            const data = {
-                moniker: localStorage.getItem('d2d_moniker'),
-                pubkey: localStorage.getItem('d2d_pubkey'),
-                points: localStorage.getItem('d2d_points'),
-                notes: localStorage.getItem('d2d_notes'),
-                searches: localStorage.getItem('d2d_searches'),
-                exported_at: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `d2d-export-${Date.now()}.json`;
-            a.click();
-        }
-        
-        function showKeys() {
-            const privkey = localStorage.getItem('d2d_privkey');
-            if (confirm('Your private key is SECRET. Only show it if you need to back it up.\n\nShow private key?')) {
-                alert('PRIVATE KEY (keep secret!):\n\n' + privkey);
-            }
-        }
-        
+
         function logout() {
-            if (confirm('This will remove your identity from this browser. Make sure you have your private key backed up!\n\nLogout?')) {
-                localStorage.removeItem('d2d_pubkey');
-                localStorage.removeItem('d2d_privkey');
-                localStorage.removeItem('d2d_moniker');
-                localStorage.removeItem('d2d_paid');
-                window.location.href = '/';
-            }
+            localStorage.removeItem('d2d_email');
+            localStorage.removeItem('d2d_paid');
+            localStorage.removeItem('d2d_tier');
+            document.getElementById('accountView').style.display = 'none';
+            document.getElementById('loginView').style.display = 'block';
+            document.getElementById('loginBtn').textContent = 'Check Membership';
+            document.getElementById('loginBtn').disabled = false;
         }
-        
-        // Init on load
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && document.getElementById('loginView').style.display !== 'none') login();
+        });
+
         init();
     </script>
 </body>
