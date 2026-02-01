@@ -288,29 +288,38 @@ async function loadRemotePage() {
       updateUsageDisplay();
     }
 
-    // Display content in sandboxed iframe
+    // Reader View - extract text, display clean
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data.content, 'text/html');
+    doc.querySelectorAll('script,style,nav,footer,header,iframe,noscript,.ad,.ads,.sidebar,.menu,.nav,aside').forEach(el => el.remove());
+    const title = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || url;
+    const main = doc.querySelector('article') || doc.querySelector('main') || doc.querySelector('.content') || doc.querySelector('#content') || doc.body;
+    let readable = '';
+    main.querySelectorAll('h1,h2,h3,h4,p,li,blockquote,pre,td,th,caption,figcaption').forEach(el => {
+      const text = el.textContent.trim();
+      if (!text || text.length < 3) return;
+      const tag = el.tagName.toLowerCase();
+      if (tag.startsWith('h')) readable += '<h2 style="color:#0f0;margin:25px 0 10px;">' + text + '</h2>';
+      else if (tag === 'li') readable += '<p style="padding-left:20px;">- ' + text + '</p>';
+      else if (tag === 'blockquote') readable += '<blockquote style="border-left:2px solid #0f0;padding-left:15px;color:#aaa;margin:15px 0;">' + text + '</blockquote>';
+      else readable += '<p style="margin:10px 0;line-height:1.7;">' + text + '</p>';
+    });
+    if (!readable) readable = '<p style="color:#888;">Could not extract readable content from this page.</p>';
+    const readerHTML = '<div style="max-width:700px;margin:0 auto;padding:40px 20px;font-family:Georgia,serif;background:#0a0a0a;color:#ddd;min-height:100vh;">' +
+      '<p style="color:#0f0;font-family:monospace;font-size:12px;margin-bottom:20px;">READER VIEW - ' + url + '</p>' +
+      '<h1 style="color:#fff;font-size:28px;margin-bottom:30px;font-family:system-ui;">' + title + '</h1>' +
+      readable +
+      '<div style="margin-top:40px;padding-top:20px;border-top:1px solid #333;color:#666;font-size:12px;font-family:monospace;">' +
+      '<a href="' + url + '" target="_blank" style="color:#0f0;">View original</a> - Browsing via Death2Data</div></div>';
     const frame = document.getElementById('remote-frame');
-    const blob = new Blob([data.content], { type: data.content_type || 'text/html' });
+    const blob = new Blob([readerHTML], { type: 'text/html' });
     const blobUrl = URL.createObjectURL(blob);
-
     frame.onload = () => {
       document.getElementById('loading').style.display = 'none';
       document.getElementById('frame-container').classList.add('visible');
       document.getElementById('status').textContent = 'Connected';
       document.getElementById('browse-btn').disabled = false;
-
-      // Try to inject D2D watermark (may fail due to sandbox)
-      try {
-        const frameDoc = frame.contentDocument || frame.contentWindow.document;
-        const watermark = frameDoc.createElement('div');
-        watermark.style.cssText = 'position:fixed;bottom:10px;right:10px;background:#000;color:#0f0;padding:8px 12px;font-size:11px;font-family:monospace;border:1px solid #0f0;z-index:999999;';
-        watermark.textContent = 'Browsing via Death2Data';
-        frameDoc.body.appendChild(watermark);
-      } catch (e) {
-        // Sandbox prevents access - expected behavior
-      }
     };
-
     frame.src = blobUrl;
 
   } catch (e) {
