@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Death2Data - Privacy Tools</title>
+<title>Death2Data - Private Search</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -11,1031 +11,405 @@ body {
   background: #0a0a0a;
   color: #fff;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* MRR Ticker */
-.mrr-ticker {
-  background: rgba(0, 255, 0, 0.05);
-  border-bottom: 1px solid #0f0;
-  padding: 12px 20px;
-  text-align: center;
-  font-size: 14px;
-  color: #0f0;
-  font-family: 'Courier New', monospace;
+/* Top bar */
+.topbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  gap: 15px;
+  font-size: 13px;
 }
-.mrr-ticker .label { color: #666; margin-right: 10px; }
+.topbar a {
+  color: #888;
+  text-decoration: none;
+}
+.topbar a:hover { color: #0f0; }
+.topbar .member-link { color: #0f0; }
 
-.container { max-width: 900px; margin: 0 auto; padding: 20px; }
-h1 { color: #0f0; font-size: 1.8rem; margin-bottom: 10px; }
-.subtitle { color: #666; font-size: 14px; margin-bottom: 30px; }
+/* Center content */
+.center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 20px;
+  margin-top: -80px;
+}
 
-/* Tabs */
-.tabs { display: flex; gap: 5px; margin-bottom: 20px; border-bottom: 1px solid #222; }
-.tab { background: none; border: none; color: #666; padding: 12px 20px; cursor: pointer; font-size: 15px; transition: all 0.2s; }
-.tab:hover { color: #888; }
-.tab.active { color: #0f0; border-bottom: 2px solid #0f0; }
-.panel { display: none; }
-.panel.active { display: block; }
+/* Logo */
+.logo {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 30px;
+}
+.logo .death { color: #fff; }
+.logo .two { color: #666; }
+.logo .data { color: #0f0; }
 
 /* Search */
-.search-box { display: flex; gap: 10px; margin-bottom: 20px; }
-.search-box input { flex: 1; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 16px; border-radius: 4px; }
-.search-box input:focus { border-color: #0f0; outline: none; }
-.search-box button { background: #0f0; color: #000; border: none; padding: 15px 30px; font-weight: bold; cursor: pointer; border-radius: 4px; }
-.search-box button:hover { background: #0ff; }
-.search-engines { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
-.engine { background: #111; border: 1px solid #222; padding: 12px 18px; color: #888; text-decoration: none; font-size: 14px; border-radius: 4px; transition: all 0.2s; }
-.engine:hover { border-color: #0f0; color: #0f0; }
-.search-note { color: #555; font-size: 13px; margin-top: 20px; line-height: 1.6; }
+.search-wrap {
+  width: 100%;
+  max-width: 580px;
+  margin-bottom: 20px;
+}
+.search-box {
+  display: flex;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 24px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.search-box:focus-within {
+  border-color: #0f0;
+}
+.search-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 16px 24px;
+  font-size: 16px;
+  outline: none;
+}
+.search-box input::placeholder { color: #555; }
+.search-box button {
+  background: none;
+  border: none;
+  color: #0f0;
+  padding: 16px 24px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+.search-box button:hover { background: #0f01; }
 
-/* Search Mode Toggle */
-.search-mode-btn { background: #111; border: 1px solid #222; color: #666; padding: 10px 20px; cursor: pointer; font-size: 14px; font-weight: 500; border-radius: 4px; transition: all 0.2s; }
-.search-mode-btn:hover { border-color: #333; color: #888; }
-.search-mode-btn.active { background: #0f0; color: #000; border-color: #0f0; }
+/* Action buttons */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+.actions button {
+  background: #111;
+  border: 1px solid #222;
+  color: #ccc;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.actions button:hover {
+  border-color: #0f0;
+  color: #0f0;
+}
 
-/* Search History */
-.search-history { margin-top: 30px; padding-top: 20px; border-top: 1px solid #222; }
-.search-history h3 { color: #888; font-size: 13px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-.history-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #1a1a1a; font-size: 14px; }
-.history-item .query { color: #aaa; }
-.history-item .time { color: #555; font-size: 12px; }
-.clear-history { background: none; border: 1px solid #333; color: #666; padding: 8px 15px; cursor: pointer; font-size: 12px; margin-top: 10px; }
-.clear-history:hover { border-color: #f66; color: #f66; }
+/* Results */
+#results {
+  width: 100%;
+  max-width: 580px;
+  margin-top: 10px;
+}
+.result-summary {
+  background: #001a00;
+  border: 1px solid #0f03;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+.result-summary .label {
+  color: #0f0;
+  font-size: 11px;
+  font-family: monospace;
+  margin-bottom: 8px;
+}
+.result-summary p {
+  color: #ddd;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.result-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #1a1a1a;
+}
+.result-item a {
+  color: #0f0;
+  text-decoration: none;
+  font-size: 15px;
+}
+.result-item a:hover { text-decoration: underline; }
+.result-item .url {
+  color: #555;
+  font-size: 12px;
+  margin-top: 3px;
+}
+.result-item .snippet {
+  color: #999;
+  font-size: 13px;
+  margin-top: 5px;
+  line-height: 1.5;
+}
+.result-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+.result-actions a {
+  color: #0f0;
+  text-decoration: none;
+  font-size: 13px;
+  padding: 8px 16px;
+  border: 1px solid #0f03;
+  border-radius: 4px;
+}
+.result-actions a:hover {
+  background: #0f01;
+  border-color: #0f0;
+}
 
-/* Notebook */
-.notebook-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.notebook-header h2 { color: #888; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
-.new-note { background: #0f0; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-.new-note:hover { background: #0ff; }
-.note-list { margin-bottom: 20px; }
-.note-item { background: #111; border: 1px solid #222; padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
-.note-item:hover { border-color: #333; transform: translateX(5px); }
-.note-title { color: #fff; margin-bottom: 5px; font-weight: 500; }
-.note-date { color: #555; font-size: 12px; }
-.note-preview { color: #888; font-size: 14px; margin-top: 10px; }
-.editor { display: none; }
-.editor.active { display: block; }
-.editor input { width: 100%; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 18px; margin-bottom: 10px; border-radius: 4px; font-weight: 500; }
-.editor input:focus { border-color: #0f0; outline: none; }
-.editor textarea { width: 100%; min-height: 400px; background: #111; border: 1px solid #333; color: #fff; padding: 15px; font-size: 16px; font-family: inherit; resize: vertical; border-radius: 4px; line-height: 1.6; }
-.editor textarea:focus { border-color: #0f0; outline: none; }
-.editor-actions { display: flex; gap: 10px; margin-top: 10px; }
-.editor-actions button { padding: 12px 24px; cursor: pointer; border: none; font-weight: 500; border-radius: 4px; }
-.save-btn { background: #0f0; color: #000; }
-.save-btn:hover { background: #0ff; }
-.back-btn { background: #333; color: #fff; }
-.back-btn:hover { background: #444; }
-.delete-btn { background: #300; color: #f66; margin-left: auto; }
-.delete-btn:hover { background: #500; }
+/* Footer links */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  justify-content: center;
+  max-width: 580px;
+  margin-bottom: 10px;
+}
+.footer-links a {
+  color: #555;
+  text-decoration: none;
+  font-size: 12px;
+}
+.footer-links a:hover { color: #0f0; }
 
-/* QR Tools */
-.qr-section { margin-bottom: 30px; background: #111; border: 1px solid #222; padding: 20px; border-radius: 4px; }
-.qr-section h3 { color: #0f0; font-size: 16px; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; color: #888; font-size: 13px; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
-.form-group input, .form-group select { width: 100%; background: #0a0a0a; border: 1px solid #333; color: #fff; padding: 12px; font-size: 15px; border-radius: 4px; }
-.form-group input:focus, .form-group select:focus { border-color: #0f0; outline: none; }
-.generate-btn { background: #0f0; color: #000; border: none; padding: 12px 30px; cursor: pointer; font-weight: bold; border-radius: 4px; }
-.generate-btn:hover { background: #0ff; }
-.qr-output { margin-top: 20px; text-align: center; padding: 20px; background: #fff; border-radius: 4px; }
+/* Bottom bar */
+.bottom {
+  border-top: 1px solid #1a1a1a;
+  padding: 15px 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #333;
+}
 
-/* Export Section */
-.export-section { margin-top: 30px; padding: 20px; background: #111; border: 1px solid #222; border-radius: 4px; }
-.export-section h3 { color: #0f0; font-size: 14px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-.export-section p { color: #666; font-size: 13px; margin-bottom: 15px; }
-.export-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-.export-btn { background: #222; border: 1px solid #333; color: #888; padding: 10px 20px; cursor: pointer; font-size: 13px; border-radius: 4px; }
-.export-btn:hover { border-color: #0f0; color: #0f0; }
+/* Upgrade banner for free users */
+.upgrade-bar {
+  background: #111;
+  border: 1px solid #222;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 20px;
+  display: none;
+}
+.upgrade-bar a { color: #0f0; text-decoration: none; font-weight: bold; }
 
-/* Empty state */
-.empty { text-align: center; padding: 80px 20px; color: #555; }
-.empty p { margin-bottom: 20px; line-height: 1.6; }
-
-/* Footer */
-.footer { margin-top: 60px; padding: 20px 0; border-top: 1px solid #222; text-align: center; color: #555; font-size: 13px; }
-.footer a { color: #0f0; text-decoration: none; }
-.footer a:hover { text-decoration: underline; }
+/* Search history */
+.history {
+  width: 100%;
+  max-width: 580px;
+  margin-top: 15px;
+}
+.history-label {
+  color: #444;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.history-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.history-items a {
+  color: #666;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 4px 10px;
+  background: #111;
+  border-radius: 12px;
+  border: 1px solid #1a1a1a;
+}
+.history-items a:hover { color: #0f0; border-color: #333; }
 </style>
 </head>
 <body>
 
-<!-- MRR Ticker -->
-<div class="mrr-ticker">
-  <span class="label">BUILDING IN PUBLIC:</span>
-  <span id="mrr-display">$6.48 MRR</span> ·
-  <span id="customers-display">7 members</span> ·
-  <a href="./join.html" style="color: #0f0; text-decoration: none;">Join for $1/month →</a>
+<!-- Top bar -->
+<div class="topbar">
+  <a href="/browse.html">Browse</a>
+  <a href="/tools.html">Tools</a>
+  <a href="/notebook.html">Notebook</a>
+  <a id="account-link" href="/me.html">Account</a>
 </div>
 
-<div class="container">
-  <h1>DEATH2DATA</h1>
-  <p class="subtitle">Privacy tools that don't spy on you. Your data stays here. Export it anytime.</p>
-<!-- Member Bar -->
-  <div id="memberBar" style="display:none; background:#0f01; border:1px solid #0f03; padding:12px 20px; border-radius:6px; margin-bottom:20px; flex-direction:row; justify-content:space-between; align-items:center;">
-    <span style="color:#0f0;">✓ Member</span>
-    <div style="display:flex; gap:12px;">
-      <a href="/browse.html" style="color:#fff; text-decoration:none; padding:6px 14px; border:1px solid #333; border-radius:4px; font-size:14px;">Browse</a>
-      <a href="/me.html" style="color:#fff; text-decoration:none; padding:6px 14px; border:1px solid #333; border-radius:4px; font-size:14px;">Account</a>
-    </div>
-  </div>
-  <div id="joinBar" style="display:none; background:#111; border:1px solid #333; padding:12px 20px; border-radius:6px; margin-bottom:20px; flex-direction:row; justify-content:space-between; align-items:center;">
-    <span style="color:#999;">5 free searches/day</span>
-    <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" style="color:#0f0; text-decoration:none; font-weight:bold; font-size:14px;">Unlock everything → $1/mo</a>
-  </div>
-  <script>
-    (function(){
-      var e = localStorage.getItem('d2d_email');
-      var p = localStorage.getItem('d2d_paid');
-      if(e && p) { document.getElementById('memberBar').style.display = 'flex'; }
-      else { document.getElementById('joinBar').style.display = 'flex'; }
-    })();
-  </script>  
-  <div class="tabs">
-    <button class="tab active" data-panel="search">Search</button>
-    <button class="tab" data-panel="notebook">Notebook</button>
-    <button class="tab" data-panel="tools">Tools</button>
-    <button class="tab" data-panel="grants">Grants</button>
-    <button class="tab" data-panel="export">Export</button>
+<!-- Center -->
+<div class="center">
+  <div class="logo">
+    <span class="death">DEATH</span><span class="two">2</span><span class="data">DATA</span>
   </div>
 
-  <!-- SEARCH PANEL -->
-  <div id="search" class="panel active">
-    <!-- Search Mode Toggle -->
-    <div style="display:flex;gap:10px;margin-bottom:20px;">
-      <button id="web-search-btn" class="search-mode-btn active" onclick="switchSearchMode('web')">🌐 Web Search</button>
-      <button id="site-search-btn" class="search-mode-btn" onclick="switchSearchMode('site')">🔍 Search This Site</button>
-    </div>
-
+  <div class="search-wrap">
     <div class="search-box">
       <input type="text" id="query" placeholder="Search privately..." autofocus>
       <button onclick="doSearch()">Search</button>
     </div>
-
-    <!-- Web Search Engines -->
-    <div id="web-search-options">
-      <p style="color:#888;margin-bottom:15px;">Pick a private search engine:</p>
-
-      <div class="search-engines">
-        <a href="#" class="engine" data-url="https://searx.be/search?q=">SearX.be</a>
-        <a href="#" class="engine" data-url="https://search.brave.com/search?q=">Brave</a>
-        <a href="#" class="engine" data-url="https://duckduckgo.com/?q=">DuckDuckGo</a>
-      </div>
-    </div>
-
-    <!-- Site Search Options -->
-    <div id="site-search-options" style="display:none;">
-      <p style="color:#888;margin-bottom:15px;">Search death2data.com pages:</p>
-      <div class="search-engines">
-        <a href="#" class="engine site-engine" data-url="https://searx.be/search?q=site:death2data.com+">SearX</a>
-        <a href="#" class="engine site-engine" data-url="https://search.brave.com/search?q=site:death2data.com+">Brave</a>
-        <a href="#" class="engine site-engine" data-url="https://duckduckgo.com/?q=site:death2data.com+">DuckDuckGo</a>
-        <a href="#" class="engine site-engine" data-url="https://www.google.com/search?q=site:death2data.com+">Google</a>
-      </div>
-    </div>
-
-    <p class="search-note">
-      We don't proxy your searches - you go directly to the engine of your choice.<br>
-      Your search history is stored locally. Export it anytime for your own AI training.
-    </p>
-
-    <!-- Local Search History -->
-    <div class="search-history" id="search-history-section" style="display:none;">
-      <h3>Your Recent Searches (local only)</h3>
-      <div id="search-history"></div>
-      <button class="clear-history" onclick="clearSearchHistory()">Clear History</button>
-    </div>
   </div>
 
-  <!-- NOTEBOOK PANEL -->
-  <div id="notebook" class="panel">
-    <div id="note-list-view">
-      <div class="notebook-header">
-        <h2>Your Notes (stored locally)</h2>
-        <button class="new-note" onclick="createNote()">+ New Note</button>
-      </div>
-      <div id="notes-container" class="note-list"></div>
-    </div>
-
-    <div id="note-editor" class="editor">
-      <input type="text" id="note-title-input" placeholder="Note title...">
-      <textarea id="note-content-input" placeholder="Write your note here..."></textarea>
-      <div class="editor-actions">
-        <button class="save-btn" onclick="saveNote()">Save</button>
-        <button class="back-btn" onclick="closeEditor()">Back</button>
-        <button class="delete-btn" onclick="deleteCurrentNote()">Delete</button>
-      </div>
-    </div>
+  <div class="actions">
+    <button onclick="doSearch()">Private Search</button>
+    <button onclick="feelingLucky()">Browse Random Wiki</button>
   </div>
 
-  <!-- TOOLS PANEL -->
-  <div id="tools" class="panel">
-    <!-- WiFi QR -->
-    <div class="qr-section">
-      <h3>WiFi QR Code</h3>
-      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code to share WiFi credentials</p>
-      <div class="form-group">
-        <label>Network Name (SSID)</label>
-        <input type="text" id="wifi-ssid" placeholder="My WiFi Network">
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="text" id="wifi-password" placeholder="secretpassword123">
-      </div>
-      <div class="form-group">
-        <label>Security Type</label>
-        <select id="wifi-security">
-          <option value="WPA">WPA/WPA2</option>
-          <option value="WEP">WEP</option>
-          <option value="nopass">None (Open)</option>
-        </select>
-      </div>
-      <button class="generate-btn" onclick="generateWiFiQR()">Generate WiFi QR</button>
-      <div id="wifi-qr-output" class="qr-output" style="display:none;"></div>
-    </div>
-
-    <!-- URL QR -->
-    <div class="qr-section">
-      <h3>URL QR Code</h3>
-      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code for any website or link</p>
-      <div class="form-group">
-        <label>URL</label>
-        <input type="text" id="url-input" placeholder="https://death2data.com">
-      </div>
-      <button class="generate-btn" onclick="generateURLQR()">Generate URL QR</button>
-      <div id="url-qr-output" class="qr-output" style="display:none;"></div>
-    </div>
-
-    <!-- Contact QR -->
-    <div class="qr-section">
-      <h3>Contact Card QR</h3>
-      <p style="color:#666;margin-bottom:15px;font-size:13px;">Generate a QR code with contact info (vCard)</p>
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="contact-name" placeholder="John Doe">
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="contact-email" placeholder="john@example.com">
-      </div>
-      <div class="form-group">
-        <label>Phone</label>
-        <input type="tel" id="contact-phone" placeholder="+1 555 123 4567">
-      </div>
-      <button class="generate-btn" onclick="generateContactQR()">Generate Contact QR</button>
-      <div id="contact-qr-output" class="qr-output" style="display:none;"></div>
-    </div>
+  <div id="upgrade-bar" class="upgrade-bar">
+    5 free browses/day · <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00">Unlock unlimited → $1/mo</a>
   </div>
 
-  <!-- GRANTS PANEL -->
-  <div id="grants" class="panel">
-    <div class="qr-section">
-      <h3>Grant Finder</h3>
-      <p style="color:#888;margin-bottom:20px;">
-        Find funding for your project. Government grants, foundations, tech credits, and accelerators.<br>
-        <strong style="color:#0f0;">D2D Members:</strong> Get help applying (3 applications/month included)
-      </p>
+  <!-- Results appear here -->
+  <div id="results"></div>
 
-      <div class="form-group">
-        <label>What are you building?</label>
-        <input type="text" id="grant-project" placeholder="A privacy-first search engine">
-      </div>
-
-      <div class="form-group">
-        <label>Who is it for?</label>
-        <input type="text" id="grant-users" placeholder="Privacy-conscious users">
-      </div>
-
-      <div class="form-group">
-        <label>What problem does it solve?</label>
-        <input type="text" id="grant-problem" placeholder="Search engines track everything you do">
-      </div>
-
-      <div class="form-group">
-        <label>Where are you located?</label>
-        <input type="text" id="grant-location" placeholder="Florida, USA">
-      </div>
-
-      <div class="form-group">
-        <label>How far along?</label>
-        <select id="grant-stage">
-          <option value="idea">Idea stage</option>
-          <option value="prototype">Prototype built</option>
-          <option value="launched">Launched / has users</option>
-          <option value="revenue">Generating revenue</option>
-        </select>
-      </div>
-
-      <button class="generate-btn" onclick="findGrants()">Find Matching Grants</button>
-
-      <div id="grant-results" style="display:none;margin-top:30px;">
-        <h3 style="color:#0f0;font-size:16px;margin-bottom:15px;">POTENTIAL MATCHES</h3>
-        <div id="grants-list"></div>
-        <p style="margin-top:20px;color:#666;font-size:13px;">
-          <strong style="color:#0f0;">Next step:</strong> Generate application materials →
-          <a href="./grant-materials.html" target="_blank" style="color:#0f0;text-decoration:none;border-bottom:1px solid #0f0;margin-left:5px;">Open Materials Generator</a>
-        </p>
-        <p style="margin-top:10px;color:#666;font-size:13px;">
-          Or email matt@death2data.com with subject "Grant help: [your project]" for personalized assistance.
-        </p>
-      </div>
-    </div>
-
-    <div class="export-section" style="margin-top:20px;">
-      <h3>How It Works</h3>
-      <p style="margin-bottom:10px;">
-        <strong style="color:#0f0;">1. We find matches</strong> - Federal, state, foundations, tech programs<br>
-        <strong style="color:#0f0;">2. Generate materials</strong> - <a href="./grant-materials.html" target="_blank" style="color:#0f0;text-decoration:none;border-bottom:1px solid #0f0;">Spec sheets, cover letters, budgets</a><br>
-        <strong style="color:#0f0;">3. We apply together</strong> - You know your project, we know the forms
-      </p>
-      <p style="margin-top:15px;font-size:13px;color:#555;">
-        Not grant writers. We're translators. $1/month members get 3 applications/month with help.
-      </p>
-    </div>
+  <!-- Search history -->
+  <div class="history" id="history-section" style="display:none;">
+    <div class="history-label">Recent</div>
+    <div class="history-items" id="history-items"></div>
   </div>
 
-  <!-- EXPORT PANEL -->
-  <div id="export" class="panel">
-    <div class="export-section">
-      <h3>Export Your Data</h3>
-      <p>Everything you create here stays on YOUR device. Export it anytime in formats useful for AI training, backups, or moving to another tool.</p>
-      
-      <div class="export-buttons">
-        <button class="export-btn" onclick="exportJSON()">Export All (JSON)</button>
-        <button class="export-btn" onclick="exportMarkdown()">Notes as Markdown</button>
-        <button class="export-btn" onclick="exportSearches()">Search History (CSV)</button>
-        <button class="export-btn" onclick="exportTrainingData()">AI Training Format (JSONL)</button>
-      </div>
-    </div>
-
-    <div class="export-section" style="margin-top:20px;">
-      <h3>What Gets Exported</h3>
-      <p style="margin-bottom:10px;">
-        <strong style="color:#0f0;">Notes:</strong> <span id="note-count">0</span> notes<br>
-        <strong style="color:#0f0;">Searches:</strong> <span id="search-count">0</span> queries<br>
-        <strong style="color:#0f0;">Total Size:</strong> <span id="data-size">0</span> KB
-      </p>
-      <p style="color:#555;font-size:12px;">We never see this data. It lives in your browser's localStorage.</p>
-    </div>
-
-    <div class="export-section" style="margin-top:20px;">
-      <h3>Import Data</h3>
-      <p>Restore from a previous export:</p>
-      <input type="file" id="import-file" accept=".json" style="margin-top:10px;">
-      <button class="export-btn" onclick="importData()" style="margin-top:10px;">Import</button>
-    </div>
-  </div>
-
-  <div class="footer">
-    <p>Open source. No tracking. No ads. Your data stays on your device.</p>
-    <p style="margin-top: 10px;">
-      <a href="mailto:matt@death2data.com">matt@death2data.com</a> ·
-      <a href="https://github.com/deathtodata">GitHub</a> ·
-      <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00">Join for $1/month</a>
-    </p>
+  <div class="footer-links">
+    <a href="/browse.html">Private Browse</a>
+    <a href="https://en.wikipedia.org/wiki/Data_broker" onclick="event.preventDefault();window.location='/browse.html?url='+this.href">Data Brokers</a>
+    <a href="https://en.wikipedia.org/wiki/Privacy" onclick="event.preventDefault();window.location='/browse.html?url='+this.href">Privacy</a>
+    <a href="/docs/">Docs</a>
+    <a href="mailto:matt@death2data.com">Contact</a>
+    <a href="https://github.com/deathtodata">GitHub</a>
   </div>
 </div>
 
-<!-- QR Code Library -->
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<div class="bottom">
+  No tracking. No ads. Your data stays on your device. · <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" style="color:#0f0;text-decoration:none;">Join for $1/month</a>
+</div>
 
 <script>
-// ========================================
-// DATA STORAGE
-// ========================================
-let notes = JSON.parse(localStorage.getItem('d2d_notes') || '[]');
+const API = 'https://api.death2data.com';
 let searches = JSON.parse(localStorage.getItem('d2d_searches') || '[]');
-let currentNoteId = null;
 
-// ========================================
-// TABS
-// ========================================
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById(tab.dataset.panel).classList.add('active');
-    
-    if (tab.dataset.panel === 'export') updateExportStats();
-  });
+// Check member status
+(function(){
+  var paid = localStorage.getItem('d2d_paid');
+  var email = localStorage.getItem('d2d_email');
+  if (paid && email) {
+    document.getElementById('account-link').textContent = email.split('@')[0];
+    document.getElementById('account-link').classList.add('member-link');
+  } else {
+    document.getElementById('upgrade-bar').style.display = 'block';
+  }
+})();
+
+// Show search history
+function renderHistory() {
+  if (searches.length === 0) return;
+  document.getElementById('history-section').style.display = 'block';
+  document.getElementById('history-items').innerHTML = searches.slice(0, 8).map(s =>
+    '<a href="#" onclick="event.preventDefault();document.getElementById(\'query\').value=\'' + s.query.replace(/'/g, "\\'") + '\';doSearch();">' + s.query + '</a>'
+  ).join('');
+}
+renderHistory();
+
+// Enter key
+document.getElementById('query').addEventListener('keypress', function(e) {
+  if (e.key === 'Enter') doSearch();
 });
 
-// ========================================
-// SEARCH
-// ========================================
-let searchMode = 'web'; // 'web' or 'site'
-
-function switchSearchMode(mode) {
-  searchMode = mode;
-
-  // Update button states
-  document.getElementById('web-search-btn').classList.toggle('active', mode === 'web');
-  document.getElementById('site-search-btn').classList.toggle('active', mode === 'site');
-
-  // Toggle search options visibility
-  document.getElementById('web-search-options').style.display = mode === 'web' ? 'block' : 'none';
-  document.getElementById('site-search-options').style.display = mode === 'site' ? 'block' : 'none';
-
-  // Update placeholder
-  const queryInput = document.getElementById('query');
-  queryInput.placeholder = mode === 'web' ? 'Search privately...' : 'Search death2data.com...';
+function feelingLucky() {
+  const topics = ['Privacy','Encryption','Data_broker','Surveillance','Cryptography','Internet_privacy','Virtual_private_network','Tor_(network)','Signal_(software)','Open-source_software'];
+  const pick = topics[Math.floor(Math.random() * topics.length)];
+  window.location = '/browse.html?url=https://en.wikipedia.org/wiki/' + pick;
 }
 
 function doSearch() {
   const query = document.getElementById('query').value.trim();
   if (!query) return;
 
-  searches.unshift({ query, timestamp: new Date().toISOString(), engine: 'd2d-api' });
-  if (searches.length > 100) searches = searches.slice(0, 100);
+  // Save to history
+  searches.unshift({ query: query, timestamp: new Date().toISOString() });
+  if (searches.length > 50) searches = searches.slice(0, 50);
   localStorage.setItem('d2d_searches', JSON.stringify(searches));
-  renderSearchHistory();
 
-  // NEW: Log to backend (privacy-safe analytics)
-  fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
-    .catch(() => {}); // Silent fail - don't break search if API down
+  // Log to API (silent)
+  fetch(API + '/search?q=' + encodeURIComponent(query)).catch(function(){});
 
-  let resultsDiv = document.getElementById('search-results');
-  if (!resultsDiv) {
-    resultsDiv = document.createElement('div');
-    resultsDiv.id = 'search-results';
-    resultsDiv.style.cssText = 'margin-top:20px;padding:20px;background:#111;border:1px solid #333;border-radius:4px;';
-    document.getElementById('search').appendChild(resultsDiv);
-  }
-  resultsDiv.innerHTML = '<p style="color:#0f0;">Searching...</p>';
+  // Show loading
+  var results = document.getElementById('results');
+  results.innerHTML = '<p style="color:#0f0;text-align:center;padding:20px;">Searching...</p>';
 
-  fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
-    .then(r => r.json())
-    .then(data => {
-      let html = '';
+  // Fetch from API
+  fetch(API + '/search?q=' + encodeURIComponent(query))
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var html = '';
 
-      // ARK RESEARCH INSIGHT (if available)
-      if (data.ark) {
-        html += '<div style="background:#001a00;border-left:3px solid #0f0;padding:18px;margin-bottom:20px;border-radius:4px;">';
-        html += '<strong style="color:#0f0;font-size:14px;display:block;margin-bottom:10px;">ARK RESEARCH</strong>';
-        html += '<p style="color:#fff;margin-bottom:8px;line-height:1.6;">' + data.ark.prediction + '</p>';
-        html += '<p style="color:#666;font-size:12px;">Source: ARK Big Ideas 2026, Page ' + data.ark.page + '</p>';
-        html += '</div>';
-      }
-
-      // COMMUNITY TREND
-      if (data.community_trend > 0) {
-        html += '<div style="background:#0a0a0a;border:1px solid #222;padding:12px;margin-bottom:15px;border-radius:4px;">';
-        html += '<span style="color:#0f0;font-weight:bold;">' + data.community_trend + ' subscribers</span>';
-        html += '<span style="color:#888;"> searched this topic</span>';
-        html += '</div>';
-      }
-
-      // DUCKDUCKGO RESULTS
+      // DuckDuckGo abstract
       if (data.abstract) {
-        html += '<div style="margin-bottom:15px;padding:15px;background:#1a1a1a;border-radius:4px;">';
-        html += '<p style="color:#fff;line-height:1.6;margin-bottom:10px;">' + data.abstract + '</p>';
-        html += '<a href="' + data.url + '" target="_blank" style="color:#0f0;font-size:13px;">Source: ' + data.source + '</a>';
+        html += '<div class="result-summary">';
+        html += '<div class="label">INSTANT ANSWER</div>';
+        html += '<p>' + data.abstract + '</p>';
+        if (data.source) html += '<p style="color:#555;font-size:11px;margin-top:8px;">Source: ' + data.source + '</p>';
         html += '</div>';
       }
 
-      // RELATED TOPICS
+      // ARK insight
+      if (data.ark) {
+        html += '<div class="result-summary">';
+        html += '<div class="label">ARK RESEARCH</div>';
+        html += '<p>' + data.ark.prediction + '</p>';
+        html += '<p style="color:#555;font-size:11px;margin-top:8px;">ARK Big Ideas 2026, Page ' + data.ark.page + '</p>';
+        html += '</div>';
+      }
+
+      // Community trend
+      if (data.community_trend > 0) {
+        html += '<p style="color:#666;font-size:12px;margin-bottom:10px;">' + data.community_trend + ' other members searched this</p>';
+      }
+
+      // Related topics
       if (data.related && data.related.length) {
-        html += '<p style="color:#888;font-size:12px;margin:15px 0 10px;">RELATED:</p>';
-        data.related.forEach(function(r) {
-          if(r.Text) html += '<a href="' + r.FirstURL + '" target="_blank" style="color:#0f0;display:block;margin-bottom:8px;font-size:14px;">' + r.Text + '</a>';
+        data.related.slice(0, 5).forEach(function(r) {
+          if (r.Text && r.FirstURL) {
+            html += '<div class="result-item">';
+            html += '<a href="/browse.html?url=' + encodeURIComponent(r.FirstURL) + '">' + r.Text + '</a>';
+            html += '<div class="url">' + r.FirstURL + '</div>';
+            html += '</div>';
+          }
         });
       }
 
-      // BROWSE BUTTONS
-      html += '<div style="display:flex;gap:10px;margin-top:15px;">';
-      html += '<button onclick="window.location=\'/browse.html?url=' + encodeURIComponent(data.url || ("https://en.wikipedia.org/wiki/" + encodeURIComponent(query.replace(/ /g, '_')))) + '\'" style="background:#0f0;color:#000;border:none;padding:12px 24px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Browse Full Page →</button>';
-      html += '<button onclick="window.open(\'https://searx.be/search?q=' + encodeURIComponent(query) + '\',\'_blank\')" style="background:transparent;color:#0f0;border:1px solid #0f0;padding:12px 24px;cursor:pointer;font-weight:bold;border-radius:4px;font-size:14px;">Deep Search →</button>';
+      // Action buttons
+      var wikiUrl = 'https://en.wikipedia.org/wiki/' + encodeURIComponent(query.replace(/ /g, '_'));
+      html += '<div class="result-actions">';
+      html += '<a href="/browse.html?url=' + encodeURIComponent(wikiUrl) + '">📖 Read on Wikipedia</a>';
+      html += '<a href="https://searx.be/search?q=' + encodeURIComponent(query) + '" target="_blank">🔍 Deep Search</a>';
+      if (data.url) html += '<a href="/browse.html?url=' + encodeURIComponent(data.url) + '">📄 Browse Source</a>';
       html += '</div>';
 
-      resultsDiv.innerHTML = html || '<p style="color:#888;">No results</p>';
-
-      // Show AI widget after 3 searches
-      if (searches.length === 3) {
-        showAIWidget();
-      }
+      results.innerHTML = html || '<p style="color:#888;text-align:center;padding:20px;">No results found</p>';
+      renderHistory();
     })
-    .catch(function() { resultsDiv.innerHTML = '<p style="color:#f66;">Search failed</p>'; });
-}
-
-// Engine click handlers - show results inline (pop-in, not pop-out)
-document.querySelectorAll('.engine').forEach(engine => {
-  engine.addEventListener('click', (e) => {
-    e.preventDefault();
-    const query = document.getElementById('query').value.trim();
-    if (!query) {
-      alert('Please enter a search query first');
-      return;
-    }
-
-    // Log with specific engine
-    const engineName = engine.textContent;
-    searches.unshift({
-      query: query,
-      timestamp: new Date().toISOString(),
-      engine: engineName
-    });
-    if (searches.length > 100) searches = searches.slice(0, 100);
-    localStorage.setItem('d2d_searches', JSON.stringify(searches));
-
-    // Log to backend (privacy-safe analytics)
-    fetch('https://api.death2data.com/search?q=' + encodeURIComponent(query))
-      .catch(() => {}); // Silent fail
-
-    renderSearchHistory();
-
-    // NEW: Show results inline instead of opening new tab
-    doSearch();
-
-    // Show AI widget after 3 searches
-    if (searches.length === 3) {
-      showAIWidget();
-    }
-  });
-});
-
-function renderSearchHistory() {
-  const section = document.getElementById('search-history-section');
-  const container = document.getElementById('search-history');
-  
-  if (searches.length === 0) {
-    section.style.display = 'none';
-    return;
-  }
-  
-  section.style.display = 'block';
-  container.innerHTML = searches.slice(0, 10).map(s => `
-    <div class="history-item">
-      <span class="query">${s.query}</span>
-      <span class="time">${new Date(s.timestamp).toLocaleString()}</span>
-    </div>
-  `).join('');
-}
-
-function clearSearchHistory() {
-  if (!confirm('Clear all search history?')) return;
-  searches = [];
-  localStorage.setItem('d2d_searches', JSON.stringify(searches));
-  renderSearchHistory();
-}
-
-// ========================================
-// NOTEBOOK
-// ========================================
-function renderNotes() {
-  const container = document.getElementById('notes-container');
-
-  if (notes.length === 0) {
-    container.innerHTML = '<div class="empty"><p>No notes yet.</p><p>Click "+ New Note" to get started.</p></div>';
-    return;
-  }
-
-  container.innerHTML = notes.map(note => `
-    <div class="note-item" onclick="editNote('${note.id}')">
-      <div class="note-title">${note.title || 'Untitled'}</div>
-      <div class="note-date">${new Date(note.updated).toLocaleDateString()}</div>
-      <div class="note-preview">${(note.content || '').substring(0, 100)}${note.content?.length > 100 ? '...' : ''}</div>
-    </div>
-  `).join('');
-}
-
-function createNote() {
-  const note = {
-    id: Date.now().toString(),
-    title: '',
-    content: '',
-    created: new Date().toISOString(),
-    updated: new Date().toISOString()
-  };
-  notes.unshift(note);
-  editNote(note.id);
-}
-
-function editNote(id) {
-  currentNoteId = id;
-  const note = notes.find(n => n.id === id);
-  document.getElementById('note-title-input').value = note.title;
-  document.getElementById('note-content-input').value = note.content;
-  document.getElementById('note-list-view').style.display = 'none';
-  document.getElementById('note-editor').classList.add('active');
-}
-
-function saveNote() {
-  const note = notes.find(n => n.id === currentNoteId);
-  note.title = document.getElementById('note-title-input').value;
-  note.content = document.getElementById('note-content-input').value;
-  note.updated = new Date().toISOString();
-  localStorage.setItem('d2d_notes', JSON.stringify(notes));
-  closeEditor();
-}
-
-function closeEditor() {
-  document.getElementById('note-editor').classList.remove('active');
-  document.getElementById('note-list-view').style.display = 'block';
-  renderNotes();
-}
-
-function deleteCurrentNote() {
-  if (!confirm('Delete this note?')) return;
-  notes = notes.filter(n => n.id !== currentNoteId);
-  localStorage.setItem('d2d_notes', JSON.stringify(notes));
-  closeEditor();
-}
-
-// ========================================
-// QR CODE GENERATORS
-// ========================================
-function generateWiFiQR() {
-  const ssid = document.getElementById('wifi-ssid').value;
-  const password = document.getElementById('wifi-password').value;
-  const security = document.getElementById('wifi-security').value;
-  if (!ssid) return alert('Enter WiFi network name');
-
-  let wifiString = `WIFI:T:${security};S:${ssid};`;
-  if (security !== 'nopass') wifiString += `P:${password};`;
-  wifiString += ';';
-
-  const output = document.getElementById('wifi-qr-output');
-  output.innerHTML = '<canvas id="wifi-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to connect to WiFi</p>';
-  output.style.display = 'block';
-  QRCode.toCanvas(document.getElementById('wifi-qr-canvas'), wifiString, { width: 300, margin: 2 });
-}
-
-function generateURLQR() {
-  const url = document.getElementById('url-input').value;
-  if (!url) return alert('Enter a URL');
-
-  const output = document.getElementById('url-qr-output');
-  output.innerHTML = '<canvas id="url-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to visit</p>';
-  output.style.display = 'block';
-  QRCode.toCanvas(document.getElementById('url-qr-canvas'), url, { width: 300, margin: 2 });
-}
-
-function generateContactQR() {
-  const name = document.getElementById('contact-name').value;
-  const email = document.getElementById('contact-email').value;
-  const phone = document.getElementById('contact-phone').value;
-  if (!name) return alert('Enter a name');
-
-  const vcard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nEMAIL:${email}\nTEL:${phone}\nEND:VCARD`;
-  const output = document.getElementById('contact-qr-output');
-  output.innerHTML = '<canvas id="contact-qr-canvas"></canvas><p style="margin-top:10px;color:#000;font-weight:500;">Scan to save contact</p>';
-  output.style.display = 'block';
-  QRCode.toCanvas(document.getElementById('contact-qr-canvas'), vcard, { width: 300, margin: 2 });
-}
-
-// ========================================
-// EXPORT FUNCTIONS
-// ========================================
-function updateExportStats() {
-  document.getElementById('note-count').textContent = notes.length;
-  document.getElementById('search-count').textContent = searches.length;
-  
-  const data = JSON.stringify({ notes, searches });
-  const sizeKB = (new Blob([data]).size / 1024).toFixed(2);
-  document.getElementById('data-size').textContent = sizeKB;
-}
-
-function downloadFile(content, filename, type) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-function exportJSON() {
-  const data = {
-    exported_at: new Date().toISOString(),
-    source: 'death2data',
-    notes: notes,
-    searches: searches
-  };
-  downloadFile(JSON.stringify(data, null, 2), `d2d-export-${Date.now()}.json`, 'application/json');
-}
-
-function exportMarkdown() {
-  let md = `# Death2Data Notes Export\nExported: ${new Date().toLocaleString()}\n\n`;
-  
-  notes.forEach(note => {
-    md += `## ${note.title || 'Untitled'}\n`;
-    md += `*Created: ${new Date(note.created).toLocaleString()}*\n\n`;
-    md += `${note.content}\n\n---\n\n`;
-  });
-  
-  downloadFile(md, `d2d-notes-${Date.now()}.md`, 'text/markdown');
-}
-
-function exportSearches() {
-  let csv = 'timestamp,query,engine\n';
-  searches.forEach(s => {
-    csv += `"${s.timestamp}","${s.query.replace(/"/g, '""')}","${s.engine}"\n`;
-  });
-  downloadFile(csv, `d2d-searches-${Date.now()}.csv`, 'text/csv');
-}
-
-function exportTrainingData() {
-  // JSONL format for AI training
-  let jsonl = '';
-  
-  // Notes as instruction-following examples
-  notes.forEach(note => {
-    if (note.title && note.content) {
-      jsonl += JSON.stringify({
-        instruction: `Write about: ${note.title}`,
-        input: '',
-        output: note.content
-      }) + '\n';
-    }
-  });
-  
-  // Searches as query examples
-  searches.forEach(s => {
-    jsonl += JSON.stringify({
-      instruction: 'Generate a search query',
-      input: '',
-      output: s.query
-    }) + '\n';
-  });
-  
-  downloadFile(jsonl, `d2d-training-${Date.now()}.jsonl`, 'application/jsonl');
-}
-
-function importData() {
-  const file = document.getElementById('import-file').files[0];
-  if (!file) return alert('Select a file first');
-  
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      
-      if (data.notes) {
-        notes = data.notes;
-        localStorage.setItem('d2d_notes', JSON.stringify(notes));
-      }
-      
-      if (data.searches) {
-        searches = data.searches;
-        localStorage.setItem('d2d_searches', JSON.stringify(searches));
-      }
-      
-      alert('Import successful!');
-      renderNotes();
-      renderSearchHistory();
-      updateExportStats();
-    } catch (err) {
-      alert('Invalid file format');
-    }
-  };
-  reader.readAsText(file);
-}
-
-// ========================================
-// GRANT FINDER
-// ========================================
-const GRANT_DATABASE = [
-  {
-    name: 'AWS Activate',
-    type: 'Cloud Credits',
-    amount: '$1K - $100K credits',
-    difficulty: 'Easy',
-    timeline: '1-2 weeks',
-    tags: ['tech', 'startup', 'credits'],
-    url: 'https://aws.amazon.com/activate/'
-  },
-  {
-    name: 'Google for Startups',
-    type: 'Cloud Credits + Mentorship',
-    amount: '$100K credits',
-    difficulty: 'Easy',
-    timeline: '2-4 weeks',
-    tags: ['tech', 'startup', 'credits', 'mentorship'],
-    url: 'https://cloud.google.com/startup'
-  },
-  {
-    name: 'Mozilla Builders',
-    type: 'Foundation Grant',
-    amount: '$10K - $50K',
-    difficulty: 'Medium',
-    timeline: '2-3 months',
-    tags: ['privacy', 'open-source', 'tech'],
-    url: 'https://builders.mozilla.community/'
-  },
-  {
-    name: 'Knight Foundation',
-    type: 'Foundation Grant',
-    amount: '$10K - $200K',
-    difficulty: 'Hard',
-    timeline: '3-6 months',
-    tags: ['journalism', 'info-tools', 'civic'],
-    url: 'https://knightfoundation.org/apply/'
-  },
-  {
-    name: 'SBIR/STTR',
-    type: 'Government Grant',
-    amount: '$50K - $2M',
-    difficulty: 'Hard',
-    timeline: '6-12 months',
-    tags: ['research', 'innovation', 'government'],
-    url: 'https://www.sbir.gov/'
-  },
-  {
-    name: 'NSF SBIR',
-    type: 'Government Research',
-    amount: '$50K - $500K',
-    difficulty: 'Hard',
-    timeline: '4-8 months',
-    tags: ['research', 'science', 'innovation'],
-    url: 'https://seedfund.nsf.gov/'
-  }
-];
-
-function findGrants() {
-  const project = document.getElementById('grant-project').value.trim();
-  const users = document.getElementById('grant-users').value.trim();
-  const problem = document.getElementById('grant-problem').value.trim();
-  const location = document.getElementById('grant-location').value.trim();
-  const stage = document.getElementById('grant-stage').value;
-
-  if (!project || !users || !problem) {
-    alert('Please fill out at least the first 3 questions');
-    return;
-  }
-
-  // Simple keyword matching (can be enhanced with ML later)
-  const keywords = (project + ' ' + users + ' ' + problem).toLowerCase();
-  let matches = [...GRANT_DATABASE];
-
-  // Prioritize based on stage
-  if (stage === 'idea' || stage === 'prototype') {
-    // Start with easy cloud credits
-    matches = matches.sort((a, b) => {
-      if (a.difficulty === 'Easy') return -1;
-      if (b.difficulty === 'Easy') return 1;
-      return 0;
-    });
-  }
-
-  // Filter by keywords (basic matching)
-  if (keywords.includes('privacy') || keywords.includes('security')) {
-    matches.unshift(GRANT_DATABASE.find(g => g.name === 'Mozilla Builders'));
-  }
-
-  // Display results
-  const resultsDiv = document.getElementById('grant-results');
-  const listDiv = document.getElementById('grants-list');
-
-  listDiv.innerHTML = matches.slice(0, 5).map(grant => `
-    <div style="background:#111;border:1px solid #222;padding:15px;margin-bottom:10px;border-radius:4px;">
-      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;">
-        <strong style="color:#0f0;">${grant.name}</strong>
-        <span style="color:#666;font-size:12px;">${grant.difficulty}</span>
-      </div>
-      <div style="color:#888;font-size:13px;margin-bottom:8px;">
-        ${grant.type} · ${grant.amount}
-      </div>
-      <div style="color:#666;font-size:12px;margin-bottom:10px;">
-        Timeline: ${grant.timeline}
-      </div>
-      <a href="${grant.url}" target="_blank" style="color:#0f0;font-size:13px;text-decoration:none;border-bottom:1px solid #0f0;">Learn more →</a>
-    </div>
-  `).join('');
-
-  resultsDiv.style.display = 'block';
-
-  // Save to localStorage for later reference
-  const grantQuery = {
-    timestamp: new Date().toISOString(),
-    project,
-    users,
-    problem,
-    location,
-    stage,
-    matches: matches.slice(0, 5).map(g => g.name)
-  };
-
-  let grantHistory = JSON.parse(localStorage.getItem('d2d_grant_queries') || '[]');
-  grantHistory.unshift(grantQuery);
-  if (grantHistory.length > 10) grantHistory = grantHistory.slice(0, 10);
-  localStorage.setItem('d2d_grant_queries', JSON.stringify(grantHistory));
-}
-
-// ========================================
-// INIT
-// ========================================
-renderNotes();
-renderSearchHistory();
-
-// Try to load stats from Cloudflare Worker (live data) or fallback to local
-async function loadStats() {
-  try {
-    // Try Cloudflare Worker first (always fresh)
-    const res = await fetch('https://d2d-api.mattmauersp.workers.dev/stats');
-    const data = await res.json();
-    document.getElementById('mrr-display').textContent = `$${data.mrr_dollars || 0} MRR`;
-    document.getElementById('customers-display').textContent = `${data.subscriptions || data.customers || 0} members`;
-  } catch (err) {
-    // Fallback to local stats.json
-    try {
-      const res = await fetch('./stats.json');
-      const data = await res.json();
-      document.getElementById('mrr-display').textContent = `$${data.mrr_dollars || 0} MRR`;
-      document.getElementById('customers-display').textContent = `${data.customers || 0} members`;
-    } catch (err2) {
-      console.log('Stats not available');
-    }
-  }
-}
-
-loadStats();
-
-// ========================================
-// AI WIDGET (Flywheel Component)
-// ========================================
-function showAIWidget() {
-  // Check if already shown
-  if (localStorage.getItem('d2d_widget_shown')) return;
-
-  // Fetch community trends
-  fetch('https://api.death2data.com/analytics')
-    .then(r => r.json())
-    .then(stats => {
-      const topQuery = stats.topQueries[0]?.query || 'privacy';
-      const topCount = stats.topQueries[0]?.count || 0;
-
-      // ARK insights for top trending topics
-      const arkInsights = {
-        'bitcoin': 'ARK predicts 45% blockchain revenue growth',
-        'crypto': 'ARK predicts 45% blockchain revenue growth',
-        'blockchain': 'ARK predicts 45% blockchain revenue growth',
-        'ai': 'ARK predicts $1.4T AI infrastructure by 2030',
-        'robotics': 'ARK predicts $6T GDP boost from robotics',
-        'robot': 'ARK predicts $6T GDP boost from robotics',
-        'privacy': 'Growing trend as AI surveillance scales',
-        'energy': 'Clean energy storage costs dropping rapidly',
-        'battery': 'Clean energy storage costs dropping rapidly'
-      };
-
-      const arkText = arkInsights[topQuery] || 'Trending in privacy-focused community';
-
-      const widget = document.createElement('div');
-      widget.id = 'ai-widget';
-      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:380px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;animation:slideIn 0.3s ease-out;';
-
-      widget.innerHTML = `
-        <style>
-        @keyframes slideIn {
-          from { transform: translateY(100px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
-        }
-        </style>
-        <h3 style="color:#0f0;margin:0 0 15px 0;font-size:16px;">D2D + ARK INTELLIGENCE</h3>
-        <p style="color:#fff;font-size:14px;line-height:1.6;margin-bottom:8px;">
-          Community trending: <strong style="color:#0f0;">"${topQuery}"</strong>
-        </p>
-        <p style="color:#aaa;font-size:13px;line-height:1.6;margin-bottom:15px;">
-          ${arkText}
-        </p>
-        <p style="color:#888;font-size:12px;line-height:1.6;margin-bottom:20px;">
-          $1/month gets you full ARK research access, trend alerts, and personalized recommendations.
-        </p>
-        <div style="display:flex;gap:10px;">
-          <a href="/join.html" style="flex:1;background:#0f0;color:#000;padding:12px 20px;text-align:center;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
-          <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
-        </div>
-      `;
-
-      document.body.appendChild(widget);
-      localStorage.setItem('d2d_widget_shown', 'true');
-    })
-    .catch(() => {
-      // Fallback if analytics API fails
-      const widget = document.createElement('div');
-      widget.id = 'ai-widget';
-      widget.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#000;border:2px solid #0f0;padding:25px;border-radius:8px;max-width:350px;box-shadow:0 4px 20px rgba(0,255,0,0.3);z-index:1000;';
-
-      widget.innerHTML = `
-        <h3 style="color:#0f0;margin:0 0 15px 0;font-size:16px;">D2D + ARK INTELLIGENCE</h3>
-        <p style="color:#fff;font-size:14px;line-height:1.6;margin-bottom:15px;">
-          Get AI-curated search results powered by ARK institutional research.
-        </p>
-        <div style="display:flex;gap:10px;">
-          <a href="/join.html" style="flex:1;background:#0f0;color:#000;padding:12px 20px;text-align:center;font-weight:bold;border-radius:4px;text-decoration:none;font-size:14px;">Subscribe $1/mo</a>
-          <button onclick="closeAIWidget()" style="background:#222;color:#888;border:1px solid #444;padding:12px 16px;cursor:pointer;border-radius:4px;font-size:14px;">Later</button>
-        </div>
-      `;
-
-      document.body.appendChild(widget);
-      localStorage.setItem('d2d_widget_shown', 'true');
+    .catch(function() {
+      results.innerHTML = '<p style="color:#f66;text-align:center;padding:20px;">Search failed - try again</p>';
     });
 }
 
-function closeAIWidget() {
-  const widget = document.getElementById('ai-widget');
-  if (widget) widget.remove();
-}
+// Load live stats
+fetch(API + '/stats').then(r => r.json()).then(data => {
+  // Subtle - don't clutter the page
+}).catch(function(){});
 </script>
 
 </body>
