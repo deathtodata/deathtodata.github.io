@@ -312,14 +312,19 @@ async function loadRemotePage() {
     headings.forEach(h => {
       let text = h.textContent.trim();
       if (!text || text.length < 3 || text.length > 100) return;
-      let next = h.nextElementSibling;
       let snippet = '';
-      while (next && !['H1','H2','H3'].includes(next.tagName)) {
-        if (next.tagName === 'P' && next.textContent.trim().length > 20) {
-          snippet = next.textContent.trim().split('.')[0] + '.';
+      let walker = h.parentElement || h;
+      let next = walker.nextElementSibling;
+      let searched = 0;
+      while (next && searched < 10) {
+        if (['H1','H2','H3'].includes(next.tagName)) break;
+        let p = (next.tagName === 'P') ? next : next.querySelector('p');
+        if (p && p.textContent.trim().length > 20) {
+          snippet = p.textContent.trim().split('.')[0] + '.';
           break;
         }
         next = next.nextElementSibling;
+        searched++;
       }
       if (snippet) summaryPoints.push('<p style="margin:8px 0;"><span style="color:#0f0;font-weight:bold;">' + text + '</span> - ' + snippet + '</p>');
     });
