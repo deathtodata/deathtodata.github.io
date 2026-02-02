@@ -191,28 +191,17 @@
 <script>
 // Validate token
 async function validateToken() {
-  // Get token from URL or localStorage
-  const urlParams = new URLSearchParams(window.location.search);
-  let token = urlParams.get('token');
+  // Check if user is logged in
+  const paid = localStorage.getItem('d2d_paid');
+  const email = localStorage.getItem('d2d_email');
 
-  if (!token) {
-    token = localStorage.getItem('d2d_access_token');
-  }
-
-  if (!token) {
-    showAccessDenied('No token provided');
+  if (!paid || !email) {
+    showAccessDenied('Please log in first');
     return;
   }
 
-  // Store token
-  localStorage.setItem('d2d_access_token', token);
-
-  // In production, validate with API: GET /api/validate?token=xxx
-  // For now, just check if it starts with d2d_
-  const valid = token.startsWith('d2d_') && token.length > 10;
-
-  if (valid) {
-    showTools(token);
+  if (paid) {
+    showTools(email);
   } else {
     showAccessDenied('Invalid token');
   }
@@ -300,7 +289,7 @@ function showAccessDenied(reason) {
 }
 
 function openTool(toolName) {
-  const token = localStorage.getItem('d2d_access_token');
+  const token = localStorage.getItem('d2d_email');
 
   // Check if tool exists
   const toolUrls = {
