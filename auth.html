@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logging in... - Death2Data</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .container { max-width: 400px; }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #333;
+            border-top-color: #0f0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        h1 { color: #0f0; margin-bottom: 10px; }
+        p { color: #666; }
+        .error { color: #f44; margin-top: 20px; }
+        .success { color: #0f0; }
+        a { color: #0f0; }
+    </style>
+    <script src="config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner" id="spinner"></div>
+        <h1 id="status">Verifying...</h1>
+        <p id="message">Checking your membership</p>
+    </div>
+
+    <script>
+        const API = 'https://api.death2data.com';
+
+        async function authenticate() {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+
+            if (!token) {
+                showError('No login token provided');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/auth?token=${encodeURIComponent(token)}`);
+                const data = await res.json();
+
+                if (data.authenticated) {
+                    // Store in localStorage
+                    localStorage.setItem('d2d_paid', 'true');
+                    localStorage.setItem('d2d_email', data.email);
+                    localStorage.setItem('d2d_tier', data.tier);
+                    localStorage.setItem('d2d_customer_id', data.customer_id);
+
+                    showSuccess(data.email);
+
+                    // Redirect after short delay
+                    setTimeout(() => {
+                        window.location.href = data.redirect || '/tools.html';
+                    }, 1500);
+                } else {
+                    showError(data.message || 'Not a member');
+                    document.getElementById('message').innerHTML =
+                        '<a href="/join.html">Join for $1/month</a>';
+                }
+            } catch (e) {
+                showError('Network error: ' + e.message);
+            }
+        }
+
+        function showSuccess(email) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('status').textContent = 'Welcome back!';
+            document.getElementById('status').className = 'success';
+            document.getElementById('message').textContent = email;
+        }
+
+        function showError(msg) {
+            document.getElementById('spinner').style.display = 'none';
+            document.getElementById('status').textContent = 'Login Failed';
+            document.getElementById('status').className = 'error';
+            document.getElementById('message').textContent = msg;
+        }
+
+        authenticate();
+    </script>
+</body>
+</html>
