@@ -205,7 +205,7 @@ body {
 </div>
 
 <script>
-const API = 'https://api.death2data.com';
+const ENV = window.location.hostname === 'localhost' ? 'dev' : 'prod'; const API = D2D_CONFIG[ENV].apiUrl;
 
 // Check access tier on load
 function checkAccess() {
