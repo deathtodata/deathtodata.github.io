@@ -1,0 +1,84 @@
+name: D2D Site Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run site audit
+        run: |
+          python .github/scripts/site-audit.py . --ci
+
+      - name: Check for critical issues
+        run: |
+          if [ -f audit-report.json ]; then
+            BROKEN=$(python -c "import json; d=json.load(open('audit-report.json')); print(len(d.get('issues',{}).get('broken_links',[])))")
+            JS_ERRORS=$(python -c "import json; d=json.load(open('audit-report.json')); print(len(d.get('issues',{}).get('js_syntax',[])))")
+            echo "Broken links: $BROKEN"
+            echo "JS errors: $JS_ERRORS"
+            if [ "$JS_ERRORS" -gt 0 ]; then
+              echo "❌ JavaScript syntax errors found!"
+              exit 1
+            fi
+            if [ "$BROKEN" -gt 20 ]; then
+              echo "❌ Too many broken links ($BROKEN > 20)"
+              exit 1
+            fi
+          fi
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-report
+          path: audit-report.json
+
+  html-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate HTML
+        uses: Cyb3r-Jak3/html5validator-action@v7.2.0
+        with:
+          root: .
+          css: false
+          extra: --ignore "Element "x-" --ignore "Attribute "x-"
+
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Link Checker
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --no-progress --exclude-mail './**/*.html'
+          fail: false  # Don't fail on external link issues
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install and run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun --collect.staticDistDir=. --collect.url=http://localhost/index.html || true
