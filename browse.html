@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>D2D Remote Browse</title>
+<!-- Security utilities -->
+<script src="/js/security.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body {
@@ -145,7 +147,9 @@ body {
 .usage-warning a { color: #0f0; text-decoration: none; }
 .usage-warning a:hover { text-decoration: underline; }
 </style>
-</head>
+
+    <script src="config.js"></script>
+    </head>
 <body>
 
 <div class="header">
@@ -361,7 +365,8 @@ function showError(msg) {
   document.getElementById('loading').style.display = 'none';
   document.getElementById('frame-container').classList.remove('visible');
   document.getElementById('error').style.display = 'block';
-  document.getElementById('error-msg').innerHTML = msg;
+  // SECURITY FIX: Use textContent instead of innerHTML to prevent XSS
+  document.getElementById('error-msg').textContent = msg;
   document.getElementById('status').textContent = 'Error';
   document.getElementById('browse-btn').disabled = false;
 }

@@ -259,7 +259,9 @@ h1 .price {
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
 
-</head>
+
+    <script src="config.js"></script>
+    </head>
 <body>
 
 <!-- HEADER (consistent navigation) -->
@@ -269,7 +271,7 @@ h1 .price {
     <nav class="nav">
       <a href="/" class="current">Home</a>
       <a href="/tools.html">Tools</a>
-      <a href="/docs/">Docs</a>
+      <a href="/docs/index.html">Docs</a>
       <a href="/manage.html">Account</a>
     </nav>
   </div>
@@ -375,7 +377,7 @@ h1 .price {
       </div>
       <div class="footer-col">
         <h4>Resources</h4>
-        <a href="/docs/">Docs</a>
+        <a href="/docs/index.html">Docs</a>
         <a href="/docs/faq.html">FAQ</a>
         <a href="/revenue.html">Open Revenue</a>
       </div>
@@ -394,6 +396,10 @@ h1 .price {
   </div>
 </footer>
 
+<script>
+    const ENV = window.location.hostname === 'localhost' ? 'dev' :
+                window.location.hostname.includes('staging') ? 'staging' : 'prod';
+</script>
 <script>
 // Load live stats from MRR endpoint
 fetch('/.netlify/functions/mrr')
