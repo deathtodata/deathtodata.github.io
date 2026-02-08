@@ -7,6 +7,12 @@ Disallow: /api/
 Disallow: /.netlify/
 Disallow: /admin/
 Disallow: /_*
+Disallow: /admin.html
+Disallow: /dashboard.html
+Disallow: /manage.html
+Disallow: /debug.html
+Disallow: /check.html
+Disallow: /audit-report.json
 
 # AI Crawlers - Welcome!
 User-agent: GPTBot

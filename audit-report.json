@@ -3,19 +3,14 @@
   "issues": {
     "broken_links": [
       {
-        "file": "grants.html",
+        "file": "admin/grants.html",
         "link": "./join.html",
         "resolved": "./join.html"
       },
       {
-        "file": "grants.html",
+        "file": "admin/grants.html",
         "link": "./join.html",
         "resolved": "./join.html"
-      },
-      {
-        "file": "tools/qr-generator.html",
-        "link": "${qrImg.src}",
-        "resolved": "${qrImg.src}"
       },
       {
         "file": "marketing/index.html",
@@ -147,7 +142,7 @@
     "api_hardcoded": []
   },
   "summary": {
-    "broken_links": 28,
+    "broken_links": 27,
     "js_syntax": 0,
     "api_hardcoded": 0
   }

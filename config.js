@@ -1,5 +1,12 @@
 // Death2Data Environment Configuration
 // Auto-detects environment and provides correct settings
+//
+// IMPORTANT: Stripe keys are loaded from environment variables.
+// Set these in your build system (Cloudflare Pages) or locally:
+//   window.ENV_STRIPE_PUBLISHABLE_KEY = 'pk_live_...'
+//   window.ENV_STRIPE_PRICE_ID = 'price_...'
+//
+// See .env.example for template and js/env.js for loader
 
 const D2D_CONFIG = {
   // Development (localhost)
@@ -25,9 +32,9 @@ const D2D_CONFIG = {
     apiUrl: 'https://d2d-api.mattmauersp.workers.dev',
     siteUrl: 'https://staging.death2data.com',
     stripe: {
-      publishableKey: 'pk_live_51RIIa4G7fHl88NQ8yUvaGIpn936VW474BDGeHcCaQbTF33SnHthcWQeJCuTVGp3hSMy3YR25AX4dpkqOY52BS9j4007Svg6DZx',
+      publishableKey: window.ENV_STRIPE_PUBLISHABLE_KEY || '',
       priceIds: {
-        monthly: 'price_1SuZaSG7fHl88NQ80GLFU5Q9' // $1 every 28 days
+        monthly: window.ENV_STRIPE_PRICE_ID || 'price_1SuZaSG7fHl88NQ80GLFU5Q9' // $1 every 28 days
       },
       hostedLink: 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00'
     },
@@ -43,9 +50,9 @@ const D2D_CONFIG = {
     apiUrl: 'https://d2d-api.mattmauersp.workers.dev',
     siteUrl: 'https://death2data.com',
     stripe: {
-      publishableKey: 'pk_live_51RIIa4G7fHl88NQ8yUvaGIpn936VW474BDGeHcCaQbTF33SnHthcWQeJCuTVGp3hSMy3YR25AX4dpkqOY52BS9j4007Svg6DZx',
+      publishableKey: window.ENV_STRIPE_PUBLISHABLE_KEY || '',
       priceIds: {
-        monthly: 'price_1SuZaSG7fHl88NQ80GLFU5Q9' // $1 every 28 days
+        monthly: window.ENV_STRIPE_PRICE_ID || 'price_1SuZaSG7fHl88NQ80GLFU5Q9' // $1 every 28 days
       },
       hostedLink: 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00'
     },

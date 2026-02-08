@@ -21,6 +21,29 @@ jobs:
         run: |
           python .github/scripts/site-audit.py . --ci
 
+      - name: Security Check - No Hardcoded Secrets
+        run: |
+          echo "Checking for hardcoded secrets..."
+
+          # Check for Stripe secret keys (should never be in code)
+          if grep -r "sk_live_" --include="*.html" --include="*.js" --include="*.json" .; then
+            echo "❌ ERROR: Stripe secret key (sk_live_) found in code!"
+            exit 1
+          fi
+
+          # Check for hardcoded Stripe publishable keys
+          if grep -r "pk_live_51RIIa4G7fHl88NQ8" --include="*.html" --include="*.js" .; then
+            echo "❌ ERROR: Hardcoded Stripe publishable key found!"
+            exit 1
+          fi
+
+          # Check for API keys in common formats
+          if grep -rE "(api[_-]?key|apikey|api[_-]?secret).*[:=].*['\"][a-zA-Z0-9]{20,}['\"]" --include="*.html" --include="*.js" .; then
+            echo "⚠️  WARNING: Possible API key found in code"
+          fi
+
+          echo "✅ No hardcoded secrets detected"
+
       - name: Check for critical issues
         run: |
           if [ -f audit-report.json ]; then
