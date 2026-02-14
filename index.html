@@ -114,7 +114,7 @@ body::before {
 .counter.active { color: var(--green); }
 
 /* Results */
-.results { max-width: 600px; width: 100%; padding-bottom: 60px; }
+.results { max-width: 600px; width: 100%; padding-bottom: 100px; }
 .result { padding: 16px 0; border-bottom: 1px solid #111; cursor: pointer; }
 .result:hover { background: #050505; margin: 0 -8px; padding: 16px 8px; }
 .result-url { font-size: 11px; color: #333; margin-bottom: 4px; word-break: break-all; }
@@ -165,11 +165,12 @@ body::before {
 }
 .gate-box .dismiss:hover { color: #666; }
 
-/* Search footer */
+/* Search footer — sits above the fixed auth bar */
 .search-footer {
-  text-align: center; font-size: 10px; color: #222; padding: 20px 0 60px;
+  text-align: center; font-size: 10px; color: #222; padding: 20px 0 80px;
 }
-.wrap.has-results ~ .search-footer { position: static; }
+.search-footer a { color: #333; }
+.search-footer a:hover { color: var(--green); text-decoration: none; }
 </style>
 
 <!-- D2D Pixel -->
@@ -399,11 +400,10 @@ async function doSearch() {
 }
 
 function localResults(q) {
-  const s = q.toLowerCase().replace(/\s+/g, '-');
   return [
-    { title: q + ' — overview', url: 'local://d2d/wiki/' + s, snippet: 'Local result. Sign in for live web search.', engine: 'local' },
-    { title: 'Understanding ' + q, url: 'local://d2d/deep/' + s, snippet: 'No tracking. No ads. Your search stays in your browser.', engine: 'local' },
-    { title: q + ' — resources', url: 'local://d2d/ref/' + s, snippet: 'Connect to fortune0 backend for real results.', engine: 'local' },
+    { title: q + ' — overview', url: '', snippet: 'Sign in with your email for live web results. Free tier includes 3 searches.', engine: '' },
+    { title: 'About ' + q, url: '', snippet: 'Private search powered by death2data. No tracking. No ads.', engine: '' },
+    { title: q + ' — more results', url: '', snippet: 'Unlock unlimited search with a $1/month membership.', engine: '' },
   ];
 }
 
