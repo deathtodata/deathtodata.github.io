@@ -32,7 +32,6 @@
 
 /* === RESET === */
 *{margin:0;padding:0;box-sizing:border-box}
-::selection{background:rgba(0,255,0,.15)}
 a{color:inherit;text-decoration:none}
 
 /* === FULL-SCREEN LAYOUT === */
@@ -41,27 +40,34 @@ body{
   font-family:'JetBrains Mono','SF Mono','Fira Code',monospace;
   background:#0a0a0a;color:#fff;
   display:flex;flex-direction:column;
+  transition:background .6s ease;
 }
 
-/* === TOP BAR === */
+/* ============================================
+   ENTRY STATE — RED / OUTSIDE
+   ============================================ */
+
+/* entry: red accent, dark, closed feel */
 .bar{
   display:flex;align-items:center;padding:0 16px;
   height:44px;border-bottom:1px solid #222;
   flex-shrink:0;gap:12px;font-size:12px;background:#0a0a0a;
+  transition:border-color .4s ease;
 }
-.bar-logo{color:#0f0;font-weight:700;letter-spacing:2px;font-size:13px;margin-right:auto}
+.bar-logo{font-weight:700;letter-spacing:2px;font-size:13px;margin-right:auto;
+  color:#f00;transition:color .4s ease}
 .bar a:not(.bar-logo){color:#555}
 .bar a:not(.bar-logo):hover{color:#fff}
 .bar a.on{color:#fff}
 
-/* === BOTTOM BAR (mirrors top) === */
 .foot{
   display:flex;align-items:center;padding:0 16px;
   height:44px;border-top:1px solid #222;
   flex-shrink:0;gap:8px;font-size:12px;background:#0a0a0a;
+  transition:border-color .4s ease;
 }
 .foot a{color:#555;white-space:nowrap}
-.foot a:hover{color:#0f0}
+.foot a:hover{color:#f00}
 .foot .sep{color:#222}
 .foot input{
   padding:6px 10px;background:#000;border:1px solid #222;
@@ -77,7 +83,6 @@ body{
 .foot .user{color:#0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
 .foot .live{display:inline-block;width:6px;height:6px;background:#0f0;border-radius:50%;margin-right:4px}
 
-/* === MIDDLE === */
 .mid{
   flex:1;overflow-y:auto;overflow-x:hidden;
   -webkit-overflow-scrolling:touch;
@@ -85,90 +90,107 @@ body{
 }
 .mid.center{justify-content:center}
 
+/* entry content */
+#entry{text-align:center;padding:0 24px;max-width:400px;
+  animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* ============================================
-   ENTRY STATE — the door
-   ============================================ */
-#entry{text-align:center;padding:0 24px;max-width:420px}
-#entry .brand{font-size:28px;font-weight:700;letter-spacing:-1px;margin-bottom:6px}
+#entry .brand{font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:6px}
 #entry .brand span{color:#f00}
-#entry .tagline{font-size:11px;color:#555;letter-spacing:.2em;margin-bottom:32px}
-#entry .pitch{font-size:13px;color:#888;line-height:1.7;margin-bottom:32px}
-#entry .pitch strong{color:#fff;font-weight:500}
+#entry .tagline{font-size:10px;color:#444;letter-spacing:.25em;margin-bottom:40px}
+#entry .pitch{font-size:12px;color:#666;line-height:1.8;margin-bottom:40px}
+#entry .pitch strong{color:#ccc;font-weight:500}
 #entry .enter-btn{
-  display:inline-block;padding:14px 48px;
-  background:#0f0;color:#000;font-family:inherit;
-  font-weight:700;font-size:13px;letter-spacing:.15em;
-  border:none;cursor:pointer;margin-bottom:24px;
+  display:inline-block;padding:16px 56px;
+  background:#f00;color:#000;font-family:inherit;
+  font-weight:700;font-size:14px;letter-spacing:.2em;
+  border:none;cursor:pointer;margin-bottom:28px;
+  transition:all .2s ease;
 }
-#entry .enter-btn:hover{background:#fff}
-#entry .fine{font-size:10px;color:#333;line-height:1.6}
-#entry .fine a{color:#555;text-decoration:underline}
-#entry .fine a:hover{color:#0f0}
+#entry .enter-btn:hover{background:#ff2222;box-shadow:0 0 30px rgba(255,0,0,.3)}
+#entry .fine{font-size:9px;color:#333;line-height:1.7}
+#entry .fine a{color:#444;text-decoration:underline}
+#entry .fine a:hover{color:#f00}
+
+::selection{background:rgba(255,0,0,.2)}
+
 
 /* ============================================
-   SEARCH STATE — the app
+   SEARCH STATE — GREEN / INSIDE
    ============================================ */
+body.inside{background:#050505}
+body.inside ::selection{background:rgba(0,255,0,.15)}
+body.inside .bar{border-bottom-color:#1a1a1a}
+body.inside .bar-logo{color:#0f0}
+body.inside .foot{border-top-color:#1a1a1a}
+body.inside .foot a:hover{color:#0f0}
+
+body.inside #entry{display:none}
+body.inside #search{display:flex;flex-direction:column;align-items:center;width:100%;
+  animation:fadeUp .4s ease both}
+
 #search{display:none;width:100%}
-body.searching #entry{display:none}
-body.searching #search{display:flex;flex-direction:column;align-items:center;width:100%}
-body.searching .mid.center #search{justify-content:center}
 
-.s-brand{font-size:20px;font-weight:700;letter-spacing:-1px;margin-bottom:4px}
-.s-brand span{color:#f00}
-.s-tag{font-size:10px;color:#444;margin-bottom:20px;letter-spacing:.15em}
+.s-brand{font-size:18px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;color:#0f0}
+.s-brand span{color:#0f0}
 
-.sbox{display:flex;max-width:560px;width:100%;padding:0 16px;margin-bottom:8px}
+.s-tag{font-size:9px;color:#333;margin-bottom:20px;letter-spacing:.2em}
+
+.sbox{display:flex;max-width:520px;width:100%;padding:0 16px;margin-bottom:8px}
 .sbox input{
   flex:1;padding:12px 14px;
-  background:#000;border:1px solid #222;border-right:none;
+  background:#000;border:1px solid #1a1a1a;border-right:none;
   color:#fff;font-family:inherit;font-size:14px;outline:none;
+  transition:border-color .2s;
 }
-.sbox input:focus{border-color:#333}
-.sbox input::placeholder{color:#333}
+.sbox input:focus{border-color:#0f0}
+.sbox input::placeholder{color:#222}
 .sbox button{
-  padding:12px 18px;background:#000;border:1px solid #222;
-  color:#0f0;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px;
+  padding:12px 20px;background:#0f0;border:1px solid #0f0;
+  color:#000;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px;
+  transition:all .2s;
 }
-.sbox button:hover{background:#111;border-color:#0f0}
-.counter{font-size:10px;color:#333;margin-bottom:16px}
+.sbox button:hover{background:#00ff44;box-shadow:0 0 20px rgba(0,255,0,.2)}
+
+.counter{font-size:10px;color:#222;margin-bottom:16px}
 .counter.on{color:#0f0}
 
-/* === RESULTS === */
-.results{max-width:560px;width:100%;padding:0 16px 20px}
-.r{padding:14px 0;border-bottom:1px solid #111}
+/* results */
+.results{max-width:520px;width:100%;padding:0 16px 20px}
+.r{padding:14px 0;border-bottom:1px solid #0a0a0a}
 .r:last-child{border-bottom:none}
 .r-t{color:#0f0;font-size:13px;margin-bottom:4px}
-.r-s{color:#666;font-size:11px;line-height:1.5}
-.r-s mark{background:none;color:#fff}
-.hint{text-align:center;color:#333;padding:30px 0;font-size:11px}
+.r-s{color:#555;font-size:11px;line-height:1.5}
+.r-s mark{background:none;color:#0f0}
+.hint{text-align:center;color:#222;padding:30px 0;font-size:11px}
 
-/* === GATE === */
+/* gate */
 .gate{
   position:fixed;inset:0;
-  background:rgba(0,0,0,.95);
+  background:rgba(0,0,0,.96);
   display:none;align-items:center;justify-content:center;
   padding:20px;z-index:200;
 }
 .gate.show{display:flex}
 .gbox{
-  max-width:360px;width:100%;text-align:center;
-  border:1px solid #222;padding:32px;background:#0a0a0a;
+  max-width:340px;width:100%;text-align:center;
+  border:1px solid #1a1a1a;padding:32px;background:#050505;
+  animation:fadeUp .3s ease both;
 }
-.gbox h2{font-size:14px;font-weight:400;margin-bottom:12px}
-.gbox p{font-size:11px;color:#888;margin-bottom:16px}
+.gbox h2{font-size:13px;font-weight:500;margin-bottom:12px;color:#0f0}
+.gbox p{font-size:11px;color:#555;margin-bottom:16px}
 .gbox input{
-  width:100%;padding:10px;background:#000;border:1px solid #222;
+  width:100%;padding:10px;background:#000;border:1px solid #1a1a1a;
   color:#fff;font-family:inherit;font-size:13px;margin-bottom:8px;outline:none;
 }
 .gbox input:focus{border-color:#0f0}
 .gbox .gbtn{
-  width:100%;padding:12px;background:#f00;color:#000;border:none;
+  width:100%;padding:12px;background:#0f0;color:#000;border:none;
   font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.1em;
 }
-.gbox .gbtn:hover{background:#fff}
-.gbox .dismiss{display:block;margin-top:12px;font-size:10px;color:#333;cursor:pointer}
-.gbox .dismiss:hover{color:#666}
+.gbox .gbtn:hover{background:#00ff44}
+.gbox .dismiss{display:block;margin-top:12px;font-size:10px;color:#222;cursor:pointer}
+.gbox .dismiss:hover{color:#555}
 .gbox .status{font-size:10px;color:#333;margin-top:6px}
 </style>
 </head>
@@ -182,12 +204,12 @@ body.searching .mid.center #search{justify-content:center}
 <!-- MIDDLE -->
 <div class="mid center" id="mid">
 
-  <!-- ENTRY: the door -->
+  <!-- ENTRY: the door (red) -->
   <div id="entry">
     <div class="brand">death<span>2</span>data</div>
     <div class="tagline">PRIVATE SEARCH ENGINE</div>
     <div class="pitch">
-      Search the web without surveillance.<br>
+      Search without surveillance.<br>
       <strong>No tracking. No ads. No data harvesting.</strong><br><br>
       3 free searches. Then <strong>$1/month</strong>.
     </div>
@@ -198,12 +220,12 @@ body.searching .mid.center #search{justify-content:center}
     </div>
   </div>
 
-  <!-- SEARCH: the app (hidden until entry) -->
+  <!-- SEARCH: the app (green, hidden until entry) -->
   <div id="search">
-    <div class="s-brand">death<span>2</span>data</div>
+    <div class="s-brand">DEATH2DATA</div>
     <div class="s-tag">SEARCH WITHOUT SURVEILLANCE</div>
     <div class="sbox">
-      <input type="text" id="q" placeholder="search anything..." autocomplete="off"
+      <input type="text" id="q" placeholder="search..." autocomplete="off"
              onkeydown="if(event.key==='Enter')doSearch()">
       <button onclick="doSearch()">SEARCH</button>
     </div>
@@ -238,15 +260,14 @@ body.searching .mid.center #search{justify-content:center}
 const S = { token:null, email:null, tier:null, searches:0, maxFree:3 };
 const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrender.com';
 
-/* ---- ENTRY / SESSION ---- */
 function enter(){
   sessionStorage.setItem('d2d_entered','1');
   activate();
 }
 
 function activate(){
-  document.body.classList.add('searching');
-  // top bar gets nav
+  document.body.classList.add('inside');
+  // top bar: logo + nav
   document.getElementById('topbar').innerHTML = `
     <a href="/" class="bar-logo">DEATH2DATA</a>
     <a href="/" class="on">Search</a>
@@ -254,7 +275,7 @@ function activate(){
     <a href="/tools.html">Tools</a>
     <a href="/docs/index.html">Docs</a>
     <a href="/admin/manage.html">Account</a>`;
-  // bottom bar gets auth
+  // bottom bar: auth
   if(S.token){
     showAuthed();
   } else {
@@ -270,11 +291,8 @@ function activate(){
 }
 
 (function init(){
-  // restore session
   const t=sessionStorage.getItem('d2d_token'), e=sessionStorage.getItem('d2d_email');
   if(t&&e){ S.token=t; S.email=e; S.maxFree=Infinity; }
-
-  // if already entered (or has token, or has ?q=), go straight to search
   const hasQ = new URLSearchParams(location.search).get('q');
   if(sessionStorage.getItem('d2d_entered') || S.token || hasQ){
     activate();
@@ -282,7 +300,6 @@ function activate(){
   }
 })();
 
-/* ---- AUTH ---- */
 async function login(){
   const email=document.getElementById('email').value.trim().toLowerCase();
   if(!email||!email.includes('@'))return;
@@ -309,11 +326,9 @@ function logout(){
   S.token=null;S.email=null;S.tier=null;S.maxFree=3;S.searches=0;
   sessionStorage.removeItem('d2d_token');sessionStorage.removeItem('d2d_email');
   sessionStorage.removeItem('d2d_entered');
-  // back to entry
   location.reload();
 }
 
-/* ---- SEARCH ---- */
 async function doSearch(){
   const q=document.getElementById('q').value.trim();
   if(!q)return;
@@ -352,7 +367,6 @@ function renderResults(results,q){
   }).join('');
 }
 
-/* ---- GATE ---- */
 function showGate(){
   document.getElementById('gate').classList.add('show');
   const b=document.getElementById('email'),g=document.getElementById('gate-email');
