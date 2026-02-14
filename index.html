@@ -77,13 +77,20 @@ body::before {
   z-index: 1000;
 }
 
-/* 3-panel layout: header=60px, footer=46px, middle=rest */
+/* Full-viewport flex layout — no hardcoded sizes */
+html, body { height: 100%; overflow: hidden; }
+body { display: flex; flex-direction: column; }
+
+/* Override shared header mobile stacking — keep it one row */
+.header-inner { flex-direction: row !important; height: 48px !important; padding: 0 !important; gap: 0 !important; }
+.site-header .nav { gap: 16px; }
+.site-header .nav a { font-size: 12px; }
+
+/* Middle panel scrolls */
 .page-content {
-  padding: 0;
-  position: fixed;
-  top: 60px; left: 0; right: 0; bottom: 46px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  flex: 1; padding: 0;
+  overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
 
 ::selection { background: rgba(0, 255, 0, 0.15); }
@@ -93,7 +100,7 @@ body::before {
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   min-height: 100%; padding: 20px;
 }
-.wrap.has-results { justify-content: flex-start; padding-top: 40px; min-height: auto; }
+.wrap.has-results { justify-content: flex-start; padding-top: 24px; min-height: auto; }
 
 .search-logo { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: -1px; margin-bottom: 4px; transition: all 0.3s; }
 .search-logo span { color: #f00; }
@@ -133,37 +140,40 @@ body::before {
 
 .searching { text-align: center; color: #333; padding: 40px 0; }
 
-/* Bottom bar — auth + links, fixed to viewport bottom */
+/* Bottom bar — last flex child, always at bottom */
 .auth {
-  position: fixed; bottom: 0; left: 0; right: 0; height: 46px;
+  flex-shrink: 0;
   background: #0a0a0a; border-top: 1px solid #111;
-  padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 12px;
-  font-size: 12px; z-index: 50;
+  padding: 8px 12px; display: flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: 12px;
 }
-.auth a { color: #444; text-decoration: none; }
+.auth a { color: #444; text-decoration: none; white-space: nowrap; }
 .auth a:hover { color: var(--green); }
 .auth .sep { color: #222; }
 .auth input {
-  padding: 8px 12px; background: #000; border: 1px solid #222;
-  color: #fff; font-family: inherit; font-size: 12px; outline: none; width: 180px;
+  padding: 6px 10px; background: #000; border: 1px solid #222;
+  color: #fff; font-family: inherit; font-size: 12px; outline: none;
+  min-width: 0; flex: 1; max-width: 200px;
 }
 .auth input:focus { border-color: var(--green); }
 .auth button {
-  padding: 8px 16px; background: #111; border: 1px solid #222;
-  color: var(--green); font-family: inherit; font-size: 12px; cursor: pointer;
+  padding: 6px 14px; background: #111; border: 1px solid #222;
+  color: var(--green); font-family: inherit; font-size: 12px; cursor: pointer; white-space: nowrap;
 }
 .auth button:hover { border-color: var(--green); }
-.auth .user { color: var(--green); }
-.auth .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 6px; }
-@media (max-width: 500px) {
-  .auth .sep, .auth a { display: none; }
+.auth .user { color: var(--green); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px; }
+.auth .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 4px; flex-shrink: 0; }
+@media (max-width: 400px) {
+  .auth { gap: 6px; padding: 8px 8px; }
+  .auth .sep { display: none; }
+  .auth a { font-size: 10px; }
 }
 
 /* Gate overlay */
 .gate {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;
   background: rgba(0,0,0,0.95); display: none;
-  align-items: center; justify-content: center; padding: 20px; z-index: 100;
+  align-items: center; justify-content: center; padding: 20px; z-index: 200;
 }
 .gate.show { display: flex; }
 .gate-box {
@@ -249,16 +259,17 @@ body::before {
   </div>
 </div>
 
+</main>
+
+<!-- FOOTER BAR — flex child of body, always at bottom -->
 <div class="auth" id="auth">
-  <a href="/about.html">$1/month</a>
+  <a href="/about.html">$1/mo</a>
   <span class="sep">·</span>
   <input type="email" id="email" placeholder="email" onkeydown="if(event.key==='Enter')login()">
   <button onclick="login()">go</button>
   <span class="sep">·</span>
   <a href="/tools.html">tools</a>
 </div>
-
-</main>
 
 <script>
 // ═══════════════════════════════════════════
