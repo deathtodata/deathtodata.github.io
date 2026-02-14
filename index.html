@@ -55,7 +55,8 @@ body{
   transition:border-color .4s ease;
 }
 .bar-logo{font-weight:700;letter-spacing:2px;font-size:13px;margin-right:auto;
-  color:#f00;transition:color .4s ease}
+  color:#f00;transition:color .4s ease;display:flex;align-items:center;gap:6px}
+.bar-icon{flex-shrink:0}
 .bar a:not(.bar-logo){color:#555}
 .bar a:not(.bar-logo):hover{color:#fff}
 .bar a.on{color:#fff}
@@ -66,6 +67,8 @@ body{
   flex-shrink:0;gap:8px;font-size:12px;background:#0a0a0a;
   transition:border-color .4s ease;
 }
+.foot-icon{color:#f00;flex-shrink:0;margin-right:4px;transition:color .4s ease}
+body.inside .foot-icon{color:#0f0}
 .foot a{color:#555;white-space:nowrap}
 .foot a:hover{color:#f00}
 .foot .sep{color:#222}
@@ -95,6 +98,8 @@ body{
   animation:fadeUp .5s ease both}
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
+.eye-mark{color:#f00;margin-bottom:20px;transition:color .4s ease}
+body.inside .eye-mark{color:#0f0}
 #entry .brand{font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:6px}
 #entry .brand span{color:#f00}
 #entry .tagline{font-size:10px;color:#444;letter-spacing:.25em;margin-bottom:40px}
@@ -198,7 +203,7 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 
 <!-- TOP BAR -->
 <div class="bar" id="topbar">
-  <a href="/" class="bar-logo">DEATH2DATA</a>
+  <a href="/" class="bar-logo"><svg class="bar-icon" viewBox="0 0 100 100" width="18" height="18"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg> D2D</a>
 </div>
 
 <!-- MIDDLE -->
@@ -206,6 +211,9 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 
   <!-- ENTRY: the door (red) -->
   <div id="entry">
+    <div class="eye-mark">
+      <svg viewBox="0 0 100 100" width="64" height="64"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="4"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="4"/></svg>
+    </div>
     <div class="brand">death<span>2</span>data</div>
     <div class="tagline">PRIVATE SEARCH ENGINE</div>
     <div class="pitch">
@@ -249,6 +257,7 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 
 <!-- BOTTOM BAR -->
 <div class="foot" id="foot">
+  <svg class="foot-icon" viewBox="0 0 100 100" width="14" height="14"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg>
   <a href="/privacy.html">privacy</a>
   <span class="sep">·</span>
   <a href="/terms.html">terms</a>
@@ -269,7 +278,7 @@ function activate(){
   document.body.classList.add('inside');
   // top bar: logo + nav
   document.getElementById('topbar').innerHTML = `
-    <a href="/" class="bar-logo">DEATH2DATA</a>
+    <a href="/" class="bar-logo"><svg class="bar-icon" viewBox="0 0 100 100" width="18" height="18"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg> D2D</a>
     <a href="/" class="on">Search</a>
     <a href="/about.html">About</a>
     <a href="/tools.html">Tools</a>
