@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- SEO/AEO/LLMEO Head -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Death2Data - Privacy Tools for $1/Month | No Tracking, No Ads</title>
+<meta name="description" content="Learn about Death2Data: privacy-first tools including QR generator, search engine, digital notebook. $1 every 28 days. No tracking. No ads. Your data stays on your device.">
+<meta name="keywords" content="privacy tools, local-first, no tracking, qr generator, privacy search, digital notebook, about">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/about.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="About Death2Data - Privacy Tools for $1/Month">
+<meta property="og:description" content="Privacy-first tools: QR generator, search engine, notebook. $1/28 days. No tracking.">
+<meta property="og:url" content="https://death2data.com/about.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="About Death2Data - Privacy Tools for $1/Month">
+<meta name="twitter:description" content="Privacy-first tools: QR generator, search engine, notebook. $1/28 days. No tracking.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Death2Data",
+  "description": "Privacy-first toolkit: QR generator, search engine, digital notebook. No tracking. No ads. Your data stays on your device.",
+  "url": "https://death2data.com/",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com",
+    "logo": "https://death2data.com/logo.png"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "1.00",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "priceValidUntil": "2027-12-31"
+  },
+  "applicationCategory": "PrivacyApplication",
+  "operatingSystem": "Web Browser",
+  "featureList": [
+    "QR Code Generator",
+    "Privacy Search Engine",
+    "28-Day Digital Notebook",
+    "Identity Vault",
+    "No tracking",
+    "No cookies",
+    "Client-side storage only"
+  ]
+}
+</script>
+
+<link rel="stylesheet" href="/css/style.css">
+<style>
+/* About page-specific styles */
+
+/* Scanline effect */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1),
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Live stats in header */
+.live-stats {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.live-stats .count {
+  color: var(--green);
+}
+
+/* Terminal prompt */
+.prompt {
+  color: var(--muted);
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.prompt::before {
+  content: '$ ';
+  color: var(--green);
+}
+
+/* Hero */
+h1 .price {
+  color: var(--green);
+  text-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+}
+
+/* Features as terminal output */
+.features {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  padding: 24px;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+
+.feature {
+  margin-bottom: 12px;
+  color: var(--gray);
+}
+
+.feature::before {
+  content: '→ ';
+  color: var(--green);
+}
+
+.feature:last-child {
+  margin-bottom: 0;
+}
+
+/* CTA Button */
+.cta {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  background: var(--green);
+  color: var(--bg);
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: all 0.2s;
+}
+
+.cta:hover {
+  background: var(--green-hover);
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+  text-decoration: none;
+}
+
+.billing-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 40px;
+}
+
+/* Terms */
+.terms {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px;
+  font-size: 12px;
+  color: var(--gray);
+  margin-bottom: 40px;
+}
+
+.terms h3 {
+  color: var(--green);
+  font-size: 11px;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.terms-section {
+  margin-bottom: 16px;
+}
+
+.terms-section:last-child {
+  margin-bottom: 0;
+}
+
+.terms-title {
+  color: var(--white);
+  margin-bottom: 8px;
+}
+
+.terms ul {
+  margin-left: 16px;
+  color: var(--muted);
+}
+
+.terms li {
+  margin-bottom: 4px;
+}
+
+/* Revenue ticker */
+.revenue-ticker {
+  background: rgba(0, 255, 0, 0.05);
+  border: 1px solid var(--green);
+  padding: 16px 24px;
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.revenue-ticker .label {
+  color: var(--green);
+}
+
+.revenue-ticker .values {
+  color: var(--gray);
+}
+
+.revenue-ticker .mrr {
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* Search CTA */
+.search-cta {
+  text-align: center;
+  padding: 20px;
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+.search-cta a {
+  color: var(--green);
+  font-weight: 600;
+}
+</style>
+
+<!-- D2D Pixel -->
+<script>
+  window.D2D_CONFIG = {
+    site_id: 'd2d_default',
+    endpoint: '/api/collect'
+  };
+</script>
+<script src="/d2d.js" async></script>
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+<script src="config.js"></script>
+</head>
+<body>
+
+<!-- HEADER (consistent navigation) -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">DEATH2DATA</a>
+    <nav class="nav">
+      <a href="/">Search</a>
+      <a href="/about.html" class="current">About</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/docs/index.html">Docs</a>
+      <a href="/admin/manage.html">Account</a>
+    </nav>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="page-content">
+  <div class="container">
+
+    <!-- Search CTA -->
+    <div class="search-cta">
+      <a href="/">Try 3 free searches — no signup required →</a>
+    </div>
+
+    <!-- Live member count -->
+    <div style="text-align: right; margin-bottom: 20px;">
+      <div class="live-stats">
+        <span class="count" id="member-count">--</span> members
+      </div>
+    </div>
+
+    <div class="prompt">subscribe --plan=membership --price=1</div>
+
+    <h1><span class="price">$1</span>/month<br>Where weirdos build in public.</h1>
+
+    <p class="subtitle">Privacy tools. No tracking. No ads. Just space to be yourself.</p>
+
+    <div class="features">
+      <div class="feature">Privacy-first search (self-hosted, open source)</div>
+      <div class="feature">Member tools (QR, analytics, business cards)</div>
+      <div class="feature">28-day notebook (unlimited topics, digital first)</div>
+      <div class="feature">Physical notebook prints at sanctioned events</div>
+      <div class="feature">Zero data harvesting. That's the whole point.</div>
+    </div>
+
+    <div class="revenue-ticker">
+      <span class="label">BUILDING IN PUBLIC</span>
+      <span class="values">
+        <span class="mrr" id="mrr-display">$--</span> MRR ·
+        <a href="/admin/revenue.html" style="color: var(--gray)">see all stats →</a>
+      </span>
+    </div>
+
+    <!-- LIVE STRIPE PAYMENT LINK -->
+    <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="cta">
+      ./join.sh →
+    </a>
+
+    <p class="billing-note">
+      Billed every 28 days. Cancel anytime via Stripe.
+    </p>
+
+    <div class="terms">
+      <h3>TERMS & CONDITIONS</h3>
+
+      <div class="terms-section">
+        <div class="terms-title">What you get:</div>
+        <ul>
+          <li>Access to all Death2Data member tools</li>
+          <li>28-day notebook (unlimited topics, stored locally)</li>
+          <li>Physical prints at D2D events (CRINGE, SOUL, DEAL, ULTRA, NIL)</li>
+          <li>Event-exclusive custom covers (collectible)</li>
+          <li>Priority support via email</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">Billing:</div>
+        <ul>
+          <li>$1.00 USD charged every 28 days</li>
+          <li>Cancel anytime from Stripe portal</li>
+          <li>No refunds for partial periods</li>
+        </ul>
+      </div>
+
+      <div class="terms-section">
+        <div class="terms-title">Privacy:</div>
+        <ul>
+          <li>We don't track you</li>
+          <li>We don't sell your data</li>
+          <li>Stripe handles payments (we never see card info)</li>
+          <li>Your notebook content stays in your browser (localStorage)</li>
+          <li>Download your data as markdown anytime</li>
+        </ul>
+      </div>
+
+      <p style="margin-top: 16px; color: var(--white);">
+        By clicking "join", you agree to these terms.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<!-- FOOTER (consistent across site) -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">DEATH2DATA</span>
+      <p>Privacy tools that don't track you.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/">Search</a>
+        <a href="/tools.html">Tools</a>
+        <a href="/tools/notebook.html">Notebook</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs/index.html">Docs</a>
+        <a href="/docs/faq.html">FAQ</a>
+        <a href="/admin/revenue.html">Open Revenue</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="/admin/manage.html">Manage Subscription</a>
+        <a href="mailto:matt@death2data.com">Support</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Death2Data. All rights reserved.</p>
+      <p class="footer-contact">
+        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Load live stats from MRR endpoint
+fetch('/.netlify/functions/mrr')
+  .then(r => r.json())
+  .then(d => {
+    document.getElementById('member-count').textContent = d.customers;
+    document.getElementById('mrr-display').textContent = '$' + d.mrr.toFixed(0);
+  })
+  .catch(() => {
+    document.getElementById('member-count').textContent = '4';
+    document.getElementById('mrr-display').textContent = '$4';
+  });
+</script>
+
+</body>
+</html>

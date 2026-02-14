@@ -1,93 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome - Death2Data</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #000;
-            color: #fff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-            text-align: center;
-        }
-        h1 { font-size: 48px; margin-bottom: 16px; }
-        p { color: #888; font-size: 18px; max-width: 400px; line-height: 1.6; margin-bottom: 24px; }
-        .identity-box {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 24px;
-            margin: 24px 0;
-            font-family: monospace;
-        }
-        .anon-name { font-size: 24px; color: #0f0; margin-bottom: 8px; }
-        .public-key { font-size: 10px; color: #666; word-break: break-all; }
-        .btn {
-            background: #0f0;
-            color: #000;
-            padding: 16px 32px;
-            font-size: 16px;
-            font-weight: 600;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            margin: 8px;
-        }
-    </style>
-<!-- SEO/AEO/LLMEO Head -->
-<title>Welcome - Your Access is Ready</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome | Death2Data</title>
+
+<!-- SEO -->
 <meta name="description" content="Welcome to Death2Data! Your membership is now active. Access all privacy-first tools.">
-<meta name="keywords" content="member welcome, access granted, membership active">
-<meta name="author" content="Death2Data">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://death2data.com/welcome.html">
 
-<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Death2Data">
 <meta property="og:title" content="Welcome - Your Access is Ready">
 <meta property="og:description" content="Welcome to Death2Data! Your membership is now active. Access all privacy-first tools.">
 <meta property="og:url" content="https://death2data.com/welcome.html">
 <meta property="og:image" content="https://death2data.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
 
 <!-- Twitter Cards -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@death2data">
-<meta name="twitter:creator" content="@death2data">
 <meta name="twitter:title" content="Welcome - Your Access is Ready">
-<meta name="twitter:description" content="Welcome to Death2Data! Your membership is now active. Access all privacy-first tools.">
+<meta name="twitter:description" content="Welcome to Death2Data! Your membership is now active.">
 <meta name="twitter:image" content="https://death2data.com/og-image.png">
 
-<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Welcome - Your Access is Ready",
-  "description": "Welcome to Death2Data! Your membership is now active. Access all privacy-first tools.",
-  "url": "https://death2data.com/welcome.html",
-  "provider": {
-    "@type": "Organization",
-    "name": "Death2Data",
-    "url": "https://death2data.com",
-    "email": "matt@death2data.com"
-  }
-}
-</script>
+<!-- Shared CSS -->
+<link rel="stylesheet" href="/css/style.css">
 
+<style>
+/* Welcome page overrides */
+.welcome-wrap {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 60px 20px;
+}
+.welcome-wrap h1 {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  margin-bottom: 20px;
+}
+.welcome-wrap h1 span { color: var(--green); }
+.welcome-wrap p {
+  color: var(--gray);
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.token-box {
+  background: var(--surface);
+  border: 2px solid var(--green);
+  padding: 30px;
+  margin: 30px 0;
+}
+.welcome-btn {
+  display: inline-block;
+  padding: 18px 40px;
+  background: var(--green);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 700;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  margin: 10px 5px;
+  transition: all 0.2s;
+}
+.welcome-btn:hover { background: #fff; text-decoration: none; }
+.welcome-btn-outline {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--gray);
+}
+.welcome-btn-outline:hover {
+  border-color: var(--green);
+  color: var(--green);
+  background: none;
+}
+</style>
+
+<!-- D2D Pixel -->
+<script>
+  window.D2D_CONFIG = { site_id: 'd2d_default', endpoint: '/api/collect' };
+</script>
+<script src="/d2d.js" async></script>
 
 <!-- Favicon -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -97,50 +91,110 @@
 <!-- PWA -->
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
-
 </head>
 <body>
-    <h1>You're in.</h1>
-    <p>Your D2D identity has been created. This lives on YOUR device, not our servers.</p>
-    
-    <div class="identity-box">
-        <div class="anon-name" id="anonName">Generating...</div>
-        <div class="public-key" id="publicKey"></div>
-    </div>
-    
-    <a href="/tools/qr-generator.html" class="btn">Get Your QR Code</a>
-    <a href="/tools.html" class="btn" style="background:#333;color:#fff;">View All Tools</a>
 
-    <script>
-        // Generate identity if not exists
-        function generateIdentity() {
-            let identity = localStorage.getItem('d2d_identity');
-            
-            if (!identity) {
-                // Generate random words for anon name
-                const words = ['GHOST','VOID','NULL','ZERO','DARK','FLUX','WAVE','BOLT','CORE','NODE'];
-                const w1 = words[Math.floor(Math.random() * words.length)];
-                const w2 = words[Math.floor(Math.random() * words.length)];
-                const num = Math.floor(Math.random() * 9000) + 1000;
-                const anonName = `${w1}-${w2}-${num}`;
-                
-                // Generate keypair (simplified - real version would use crypto)
-                const privateKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                    .map(b => b.toString(16).padStart(2, '0')).join('');
-                const publicKey = Array.from(crypto.getRandomValues(new Uint8Array(32)))
-                    .map(b => b.toString(16).padStart(2, '0')).join('');
-                
-                identity = { anonName, publicKey, privateKey, created: Date.now() };
-                localStorage.setItem('d2d_identity', JSON.stringify(identity));
-            } else {
-                identity = JSON.parse(identity);
-            }
-            
-            document.getElementById('anonName').textContent = identity.anonName;
-            document.getElementById('publicKey').textContent = 'pub:' + identity.publicKey.slice(0,32) + '...';
-        }
-        
-        generateIdentity();
-    </script>
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">DEATH2DATA</a>
+    <nav class="nav">
+      <a href="/">Search</a>
+      <a href="/about.html">About</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/docs/index.html">Docs</a>
+      <a href="/admin/manage.html">Account</a>
+    </nav>
+  </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="page-content">
+  <div class="welcome-wrap">
+    <h1><span>&#10003;</span> PAYMENT SUCCESSFUL</h1>
+
+    <p>Welcome to Death2Data. Your payment has been processed.</p>
+
+    <div class="token-box">
+      <p style="color:var(--muted);font-size:0.75rem;letter-spacing:0.2em;margin-bottom:15px">NEXT STEPS</p>
+      <div style="color:var(--gray);font-size:0.95rem;line-height:1.8;text-align:left">
+        1. Check your email from Stripe<br>
+        2. Access your Customer Portal to manage subscription<br>
+        3. Start searching — you now have unlimited access
+      </div>
+    </div>
+
+    <p>Your cryptographic identity from signup will be linked to your subscription. No passwords needed.</p>
+
+    <p style="margin-top:30px;color:var(--gray);font-size:0.9rem">
+      <strong>What happens next:</strong><br>
+      Your subscription is managed through Stripe Customer Portal.<br>
+      Cancel anytime from the portal link in your email.
+    </p>
+
+    <div style="margin-top:30px">
+      <a href="/" class="welcome-btn">START SEARCHING</a>
+    </div>
+    <div style="margin-top:10px">
+      <a href="/tools.html" class="welcome-btn welcome-btn-outline">VIEW ALL TOOLS</a>
+    </div>
+
+    <div style="margin-top:40px;padding-top:40px;border-top:1px solid var(--border)">
+      <p style="color:var(--gray);font-size:0.9rem">Questions? <a href="mailto:matt@death2data.com">matt@death2data.com</a></p>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">DEATH2DATA</span>
+      <p>Privacy tools that don't track you.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/">Search</a>
+        <a href="/tools.html">Tools</a>
+        <a href="/tools/notebook.html">Notebook</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs/index.html">Docs</a>
+        <a href="/docs/faq.html">FAQ</a>
+        <a href="/admin/revenue.html">Open Revenue</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="/admin/manage.html">Manage Subscription</a>
+        <a href="mailto:matt@death2data.com">Support</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Death2Data. All rights reserved.</p>
+      <p class="footer-contact">
+        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Save payment timestamp
+const urlParams = new URLSearchParams(window.location.search);
+const paymentSuccess = urlParams.get('success');
+
+if (paymentSuccess) {
+  localStorage.setItem('d2d_payment_timestamp', new Date().toISOString());
+}
+
+// Store identity info if it exists in localStorage from signup
+const anonName = localStorage.getItem('d2d_anon_name');
+if (anonName) {
+  console.log('Identity linked:', anonName);
+}
+</script>
+
 </body>
 </html>

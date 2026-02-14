@@ -4,9 +4,9 @@
 <!-- SEO/AEO/LLMEO Head -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Death2Data - Privacy Tools for $1/Month | No Tracking, No Ads</title>
-<meta name="description" content="Access privacy-first tools: QR generator, search engine, digital notebook. $1 every 28 days. No tracking. No ads. Your data stays on your device.">
-<meta name="keywords" content="privacy tools, local-first, no tracking, qr generator, privacy search, digital notebook">
+<title>Death2Data — Private Search | No Tracking, No Ads</title>
+<meta name="description" content="Search the web privately. No tracking. No ads. No data harvesting. Death2Data is a privacy-first search engine. 3 free searches, then $1/month.">
+<meta name="keywords" content="private search, privacy search engine, no tracking, death2data, anonymous search">
 <meta name="author" content="Death2Data">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://death2data.com/">
@@ -14,8 +14,8 @@
 <!-- Open Graph (Facebook, LinkedIn, Discord) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Death2Data">
-<meta property="og:title" content="Death2Data - Privacy Tools for $1/Month">
-<meta property="og:description" content="Privacy-first tools: QR generator, search engine, notebook. $1/28 days. No tracking.">
+<meta property="og:title" content="Death2Data — Private Search">
+<meta property="og:description" content="Search the web privately. No tracking. No ads. No data harvesting. 3 free searches.">
 <meta property="og:url" content="https://death2data.com/">
 <meta property="og:image" content="https://death2data.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -26,63 +26,46 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@death2data">
 <meta name="twitter:creator" content="@death2data">
-<meta name="twitter:title" content="Death2Data - Privacy Tools for $1/Month">
-<meta name="twitter:description" content="Privacy-first tools: QR generator, search engine, notebook. $1/28 days. No tracking.">
+<meta name="twitter:title" content="Death2Data — Private Search">
+<meta name="twitter:description" content="Search the web privately. No tracking. No ads. No data harvesting. 3 free searches.">
 <meta name="twitter:image" content="https://death2data.com/og-image.png">
 
 <!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
+  "@type": "WebSite",
   "name": "Death2Data",
-  "description": "Privacy-first toolkit: QR generator, search engine, digital notebook. No tracking. No ads. Your data stays on your device.",
+  "description": "Privacy-first search engine. No tracking. No ads. Your searches stay on your device.",
   "url": "https://death2data.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://death2data.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  },
   "provider": {
     "@type": "Organization",
     "name": "Death2Data",
     "url": "https://death2data.com",
-    "email": "matt@death2data.com",
-    "logo": "https://death2data.com/logo.png"
-  },
-  "offers": {
-    "@type": "Offer",
-    "price": "1.00",
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock",
-    "priceValidUntil": "2027-12-31"
-  },
-  "applicationCategory": "PrivacyApplication",
-  "operatingSystem": "Web Browser",
-  "featureList": [
-    "QR Code Generator",
-    "Privacy Search Engine",
-    "28-Day Digital Notebook",
-    "Identity Vault",
-    "No tracking",
-    "No cookies",
-    "Client-side storage only"
-  ],
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.8",
-    "reviewCount": "7"
+    "email": "matt@death2data.com"
   }
 }
 </script>
 
+<!-- Shared site CSS (header, footer, base styles) -->
 <link rel="stylesheet" href="/css/style.css">
+
 <style>
-/* Homepage-specific styles */
+/* ════════════════════════════════════════════
+   SEARCH PAGE STYLES
+   Overrides/additions for the search homepage
+   ════════════════════════════════════════════ */
 
 /* Scanline effect */
 body::before {
   content: '';
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background: repeating-linear-gradient(
     0deg,
     rgba(0, 0, 0, 0.1),
@@ -94,151 +77,99 @@ body::before {
   z-index: 1000;
 }
 
-/* Live stats in header */
-.live-stats {
-  font-size: 12px;
-  color: var(--muted);
-}
+/* Remove default page-content padding for search layout */
+.page-content { padding: 0; flex: 1; }
 
-.live-stats .count {
-  color: var(--green);
-}
+::selection { background: rgba(0, 255, 0, 0.15); }
 
-/* Terminal prompt */
-.prompt {
-  color: var(--muted);
-  margin-bottom: 8px;
-  font-size: 12px;
+/* Search layout */
+.wrap {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: calc(100vh - 60px); padding: 20px; transition: all 0.3s;
 }
+.wrap.has-results { justify-content: flex-start; padding-top: 40px; min-height: auto; }
 
-.prompt::before {
-  content: '$ ';
-  color: var(--green);
-}
+.search-logo { font-size: 24px; font-weight: 700; color: #fff; letter-spacing: -1px; margin-bottom: 4px; transition: all 0.3s; }
+.search-logo span { color: #f00; }
+.wrap.has-results .search-logo { font-size: 16px; }
+.tagline { font-size: 11px; color: #444; margin-bottom: 28px; transition: all 0.3s; letter-spacing: 0.1em; }
+.wrap.has-results .tagline { font-size: 10px; margin-bottom: 14px; }
 
-/* Hero */
-h1 .price {
-  color: var(--green);
-  text-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+/* Search bar */
+.search-box { display: flex; gap: 0; max-width: 600px; width: 100%; margin-bottom: 12px; }
+.search-input {
+  flex: 1; padding: 14px 16px;
+  background: #0a0a0a; border: 1px solid #222; border-right: none;
+  color: #fff; font-family: inherit; font-size: 14px; outline: none;
 }
+.search-input:focus { border-color: #333; }
+.search-input::placeholder { color: #333; }
+.search-btn {
+  padding: 14px 20px; background: #0a0a0a; border: 1px solid #222;
+  color: var(--green); font-family: inherit; font-weight: 700; cursor: pointer; font-size: 13px;
+}
+.search-btn:hover { background: #111; border-color: var(--green); }
 
-/* Features as terminal output */
-.features {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--green);
-  padding: 24px;
-  margin-bottom: 40px;
-  font-size: 14px;
-}
+.counter { font-size: 11px; color: #333; margin-bottom: 20px; transition: all 0.3s; }
+.counter.active { color: var(--green); }
 
-.feature {
-  margin-bottom: 12px;
-  color: var(--gray);
-}
+/* Results */
+.results { max-width: 600px; width: 100%; padding-bottom: 60px; }
+.result { padding: 16px 0; border-bottom: 1px solid #111; cursor: pointer; }
+.result:hover { background: #050505; margin: 0 -8px; padding: 16px 8px; }
+.result-url { font-size: 11px; color: #333; margin-bottom: 4px; word-break: break-all; }
+.result-title { color: var(--green); font-size: 14px; margin-bottom: 6px; }
+.result-snippet { color: #666; font-size: 12px; line-height: 1.5; }
+.result-snippet mark { background: none; color: #fff; }
+.result.locked { opacity: 0.3; cursor: default; }
+.result.locked .result-title::after { content: " [locked]"; color: #f00; font-size: 11px; }
+.result-engine { font-size: 10px; color: #222; margin-top: 4px; }
 
-.feature::before {
-  content: '→ ';
-  color: var(--green);
-}
+.searching { text-align: center; color: #333; padding: 40px 0; }
 
-.feature:last-child {
-  margin-bottom: 0;
+/* Auth bar */
+.auth {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #0a0a0a; border-top: 1px solid #111;
+  padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 12px; z-index: 50;
 }
+.auth input {
+  padding: 8px 12px; background: #000; border: 1px solid #222;
+  color: #fff; font-family: inherit; font-size: 12px; outline: none; width: 200px;
+}
+.auth input:focus { border-color: var(--green); }
+.auth button {
+  padding: 8px 16px; background: #111; border: 1px solid #222;
+  color: var(--green); font-family: inherit; font-size: 12px; cursor: pointer;
+}
+.auth button:hover { border-color: var(--green); }
+.auth .user { color: var(--green); }
+.auth .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 6px; }
 
-/* CTA Button */
-.cta {
-  display: block;
-  width: 100%;
-  padding: 20px;
-  background: var(--green);
-  color: var(--bg);
-  text-align: center;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 700;
-  border: none;
-  cursor: pointer;
-  margin-bottom: 16px;
-  transition: all 0.2s;
+/* Gate overlay */
+.gate {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.95); display: none;
+  align-items: center; justify-content: center; padding: 20px; z-index: 100;
 }
+.gate.show { display: flex; }
+.gate-box {
+  max-width: 400px; text-align: center;
+  border: 1px solid #222; padding: 40px; background: #0a0a0a;
+}
+.gate-box h2 { color: #fff; font-size: 1rem; margin-bottom: 16px; font-weight: 400; }
+.gate-box p { font-size: 12px; margin-bottom: 20px; }
+.gate-box .dismiss {
+  display: block; margin-top: 16px; font-size: 11px; color: #333; cursor: pointer;
+}
+.gate-box .dismiss:hover { color: #666; }
 
-.cta:hover {
-  background: var(--green-hover);
-  box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
-  text-decoration: none;
+/* Search footer */
+.search-footer {
+  text-align: center; font-size: 10px; color: #222; padding: 20px 0 60px;
 }
-
-.billing-note {
-  text-align: center;
-  font-size: 12px;
-  color: var(--muted);
-  margin-bottom: 40px;
-}
-
-/* Terms */
-.terms {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 24px;
-  font-size: 12px;
-  color: var(--gray);
-  margin-bottom: 40px;
-}
-
-.terms h3 {
-  color: var(--green);
-  font-size: 11px;
-  letter-spacing: 2px;
-  margin-bottom: 16px;
-}
-
-.terms-section {
-  margin-bottom: 16px;
-}
-
-.terms-section:last-child {
-  margin-bottom: 0;
-}
-
-.terms-title {
-  color: var(--white);
-  margin-bottom: 8px;
-}
-
-.terms ul {
-  margin-left: 16px;
-  color: var(--muted);
-}
-
-.terms li {
-  margin-bottom: 4px;
-}
-
-/* Revenue ticker */
-.revenue-ticker {
-  background: rgba(0, 255, 0, 0.05);
-  border: 1px solid var(--green);
-  padding: 16px 24px;
-  margin-bottom: 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 12px;
-}
-
-.revenue-ticker .label {
-  color: var(--green);
-}
-
-.revenue-ticker .values {
-  color: var(--gray);
-}
-
-.revenue-ticker .mrr {
-  color: var(--green);
-  font-weight: 700;
-}
+.wrap.has-results ~ .search-footer { position: static; }
 </style>
 
 <!-- D2D Pixel -->
@@ -259,9 +190,8 @@ h1 .price {
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
 
-
-    <script src="config.js"></script>
-    </head>
+<script src="config.js"></script>
+</head>
 <body>
 
 <!-- HEADER (consistent navigation) -->
@@ -269,7 +199,8 @@ h1 .price {
   <div class="header-inner">
     <a href="/" class="logo">DEATH2DATA</a>
     <nav class="nav">
-      <a href="/" class="current">Home</a>
+      <a href="/" class="current">Search</a>
+      <a href="/about.html">About</a>
       <a href="/tools.html">Tools</a>
       <a href="/docs/index.html">Docs</a>
       <a href="/admin/manage.html">Account</a>
@@ -279,153 +210,304 @@ h1 .price {
 
 <!-- MAIN CONTENT -->
 <main class="page-content">
-  <div class="container">
 
-    <!-- Live member count -->
-    <div style="text-align: right; margin-bottom: 20px;">
-      <div class="live-stats">
-        <span class="count" id="member-count">--</span> members
-      </div>
-    </div>
+<div class="wrap" id="wrap">
+  <div class="search-logo">death<span>2</span>data</div>
+  <div class="tagline">SEARCH WITHOUT SURVEILLANCE</div>
 
-    <div class="prompt">subscribe --plan=membership --price=1</div>
-
-    <h1><span class="price">$1</span>/month<br>Where weirdos build in public.</h1>
-
-    <p class="subtitle">Privacy tools. No tracking. No ads. Just space to be yourself.</p>
-
-    <div class="features">
-      <div class="feature">Privacy-first search (self-hosted, open source)</div>
-      <div class="feature">Member tools (QR, analytics, business cards)</div>
-      <div class="feature">28-day notebook (unlimited topics, digital first)</div>
-      <div class="feature">Physical notebook prints at sanctioned events</div>
-      <div class="feature">Zero data harvesting. That's the whole point.</div>
-    </div>
-
-    <div class="revenue-ticker">
-      <span class="label">BUILDING IN PUBLIC</span>
-      <span class="values">
-        <span class="mrr" id="mrr-display">$--</span> MRR ·
-        <a href="/admin/revenue.html" style="color: var(--gray)">see all stats →</a>
-      </span>
-    </div>
-
-    <!-- LIVE STRIPE PAYMENT LINK -->
-    <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="cta">
-      ./join.sh →
-    </a>
-
-    <p class="billing-note">
-      Billed every 28 days. Cancel anytime via Stripe.
-    </p>
-
-    <div class="terms">
-      <h3>TERMS & CONDITIONS</h3>
-
-      <div class="terms-section">
-        <div class="terms-title">What you get:</div>
-        <ul>
-          <li>Access to all Death2Data member tools</li>
-          <li>28-day notebook (unlimited topics, stored locally)</li>
-          <li>Physical prints at D2D events (CRINGE, SOUL, DEAL, ULTRA, NIL)</li>
-          <li>Event-exclusive custom covers (collectible)</li>
-          <li>Priority support via email</li>
-        </ul>
-      </div>
-
-      <div class="terms-section">
-        <div class="terms-title">Billing:</div>
-        <ul>
-          <li>$1.00 USD charged every 28 days</li>
-          <li>Cancel anytime from Stripe portal</li>
-          <li>No refunds for partial periods</li>
-        </ul>
-      </div>
-
-      <div class="terms-section">
-        <div class="terms-title">Privacy:</div>
-        <ul>
-          <li>We don't track you</li>
-          <li>We don't sell your data</li>
-          <li>Stripe handles payments (we never see card info)</li>
-          <li>Your notebook content stays in your browser (localStorage)</li>
-          <li>Download your data as markdown anytime</li>
-        </ul>
-      </div>
-
-      <p style="margin-top: 16px; color: var(--white);">
-        By clicking "join", you agree to these terms.
-      </p>
-    </div>
-
+  <div class="search-box">
+    <input type="text" class="search-input" id="q" placeholder="search anything..." autocomplete="off"
+           onkeydown="if(event.key==='Enter')doSearch()">
+    <button class="search-btn" onclick="doSearch()">SEARCH</button>
   </div>
+
+  <div class="counter" id="counter">3 free searches</div>
+  <div class="results" id="results"></div>
+</div>
+
+<div class="gate" id="gate">
+  <div class="gate-box">
+    <h2>FREE SEARCHES USED</h2>
+    <p>Enter your email for unlimited search. No tracking. No ads.</p>
+    <div id="gate-form" style="margin:16px 0">
+      <input type="email" id="gate-email" placeholder="your email"
+        style="width:100%;padding:12px;background:#000;border:1px solid #222;color:#fff;font-family:inherit;font-size:13px;margin-bottom:10px;outline:none"
+        onkeydown="if(event.key==='Enter')gateLogin()" onfocus="this.style.borderColor='#0f0'" onblur="this.style.borderColor='#222'">
+      <button onclick="gateLogin()"
+        style="width:100%;padding:14px;background:#f00;color:#000;border:none;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:0.1em">UNLOCK SEARCH</button>
+      <div id="gate-status" style="font-size:11px;color:#333;margin-top:8px"></div>
+    </div>
+    <span class="dismiss" onclick="dismissGate()">not now</span>
+  </div>
+</div>
+
+<div class="auth" id="auth">
+  <input type="email" id="email" placeholder="email to sign in" onkeydown="if(event.key==='Enter')login()">
+  <button onclick="login()">sign in</button>
+</div>
+
+<div class="search-footer">
+  <a href="/about.html">$1/month membership</a> · <a href="/tools.html">tools</a> · <a href="https://fortune0.com">fortune0</a>
+</div>
+
 </main>
 
-<!-- FOOTER (consistent across site) -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="logo">DEATH2DATA</span>
-      <p>Privacy tools that don't track you.</p>
-    </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Product</h4>
-        <a href="/">Home</a>
-        <a href="/tools.html">Tools</a>
-        <a href="/tools/notebook.html">Notebook</a>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="/docs/index.html">Docs</a>
-        <a href="/docs/faq.html">FAQ</a>
-        <a href="/admin/revenue.html">Open Revenue</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="/admin/manage.html">Manage Subscription</a>
-        <a href="mailto:matt@death2data.com">Support</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 Death2Data. All rights reserved.</p>
-      <p class="footer-contact">
-        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
-      </p>
-    </div>
-  </div>
-</footer>
+<!-- NOTE: No site-footer on search page — auth bar sits at bottom -->
 
 <script>
-    const ENV = window.location.hostname === 'localhost' ? 'dev' :
-                window.location.hostname.includes('staging') ? 'staging' : 'prod';
-</script>
-<script>
-// Load live stats from MRR endpoint
-fetch('/.netlify/functions/mrr')
-  .then(r => r.json())
-  .then(d => {
-    document.getElementById('member-count').textContent = d.customers;
-    document.getElementById('mrr-display').textContent = '$' + d.mrr.toFixed(0);
-  })
-  .catch(() => {
-    document.getElementById('member-count').textContent = '4';
-    document.getElementById('mrr-display').textContent = '$4';
-  });
-</script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+const S = {
+  token: null,
+  email: null,
+  tier: null,
+  searches: 0,
+  maxFree: 3,
+};
 
-<!-- Footer -->
-<footer style="text-align: center; padding: 60px 20px 40px; border-top: 1px solid var(--border); margin-top: 80px; color: var(--muted); font-size: 13px;">
-  <p style="margin-bottom: 12px;">
-    <strong style="color: var(--green);">Find your weird. Own your data. Build in public.</strong>
-  </p>
-  <p style="margin-bottom: 8px;">
-    Part of the <a href="https://ark.wav.group" style="color: var(--gray); text-decoration: none;" target="_blank">ARK/WAV</a> community.
-  </p>
-  <p style="font-size: 11px; color: #444;">
-    Built by weirdos, for weirdos. Sponsored by <a href="https://calriven.com" style="color: #555; text-decoration: none;" target="_blank">calriven.com</a> (AI CTO)
-  </p>
-</footer>
+// Fortune0 backend — serves the search API
+const API = location.hostname === 'localhost'
+  ? ''
+  : 'https://fortune0-com.onrender.com';
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+(function init() {
+  // Restore session
+  const t = sessionStorage.getItem('d2d_token');
+  const e = sessionStorage.getItem('d2d_email');
+  if (t && e) {
+    S.token = t;
+    S.email = e;
+    S.maxFree = Infinity;
+    showAuthed();
+  }
+  updateCounter();
+  document.getElementById('q').focus();
+
+  // Check for ?q= URL param (from JSON-LD SearchAction)
+  const params = new URLSearchParams(window.location.search);
+  const preQ = params.get('q');
+  if (preQ) {
+    document.getElementById('q').value = preQ;
+    doSearch();
+  }
+})();
+
+// ═══════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════
+async function login() {
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) return;
+  try {
+    const r = await fetch(API + '/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source_domain: 'death2data.com' }),
+    });
+    const d = await r.json();
+    if (d.token) {
+      S.token = d.token;
+      S.email = d.email;
+      S.tier = d.tier;
+      S.maxFree = Infinity;
+      sessionStorage.setItem('d2d_token', d.token);
+      sessionStorage.setItem('d2d_email', d.email);
+      showAuthed();
+      document.getElementById('gate').classList.remove('show');
+      updateCounter();
+    }
+  } catch (e) {
+    // Offline — let them search locally
+    S.maxFree = Infinity;
+    updateCounter();
+  }
+}
+
+function showAuthed() {
+  const el = document.getElementById('auth');
+  el.innerHTML = `
+    <span class="user"><span class="dot"></span>${S.email}</span>
+    <button onclick="logout()">sign out</button>
+  `;
+}
+
+function logout() {
+  S.token = null;
+  S.email = null;
+  S.tier = null;
+  S.maxFree = 3;
+  S.searches = 0;
+  sessionStorage.removeItem('d2d_token');
+  sessionStorage.removeItem('d2d_email');
+  document.getElementById('auth').innerHTML = `
+    <input type="email" id="email" placeholder="email to sign in" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">sign in</button>
+  `;
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('wrap').classList.remove('has-results');
+  updateCounter();
+}
+
+// ═══════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════
+async function doSearch() {
+  const q = document.getElementById('q').value.trim();
+  if (!q) return;
+
+  if (S.searches >= S.maxFree && !S.token) {
+    showGate();
+    return;
+  }
+
+  S.searches++;
+  updateCounter();
+  document.getElementById('wrap').classList.add('has-results');
+  document.getElementById('results').innerHTML = '<div class="searching">searching...</div>';
+
+  let results;
+  try {
+    const headers = {};
+    if (S.token) headers['Authorization'] = 'Bearer ' + S.token;
+    const r = await fetch(API + '/api/search?q=' + encodeURIComponent(q), { headers });
+    const d = await r.json();
+
+    if (d.results && d.results.length > 0) {
+      results = d.results;
+    } else if (d.error === 'auth_required' || d.error === 'activation_required') {
+      results = localResults(q);
+      if (d.error === 'activation_required') {
+        setTimeout(() => showGate(), 400);
+      }
+    } else {
+      results = localResults(q);
+    }
+  } catch (e) {
+    // API down — local fallback
+    results = localResults(q);
+  }
+
+  renderResults(results, q);
+
+  if (S.searches >= S.maxFree && !S.token) {
+    setTimeout(() => showGate(), 600);
+  }
+}
+
+function localResults(q) {
+  const s = q.toLowerCase().replace(/\s+/g, '-');
+  return [
+    { title: q + ' — overview', url: 'local://d2d/wiki/' + s, snippet: 'Local result. Sign in for live web search.', engine: 'local' },
+    { title: 'Understanding ' + q, url: 'local://d2d/deep/' + s, snippet: 'No tracking. No ads. Your search stays in your browser.', engine: 'local' },
+    { title: q + ' — resources', url: 'local://d2d/ref/' + s, snippet: 'Connect to fortune0 backend for real results.', engine: 'local' },
+  ];
+}
+
+function renderResults(results, q) {
+  const el = document.getElementById('results');
+  const words = q.toLowerCase().split(/\s+/);
+  el.innerHTML = results.map(r => {
+    let sn = r.snippet || r.content || '';
+    words.forEach(w => {
+      if (w.length > 2) sn = sn.replace(new RegExp('(' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'), '<mark>$1</mark>');
+    });
+    const eng = r.engine ? `<div class="result-engine">via ${r.engine}</div>` : '';
+    return `<div class="result" onclick="go('${(r.url || '').replace(/'/g, "\\'")}')">
+      <div class="result-url">${r.url || ''}</div>
+      <div class="result-title">${r.title || ''}</div>
+      <div class="result-snippet">${sn}</div>
+      ${eng}
+    </div>`;
+  }).join('');
+}
+
+function go(url) {
+  if (url && url.startsWith('http')) {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+}
+
+// ═══════════════════════════════════════════
+// GATE
+// ═══════════════════════════════════════════
+function showGate() {
+  document.getElementById('gate').classList.add('show');
+  // Prefill gate email from bottom bar if they typed something
+  const bottomEmail = document.getElementById('email');
+  const gateEmail = document.getElementById('gate-email');
+  if (bottomEmail && bottomEmail.value && gateEmail) {
+    gateEmail.value = bottomEmail.value;
+  }
+  if (gateEmail) gateEmail.focus();
+}
+
+async function gateLogin() {
+  const email = document.getElementById('gate-email').value.trim().toLowerCase();
+  const status = document.getElementById('gate-status');
+  if (!email || !email.includes('@')) {
+    status.textContent = 'enter a valid email';
+    status.style.color = '#f00';
+    return;
+  }
+  status.textContent = 'connecting...';
+  status.style.color = '#333';
+  try {
+    const r = await fetch(API + '/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source_domain: 'death2data.com' }),
+    });
+    const d = await r.json();
+    if (d.token) {
+      S.token = d.token;
+      S.email = d.email;
+      S.tier = d.tier;
+      S.maxFree = Infinity;
+      sessionStorage.setItem('d2d_token', d.token);
+      sessionStorage.setItem('d2d_email', d.email);
+      showAuthed();
+      document.getElementById('gate').classList.remove('show');
+      updateCounter();
+      // Re-run last search automatically
+      doSearch();
+    } else if (d.error) {
+      status.textContent = d.error;
+      status.style.color = '#f00';
+    }
+  } catch (e) {
+    status.textContent = 'offline — try again';
+    status.style.color = '#f00';
+  }
+}
+
+function dismissGate() {
+  document.getElementById('gate').classList.remove('show');
+  S.maxFree = S.searches + 1;
+  updateCounter();
+}
+
+// ═══════════════════════════════════════════
+// COUNTER
+// ═══════════════════════════════════════════
+function updateCounter() {
+  const el = document.getElementById('counter');
+  if (S.token) {
+    el.textContent = 'unlimited searches';
+    el.classList.add('active');
+  } else if (S.searches === 0) {
+    el.textContent = S.maxFree + ' free searches';
+    el.classList.remove('active');
+  } else {
+    const r = Math.max(0, S.maxFree - S.searches);
+    el.textContent = r > 0 ? r + ' free search' + (r === 1 ? '' : 'es') + ' remaining' : 'free searches used';
+    el.classList.remove('active');
+  }
+}
+</script>
 
 </body>
 </html>
