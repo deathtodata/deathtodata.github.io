@@ -1,22 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Billing - Death2Data Docs</title>
-    <link rel="stylesheet" href="/style.css">
-    <script src="/config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing - Death2Data</title>
+<link rel="stylesheet" href="/css/style.css">
+<!-- SEO/AEO/LLMEO Head -->
+<title>Billing - Death2Data Docs</title>
+<meta name="description" content="Death2Data billing information. $1 every 28 days. Manage your subscription through Stripe. Cancel anytime.">
+<meta name="keywords" content="billing, subscription, pricing, payment, stripe">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/docs/billing.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Billing - Death2Data">
+<meta property="og:description" content="Death2Data billing information. $1 every 28 days. Manage your subscription through Stripe.">
+<meta property="og:url" content="https://death2data.com/docs/billing.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Billing - Death2Data">
+<meta name="twitter:description" content="Death2Data billing information. $1 every 28 days. Manage through Stripe.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Billing Documentation",
+  "description": "Death2Data billing information. $1 every 28 days. Manage your subscription through Stripe.",
+  "url": "https://death2data.com/docs/billing.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
 </head>
 <body>
-    <nav>
-        <a href="/">← Back to D2D</a>
-        <a href="/docs/index.html">Docs</a>
-    </nav>
 
-    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
-        <h1>Billing</h1>
-        <p>Documentation coming soon.</p>
-        <p>Questions? <a href="mailto:matt@death2data.com">Contact us</a></p>
-    </main>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">DEATH2DATA</a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/docs/index.html">Docs</a>
+      <a href="/admin/manage.html">Account</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-content">
+  <div class="docs-layout">
+
+    <aside class="docs-sidebar">
+      <h4>GETTING STARTED</h4>
+      <a href="/docs/index.html">Overview</a>
+      <a href="/docs/membership.html">Membership</a>
+      <a href="/docs/notebook.html">28-Day Notebook</a>
+
+      <h4>TOOLS</h4>
+      <a href="/docs/search.html">Privacy Search</a>
+      <a href="/docs/qr.html">QR Generator</a>
+      <a href="/docs/analytics.html">Analytics</a>
+
+      <h4>HELP</h4>
+      <a href="/docs/faq.html">FAQ</a>
+      <a href="/docs/billing.html" class="current">Billing</a>
+      <a href="/docs/contact.html">Contact</a>
+    </aside>
+
+    <div class="docs-content">
+      <h1>Billing</h1>
+      <p class="doc-updated">Last updated: February 2026</p>
+
+      <h2>Pricing</h2>
+      <p>$1 every 28 days. That's the whole price. No hidden fees. No upsells. No "introductory rates" that jump up later. $1. Every month.</p>
+
+      <h2>Billing Cycle</h2>
+
+      <h3>28-Day Billing</h3>
+      <p>We bill every 28 days, not calendar months. This gives consistent billing dates and avoids month-length confusion.</p>
+
+      <h3>First Charge</h3>
+      <p>When you sign up, the first $1 charges immediately. Your membership becomes active right away.</p>
+
+      <h3>Recurring Charges</h3>
+      <p>$1 charges every 28 days after your signup date unless you cancel.</p>
+
+      <h3>Your Billing Date</h3>
+      <p>Check the Stripe billing portal to see your exact billing date. You can set up calendar reminders if you want to track it.</p>
+
+      <h2>Payment Methods</h2>
+
+      <h3>What We Accept</h3>
+      <p>All major credit cards (Visa, Mastercard, American Express, Discover). Apple Pay. Google Pay. Anything Stripe accepts.</p>
+
+      <h3>Who Processes It</h3>
+      <p>Stripe handles all payments. They're PCI-DSS compliant. We never see your card number. Stripe stores your payment method. We never access it.</p>
+
+      <h3>Security</h3>
+      <p>Your card is encrypted. Stripe is a trusted payment processor used by millions of businesses. Your payment info is safer there than on most websites.</p>
+
+      <h2>Managing Your Subscription</h2>
+
+      <h3>Access the Billing Portal</h3>
+      <p>Go to <a href="/admin/manage.html">/admin/manage.html</a>. Enter your email. Click "Open Billing Portal". You're taken directly to Stripe.</p>
+
+      <h3>Update Payment Method</h3>
+      <p>In the Stripe portal, click "Manage payment methods". Add a new card or update your existing one. Takes 30 seconds.</p>
+
+      <h3>View Invoices</h3>
+      <p>Stripe keeps a record of every charge. Download invoices anytime. Keep them for your records.</p>
+
+      <h3>See Your Next Billing Date</h3>
+      <p>The portal shows when your next charge will happen. No surprises.</p>
+
+      <h2>Cancellation</h2>
+
+      <h3>How to Cancel</h3>
+      <p>Go to <a href="/admin/manage.html">/admin/manage.html</a> → enter your email → "Open Billing Portal" → click "Cancel subscription". Done.</p>
+
+      <h3>When Does It Take Effect?</h3>
+      <p>Cancellation is immediate. You keep access until your current billing period ends. After that, your membership expires.</p>
+
+      <h3>No Questions Asked</h3>
+      <p>We don't email asking why. We don't nag you. We don't offer discounts to keep you. You decided to leave, so you leave.</p>
+
+      <h3>Reactivation</h3>
+      <p>If you cancel and change your mind, you can sign up again. You'll be treated like a new member. Paid plans don't have "pause" features - you either subscribe or you don't.</p>
+
+      <h2>Refunds & Disputes</h2>
+
+      <h3>No Refunds</h3>
+      <p>It's $1. We'd spend more processing a refund than the refund itself. But you can cancel immediately and stop charges.</p>
+
+      <h3>What If You Cancel Mid-Cycle?</h3>
+      <p>You keep access until your billing period ends. We don't prorate refunds. If you paid for 28 days, you get 28 days even if you cancel on day 3.</p>
+
+      <h3>Chargebacks</h3>
+      <p>If you dispute the charge with your card company instead of canceling, we'll lose the payment plus chargeback fees. That hurts us more than a simple cancellation. Just cancel if you want to stop paying.</p>
+
+      <h2>Data & Privacy</h2>
+
+      <h3>What We Store</h3>
+      <p>Your email address. Your subscription status (active/canceled). Your signup date. That's it.</p>
+
+      <h3>What Stripe Stores</h3>
+      <p>Your payment method. Your billing address. Your card details. Your invoice history. Stripe's privacy policy covers that.</p>
+
+      <h3>We Never See Your Card</h3>
+      <p>Your card number never hits our servers. Stripe tokenizes it and gives us a token. We charge the token, not the card directly.</p>
+
+      <h3>Email Marketing?</h3>
+      <p>We email about billing events only: signup confirmation, failed payment, cancellation. We don't do marketing emails or newsletters. Your email is for transactional use only.</p>
+
+      <h2>Billing Issues</h2>
+
+      <h3>Card Declined?</h3>
+      <p>Stripe will retry failed charges. If it keeps failing, Stripe will email you. Update your payment method in the portal. We can't manually retry charges - Stripe controls that.</p>
+
+      <h3>Wrong Amount Charged?</h3>
+      <p>It should always be $1 every 28 days. If you see something different, email <a href="mailto:matt@death2data.com">matt@death2data.com</a> immediately with the charge amount and date.</p>
+
+      <h3>Can't Access Stripe Portal?</h3>
+      <p>Make sure you're entering the exact email you signed up with. If you're still stuck, email us with the email address on your account and we can help troubleshoot.</p>
+
+      <h3>Other Issues?</h3>
+      <p>Email <a href="mailto:matt@death2data.com">matt@death2data.com</a> with details. Include the amount charged, the date, your email, and what's wrong. We'll help.</p>
+
+      <h2>Taxes</h2>
+      <p>If your jurisdiction requires sales tax, it's included in the $1. We handle it. You pay $1, we collect tax if applicable, Stripe remits it. No surprises.</p>
+
+      <h2>Still have questions?</h2>
+      <p>Email <a href="mailto:matt@death2data.com">matt@death2data.com</a> - I read everything and respond personally.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">DEATH2DATA</span>
+      <p>Privacy tools that don't track you.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/">Home</a>
+        <a href="/tools.html">Tools</a>
+        <a href="/tools/notebook.html">Notebook</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs/index.html">Docs</a>
+        <a href="/docs/faq.html">FAQ</a>
+        <a href="/admin/revenue.html">Open Revenue</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="/admin/manage.html">Manage Subscription</a>
+        <a href="mailto:matt@death2data.com">Support</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Death2Data. All rights reserved.</p>
+      <p class="footer-contact">
+        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>

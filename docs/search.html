@@ -1,22 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search - Death2Data Docs</title>
-    <link rel="stylesheet" href="/style.css">
-    <script src="/config.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Search - Death2Data</title>
+<link rel="stylesheet" href="/css/style.css">
+<!-- SEO/AEO/LLMEO Head -->
+<title>Privacy Search - Death2Data Docs</title>
+<meta name="description" content="Search the web without tracking. Death2Data's privacy-first search tool with no cookies, no history, no surveillance.">
+<meta name="keywords" content="privacy search, private search engine, no tracking search">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/docs/search.html">
+
+<!-- Open Graph (Facebook, LinkedIn, Discord) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Privacy Search - Death2Data">
+<meta property="og:description" content="Search the web without tracking. No cookies, no history, no surveillance.">
+<meta property="og:url" content="https://death2data.com/docs/search.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Privacy Search - Death2Data">
+<meta name="twitter:description" content="Search the web without tracking. No cookies, no history, no surveillance.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Privacy Search Documentation",
+  "description": "Search the web without tracking. Death2Data's privacy-first search tool.",
+  "url": "https://death2data.com/docs/search.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
 </head>
 <body>
-    <nav>
-        <a href="/">← Back to D2D</a>
-        <a href="/docs/index.html">Docs</a>
-    </nav>
 
-    <main style="max-width: 800px; margin: 2rem auto; padding: 0 1rem;">
-        <h1>Search</h1>
-        <p>Documentation coming soon.</p>
-        <p>Questions? <a href="mailto:matt@death2data.com">Contact us</a></p>
-    </main>
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">DEATH2DATA</a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/tools.html">Tools</a>
+      <a href="/docs/index.html">Docs</a>
+      <a href="/admin/manage.html">Account</a>
+    </nav>
+  </div>
+</header>
+
+<main class="page-content">
+  <div class="docs-layout">
+
+    <aside class="docs-sidebar">
+      <h4>GETTING STARTED</h4>
+      <a href="/docs/index.html">Overview</a>
+      <a href="/docs/membership.html">Membership</a>
+      <a href="/docs/notebook.html">28-Day Notebook</a>
+
+      <h4>TOOLS</h4>
+      <a href="/docs/search.html" class="current">Privacy Search</a>
+      <a href="/docs/qr.html">QR Generator</a>
+      <a href="/docs/analytics.html">Analytics</a>
+
+      <h4>HELP</h4>
+      <a href="/docs/faq.html">FAQ</a>
+      <a href="/docs/billing.html">Billing</a>
+      <a href="/docs/contact.html">Contact</a>
+    </aside>
+
+    <div class="docs-content">
+      <h1>Privacy Search</h1>
+      <p class="doc-updated">Last updated: February 2026</p>
+
+      <h2>Overview</h2>
+      <p>Privacy Search lets you search the web without tracking, history storage, or surveillance. Get 3 free searches to try it. After that, members get unlimited searches for $1/month.</p>
+
+      <h2>How It Works</h2>
+      <p>Simple: you type a query, we pass it directly to search engines, and you get results. No middle man. No logging. No cookies.</p>
+
+      <h3>Free Tier</h3>
+      <p>3 free searches per browser session. No signup required. After that, you need a membership.</p>
+
+      <h3>Membership</h3>
+      <p>Members get unlimited searches. $1 every 28 days. Join at the entry gate or continue searching after your free searches run out.</p>
+
+      <h2>Privacy Guarantees</h2>
+
+      <h3>No Search History</h3>
+      <p>Your searches aren't stored on our servers. They don't get logged. They don't get sold. We literally don't have a database of what you've searched.</p>
+
+      <h3>No Cookies</h3>
+      <p>We use session-based authentication stored in your browser's sessionStorage, not cookies. Session data expires when you close the tab. No persistent tracking.</p>
+
+      <h3>No Direct Tracking</h3>
+      <p>We don't use Google Analytics, Facebook Pixel, Segment, or any third-party tracking. We don't know your IP. We don't fingerprint your device. We don't care where you go.</p>
+
+      <h3>Direct Search Engine Queries</h3>
+      <p>Queries go straight to search engines through our fortune0 API backend. We act as a relay, not a middle man. The search engine sees your query, not some tracking infrastructure.</p>
+
+      <h2>How to Use</h2>
+
+      <h3>Quick Start</h3>
+      <p>Visit death2data.com or use the search box on the site. Type your query and press Enter. That's it.</p>
+
+      <h3>URL Parameters</h3>
+      <p>You can search directly via URL: <code>death2data.com/?q=your+query</code>. Spaces as <code>+</code> or <code>%20</code>. Results load directly without any extra steps.</p>
+
+      <h3>Switching Topics</h3>
+      <p>Search again. New query, new results. No history to clear, no old searches following you around.</p>
+
+      <h2>Technical Details</h2>
+
+      <h3>Authentication</h3>
+      <p>Session-based. Your membership status is stored in sessionStorage on your device. When you close the browser, the session expires. No persistent tokens. No server-side sessions stored.</p>
+
+      <h3>Backend</h3>
+      <p>The fortune0 API on Render handles search relay. It's the middleman between you and the search engines. We don't log queries there either.</p>
+
+      <h3>Frontend</h3>
+      <p>Vanilla JavaScript. No frameworks. No tracking libraries. No hidden requests. The code is lightweight and auditable.</p>
+
+      <h2>Under the Hood</h2>
+
+      <h3>What We Built</h3>
+      <p>Custom search relay API. Session authentication system. Minimal UI that respects your attention.</p>
+
+      <h3>What We Use</h3>
+      <p>Render for API hosting. GitHub Pages for the frontend. fortune0 for billing integration.</p>
+
+      <h3>Influences</h3>
+      <p>We were inspired by DuckDuckGo's privacy approach (no tracking), Google's minimal interface design (no cruft), and Brave Search's independence (no surveillance). We took the best parts and built something even simpler.</p>
+
+      <h2>Why We Built It This Way</h2>
+      <p>Most search tools make money from tracking or ads. We make $1/month. That's it. When your only income is from people who explicitly choose you, you can't afford to track them. Your incentive is to be good, not to sell data.</p>
+
+      <h2>Limitations</h2>
+      <p>This isn't a search engine. It's a search interface. We relay your query to real search engines. If a search engine is down, we can't help. If a search engine changes their API, we adapt.</p>
+
+      <h2>Still have questions?</h2>
+      <p>Email <a href="mailto:matt@death2data.com">matt@death2data.com</a> - I read everything and respond personally.</p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo">DEATH2DATA</span>
+      <p>Privacy tools that don't track you.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="/">Home</a>
+        <a href="/tools.html">Tools</a>
+        <a href="/tools/notebook.html">Notebook</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="/docs/index.html">Docs</a>
+        <a href="/docs/faq.html">FAQ</a>
+        <a href="/admin/revenue.html">Open Revenue</a>
+      </div>
+      <div class="footer-col">
+        <h4>Account</h4>
+        <a href="/admin/manage.html">Manage Subscription</a>
+        <a href="mailto:matt@death2data.com">Support</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Death2Data. All rights reserved.</p>
+      <p class="footer-contact">
+        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
+      </p>
+    </div>
+  </div>
+</footer>
+
 </body>
 </html>
