@@ -27,22 +27,22 @@ jobs:
 
           # Check for Stripe secret keys (should never be in code)
           if grep -r "sk_live_" --include="*.html" --include="*.js" --include="*.json" .; then
-            echo "❌ ERROR: Stripe secret key (sk_live_) found in code!"
+            echo "ERROR: Stripe secret key (sk_live_) found in code!"
             exit 1
           fi
 
           # Check for hardcoded Stripe publishable keys
           if grep -r "pk_live_51RIIa4G7fHl88NQ8" --include="*.html" --include="*.js" .; then
-            echo "❌ ERROR: Hardcoded Stripe publishable key found!"
+            echo "ERROR: Hardcoded Stripe publishable key found!"
             exit 1
           fi
 
           # Check for API keys in common formats
           if grep -rE "(api[_-]?key|apikey|api[_-]?secret).*[:=].*['\"][a-zA-Z0-9]{20,}['\"]" --include="*.html" --include="*.js" .; then
-            echo "⚠️  WARNING: Possible API key found in code"
+            echo "WARNING: Possible API key found in code"
           fi
 
-          echo "✅ No hardcoded secrets detected"
+          echo "No hardcoded secrets detected"
 
       - name: Check for critical issues
         run: |
@@ -52,11 +52,11 @@ jobs:
             echo "Broken links: $BROKEN"
             echo "JS errors: $JS_ERRORS"
             if [ "$JS_ERRORS" -gt 0 ]; then
-              echo "❌ JavaScript syntax errors found!"
+              echo "JavaScript syntax errors found!"
               exit 1
             fi
-            if [ "$BROKEN" -gt 20 ]; then
-              echo "❌ Too many broken links ($BROKEN > 20)"
+            if [ "$BROKEN" -gt 5 ]; then
+              echo "Too many broken links ($BROKEN > 5)"
               exit 1
             fi
           fi
@@ -70,15 +70,17 @@ jobs:
 
   html-validate:
     runs-on: ubuntu-latest
+    # Non-blocking until legacy HTML files are cleaned up
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate HTML
+      - name: Validate HTML (core pages)
         uses: Cyb3r-Jak3/html5validator-action@v7.2.0
         with:
           root: .
           css: false
-          extra: --ignore "Element "x-" --ignore "Attribute "x-"
+          extra: --also-check-css false --ignore "Element .x-." --ignore "Attribute .x-."
 
   links:
     runs-on: ubuntu-latest

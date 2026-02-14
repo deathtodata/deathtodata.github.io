@@ -30,6 +30,7 @@ class SiteAudit:
     def check_links(self, html_file):
         content = html_file.read_text(errors='ignore')
         rel_path = str(html_file.relative_to(self.repo_path))
+        file_dir = str(html_file.parent.relative_to(self.repo_path))
 
         hrefs = re.findall(r'href=["\']([^"\']+)["\']', content)
         srcs = re.findall(r'src=["\']([^"\']+)["\']', content)
@@ -38,7 +39,20 @@ class SiteAudit:
             if link.startswith(('http://', 'https://', '#', 'javascript:', 'mailto:', 'tel:', 'data:')):
                 continue
 
-            target = link.lstrip('/').split('?')[0].split('#')[0]
+            clean = link.split('?')[0].split('#')[0]
+            if not clean:
+                continue
+
+            # Resolve path: absolute (starts with /) or relative to file's directory
+            if clean.startswith('/'):
+                target = clean.lstrip('/')
+            else:
+                # Relative path — resolve from the file's directory
+                if file_dir == '.':
+                    target = clean
+                else:
+                    target = os.path.normpath(os.path.join(file_dir, clean))
+
             if not target:
                 continue
 
