@@ -127,16 +127,19 @@ body::before {
 
 .searching { text-align: center; color: #333; padding: 40px 0; }
 
-/* Auth bar */
+/* Bottom bar — auth + links in one row */
 .auth {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: #0a0a0a; border-top: 1px solid #111;
-  padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 10px 20px; display: flex; align-items: center; justify-content: center; gap: 12px;
   font-size: 12px; z-index: 50;
 }
+.auth a { color: #444; text-decoration: none; }
+.auth a:hover { color: var(--green); }
+.auth .sep { color: #222; }
 .auth input {
   padding: 8px 12px; background: #000; border: 1px solid #222;
-  color: #fff; font-family: inherit; font-size: 12px; outline: none; width: 200px;
+  color: #fff; font-family: inherit; font-size: 12px; outline: none; width: 180px;
 }
 .auth input:focus { border-color: var(--green); }
 .auth button {
@@ -146,6 +149,9 @@ body::before {
 .auth button:hover { border-color: var(--green); }
 .auth .user { color: var(--green); }
 .auth .dot { display: inline-block; width: 6px; height: 6px; background: var(--green); border-radius: 50%; margin-right: 6px; }
+@media (max-width: 500px) {
+  .auth .sep, .auth a { display: none; }
+}
 
 /* Gate overlay */
 .gate {
@@ -165,12 +171,7 @@ body::before {
 }
 .gate-box .dismiss:hover { color: #666; }
 
-/* Search footer — sits above the fixed auth bar */
-.search-footer {
-  text-align: center; font-size: 10px; color: #222; padding: 20px 0 80px;
-}
-.search-footer a { color: #333; }
-.search-footer a:hover { color: var(--green); text-decoration: none; }
+/* Results need bottom padding to clear the fixed auth bar */
 </style>
 
 <!-- D2D Pixel -->
@@ -243,17 +244,15 @@ body::before {
 </div>
 
 <div class="auth" id="auth">
+  <a href="/about.html">$1/month</a>
+  <span class="sep">·</span>
   <input type="email" id="email" placeholder="email to sign in" onkeydown="if(event.key==='Enter')login()">
   <button onclick="login()">sign in</button>
-</div>
-
-<div class="search-footer">
-  <a href="/about.html">$1/month membership</a> · <a href="/tools.html">tools</a> · <a href="https://fortune0.com">fortune0</a>
+  <span class="sep">·</span>
+  <a href="/tools.html">tools</a>
 </div>
 
 </main>
-
-<!-- NOTE: No site-footer on search page — auth bar sits at bottom -->
 
 <script>
 // ═══════════════════════════════════════════
@@ -331,8 +330,12 @@ async function login() {
 function showAuthed() {
   const el = document.getElementById('auth');
   el.innerHTML = `
+    <a href="/about.html">$1/month</a>
+    <span class="sep">·</span>
     <span class="user"><span class="dot"></span>${S.email}</span>
     <button onclick="logout()">sign out</button>
+    <span class="sep">·</span>
+    <a href="/tools.html">tools</a>
   `;
 }
 
@@ -345,8 +348,12 @@ function logout() {
   sessionStorage.removeItem('d2d_token');
   sessionStorage.removeItem('d2d_email');
   document.getElementById('auth').innerHTML = `
+    <a href="/about.html">$1/month</a>
+    <span class="sep">·</span>
     <input type="email" id="email" placeholder="email to sign in" onkeydown="if(event.key==='Enter')login()">
     <button onclick="login()">sign in</button>
+    <span class="sep">·</span>
+    <a href="/tools.html">tools</a>
   `;
   document.getElementById('results').innerHTML = '';
   document.getElementById('wrap').classList.remove('has-results');
