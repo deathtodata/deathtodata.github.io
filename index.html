@@ -237,7 +237,7 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
              onkeydown="if(event.key==='Enter')doSearch()">
       <button onclick="doSearch()">SEARCH</button>
     </div>
-    <div class="counter" id="counter">3 free searches</div>
+    <div class="counter" id="counter">domain search — sign in for web results</div>
     <div class="results" id="results"></div>
   </div>
 </div>
@@ -266,7 +266,7 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 </div>
 
 <script>
-const S = { token:null, email:null, tier:null, searches:0, maxFree:3 };
+const S = { token:null, email:null, tier:null, searches:0, maxFree:Infinity };
 const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrender.com';
 
 function enter(){
@@ -316,11 +316,48 @@ async function login(){
     const r=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source_domain:'death2data.com'})});
     const d=await r.json();
     if(d.token){
-      S.token=d.token;S.email=d.email;S.tier=d.tier;S.maxFree=Infinity;
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
       sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
-      showAuthed();document.getElementById('gate').classList.remove('show');updateCounter();
+      showAuthed();updateCounter();
+    } else if(d.exists){
+      // Existing user — show key input in footer
+      document.getElementById('foot').innerHTML=`
+        <span class="user">${email}</span><span class="sep">·</span>
+        <input type="password" id="lkey" placeholder="license key" style="width:120px;font-size:11px;padding:2px 6px;border:1px solid #444;background:#111;color:#0f0;border-radius:3px" onkeydown="if(event.key==='Enter')loginWithKey()">
+        <button onclick="loginWithKey()">go</button>
+        <button onclick="resetFooter()" style="opacity:.5">back</button>`;
+      S._pendingEmail=email;
+      document.getElementById('lkey').focus();
     }
-  }catch(e){ S.maxFree=Infinity;updateCounter(); }
+  }catch(e){ console.error(e); }
+}
+
+async function loginWithKey(){
+  const key=document.getElementById('lkey').value.trim();
+  const email=S._pendingEmail;
+  if(!key||!email)return;
+  try{
+    const r=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,key})});
+    const d=await r.json();
+    if(d.token){
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
+      sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+      showAuthed();updateCounter();
+    } else if(d.error){
+      const el=document.getElementById('lkey');
+      el.value='';el.placeholder=d.error;el.focus();
+    }
+  }catch(e){ console.error(e); }
+}
+
+function resetFooter(){
+  delete S._pendingEmail;
+  document.getElementById('foot').innerHTML=`
+    <a href="/about.html">$1/mo</a><span class="sep">·</span>
+    <input type="email" id="email" placeholder="email" onkeydown="if(event.key==='Enter')login()">
+    <button onclick="login()">go</button>
+    <span class="sep">·</span>
+    <a href="/tools.html">tools</a>`;
 }
 
 function showAuthed(){
@@ -332,7 +369,7 @@ function showAuthed(){
 }
 
 function logout(){
-  S.token=null;S.email=null;S.tier=null;S.maxFree=3;S.searches=0;
+  S.token=null;S.email=null;S.tier=null;S.maxFree=Infinity;S.searches=0;
   sessionStorage.removeItem('d2d_token');sessionStorage.removeItem('d2d_email');
   sessionStorage.removeItem('d2d_entered');
   location.reload();
@@ -341,7 +378,6 @@ function logout(){
 async function doSearch(){
   const q=document.getElementById('q').value.trim();
   if(!q)return;
-  if(S.searches>=S.maxFree&&!S.token){showGate();return;}
   S.searches++;updateCounter();
   document.getElementById('mid').classList.remove('center');
   document.getElementById('results').innerHTML='<div class="hint">searching...</div>';
@@ -350,12 +386,16 @@ async function doSearch(){
     const h={};if(S.token)h['Authorization']='Bearer '+S.token;
     const r=await fetch(API+'/api/search?q='+encodeURIComponent(q),{headers:h});
     const d=await r.json();
-    if(d.results&&d.results.length>0)results=d.results;
-    else if(d.error==='activation_required'){results=localResults(q);setTimeout(()=>showGate(),400);}
+    if(d.results&&d.results.length>0){
+      results=d.results;
+      // If web results are locked, hint at upgrade
+      if(d.web_locked){
+        results.push({title:'Web results available',snippet:'Sign in with your license key for full web search results.',engine:'info'});
+      }
+    }
     else results=localResults(q);
   }catch(e){results=localResults(q);}
   renderResults(results,q);
-  if(S.searches>=S.maxFree&&!S.token)setTimeout(()=>showGate(),600);
 }
 
 function localResults(q){
@@ -384,19 +424,52 @@ function showGate(){
 }
 
 async function gateLogin(){
-  const email=document.getElementById('gate-email').value.trim().toLowerCase();
+  const gateBox=document.querySelector('.gbox');
+  const emailEl=document.getElementById('gate-email');
+  const keyEl=document.getElementById('gate-key');
   const status=document.getElementById('gate-status');
+
+  // If key input is showing, do key login
+  if(keyEl && keyEl.offsetParent!==null){
+    const key=keyEl.value.trim();
+    const email=S._pendingEmail;
+    if(!key||!email){status.textContent='enter your license key';status.style.color='#f00';return;}
+    status.textContent='signing in...';status.style.color='#0f0';
+    try{
+      const r=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,key})});
+      const d=await r.json();
+      if(d.token){
+        S.token=d.token;S.email=d.email;S.tier=d.tier;
+        sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+        showAuthed();document.getElementById('gate').classList.remove('show');updateCounter();doSearch();
+      } else if(d.error){status.textContent=d.error;status.style.color='#f00';}
+    }catch(e){status.textContent='offline — try again';status.style.color='#f00';}
+    return;
+  }
+
+  // Otherwise, try signup with email
+  const email=emailEl.value.trim().toLowerCase();
   if(!email||!email.includes('@')){status.textContent='enter a valid email';status.style.color='#f00';return;}
-  status.textContent='connecting...';status.style.color='#333';
+  status.textContent='connecting...';status.style.color='#0f0';
   try{
     const r=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source_domain:'death2data.com'})});
     const d=await r.json();
     if(d.token){
-      S.token=d.token;S.email=d.email;S.tier=d.tier;S.maxFree=Infinity;
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
       sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
       showAuthed();document.getElementById('gate').classList.remove('show');updateCounter();doSearch();
-    }
-    else if(d.error){status.textContent=d.error;status.style.color='#f00';}
+    } else if(d.exists){
+      // Existing user — show key input in gate
+      S._pendingEmail=email;
+      gateBox.querySelector('h2').textContent='ENTER LICENSE KEY';
+      gateBox.querySelector('p').textContent='Check your signup email for your key.';
+      emailEl.style.display='none';
+      const ki=document.createElement('input');ki.type='password';ki.id='gate-key';ki.placeholder='license key (IK-...)';
+      ki.onkeydown=function(e){if(e.key==='Enter')gateLogin();};
+      emailEl.after(ki);ki.focus();
+      gateBox.querySelector('.gbtn').textContent='SIGN IN';
+      status.textContent='';
+    } else if(d.error){status.textContent=d.error;status.style.color='#f00';}
   }catch(e){status.textContent='offline — try again';status.style.color='#f00';}
 }
 
@@ -405,9 +478,8 @@ function dismissGate(){document.getElementById('gate').classList.remove('show');
 function updateCounter(){
   const el=document.getElementById('counter');
   if(!el)return;
-  if(S.token){el.textContent='unlimited searches';el.classList.add('on');}
-  else if(S.searches===0){el.textContent=S.maxFree+' free searches';el.classList.remove('on');}
-  else{const r=Math.max(0,S.maxFree-S.searches);el.textContent=r>0?r+' free search'+(r===1?'':'es')+' remaining':'free searches used';el.classList.remove('on');}
+  if(S.token){el.textContent='signed in — full search';el.classList.add('on');}
+  else{el.textContent='domain search — sign in for web results';el.classList.remove('on');}
 }
 </script>
 </body>
