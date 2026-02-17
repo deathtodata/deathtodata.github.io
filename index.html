@@ -164,7 +164,9 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 .results{max-width:520px;width:100%;padding:0 16px 20px}
 .r{padding:14px 0;border-bottom:1px solid #0a0a0a}
 .r:last-child{border-bottom:none}
-.r-t{color:#0f0;font-size:13px;margin-bottom:4px}
+a.r-t{color:#0f0;font-size:13px;margin-bottom:2px;text-decoration:none;display:block;cursor:pointer}
+a.r-t:hover{text-decoration:underline}
+.r-u{color:#0a0;font-size:10px;margin-bottom:4px;opacity:0.6}
 .r-s{color:#555;font-size:11px;line-height:1.5}
 .r-s mark{background:none;color:#0f0}
 .hint{text-align:center;color:#222;padding:30px 0;font-size:11px}
@@ -412,7 +414,9 @@ function renderResults(results,q){
   el.innerHTML=results.map(r=>{
     let sn=r.snippet||r.content||'';
     words.forEach(w=>{if(w.length>2)sn=sn.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');});
-    return`<div class="r"><div class="r-t">${r.title||''}</div><div class="r-s">${sn}</div></div>`;
+    const url=r.url||'#';
+    const domain=url!=='#'?url.replace(/^https?:\/\//,'').split('/')[0]:'';
+    return`<div class="r"><a class="r-t" href="${url}" target="_blank" rel="noopener">${r.title||''}</a>${domain?`<div class="r-u">${domain}</div>`:''}<div class="r-s">${sn}</div></div>`;
   }).join('');
 }
 
