@@ -466,7 +466,7 @@ async function gateLogin(){
       // Existing user — show key input in gate
       S._pendingEmail=email;
       gateBox.querySelector('h2').textContent='ENTER LICENSE KEY';
-      gateBox.querySelector('p').textContent='Check your signup email for your key.';
+      gateBox.querySelector('p').innerHTML='Have a key? Enter it below.<br><span style="color:#555;font-size:11px">No key? <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" target="_blank" style="color:#0f0">Get full access for $1/mo</a></span>';
       emailEl.style.display='none';
       const ki=document.createElement('input');ki.type='password';ki.id='gate-key';ki.placeholder='license key (IK-...)';
       ki.onkeydown=function(e){if(e.key==='Enter')gateLogin();};
