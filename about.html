@@ -410,16 +410,19 @@ h1 .price {
 </footer>
 
 <script>
-// Load live stats from MRR endpoint
-fetch('/.netlify/functions/mrr')
+// Load live stats from fortune0 server
+fetch('https://fortune0-com.onrender.com/api/public/stats')
   .then(r => r.json())
   .then(d => {
     document.getElementById('member-count').textContent = d.customers;
     document.getElementById('mrr-display').textContent = '$' + d.mrr.toFixed(0);
+    // Show search volume if elements exist
+    const st = document.getElementById('searches-total');
+    if(st) st.textContent = d.searches_total.toLocaleString();
   })
   .catch(() => {
-    document.getElementById('member-count').textContent = '4';
-    document.getElementById('mrr-display').textContent = '$4';
+    document.getElementById('member-count').textContent = '12';
+    document.getElementById('mrr-display').textContent = '$12';
   });
 </script>
 
