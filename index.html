@@ -161,15 +161,16 @@ body.inside #search{display:flex;flex-direction:column;align-items:center;width:
 .counter.on{color:#0f0}
 
 /* results */
-.results{max-width:520px;width:100%;padding:0 16px 20px}
-.r{padding:14px 0;border-bottom:1px solid #0a0a0a}
-.r:last-child{border-bottom:none}
-a.r-t{color:#0f0;font-size:13px;margin-bottom:2px;text-decoration:none;display:block;cursor:pointer}
+.results{max-width:600px;width:100%;padding:0 16px 20px}
+.r{padding:16px 14px;margin-bottom:8px;border:1px solid #1a1a1a;border-radius:6px;
+  background:#0d0d0d;transition:border-color .2s}
+.r:hover{border-color:#1f3a1f}
+a.r-t{color:#0f0;font-size:14px;margin-bottom:4px;text-decoration:none;display:block;cursor:pointer;
+  line-height:1.4;font-weight:500}
 a.r-t:hover{text-decoration:underline}
-.r-u{color:#0a0;font-size:10px;margin-bottom:4px;opacity:0.6}
-.r-s{color:#555;font-size:11px;line-height:1.5}
-.r-s mark{background:none;color:#0f0}
-.hint{text-align:center;color:#222;padding:30px 0;font-size:11px}
+.r-u{color:#888;font-size:11px;margin-bottom:6px}
+.r-s{color:#999;font-size:12px;line-height:1.6}
+.hint{text-align:center;color:#444;padding:30px 0;font-size:11px}
 
 /* gate */
 .gate{
@@ -291,11 +292,10 @@ function activate(){
     showAuthed();
   } else {
     document.getElementById('foot').innerHTML = `
-      <a href="/about.html">$1/mo</a><span class="sep">·</span>
-      <input type="email" id="email" placeholder="email" onkeydown="if(event.key==='Enter')login()">
+      <input type="email" id="email" placeholder="sign in with email" onkeydown="if(event.key==='Enter')login()" style="max-width:220px">
       <button onclick="login()">go</button>
       <span class="sep">·</span>
-      <a href="/tools.html">tools</a>`;
+      <a href="/about.html" style="color:#0f0">join $1/mo</a>`;
   }
   updateCounter();
   document.getElementById('q').focus();
@@ -308,6 +308,19 @@ function activate(){
   if(sessionStorage.getItem('d2d_entered') || S.token || hasQ){
     activate();
     if(hasQ){ document.getElementById('q').value=hasQ; doSearch(); }
+  }
+  // Proactively verify session on load — re-auth if token is dead
+  if(S.token && S.email){
+    fetch(API+'/api/search?q=ping',{headers:{'Authorization':'Bearer '+S.token}})
+      .then(r=>r.json()).then(d=>{
+        if(d.authed===false){
+          // Token is dead — try to get a new one
+          fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:S.email,source_domain:'death2data.com'})})
+            .then(r=>r.json()).then(ad=>{
+              if(ad.token){ S.token=ad.token;S.tier=ad.tier;sessionStorage.setItem('d2d_token',ad.token);showAuthed();updateCounter(); }
+            }).catch(()=>{});
+        }
+      }).catch(()=>{});
   }
 })();
 
@@ -355,19 +368,19 @@ async function loginWithKey(){
 function resetFooter(){
   delete S._pendingEmail;
   document.getElementById('foot').innerHTML=`
-    <a href="/about.html">$1/mo</a><span class="sep">·</span>
-    <input type="email" id="email" placeholder="email" onkeydown="if(event.key==='Enter')login()">
+    <input type="email" id="email" placeholder="sign in with email" onkeydown="if(event.key==='Enter')login()" style="max-width:220px">
     <button onclick="login()">go</button>
     <span class="sep">·</span>
-    <a href="/tools.html">tools</a>`;
+    <a href="/about.html" style="color:#0f0">join $1/mo</a>`;
 }
 
 function showAuthed(){
   document.getElementById('foot').innerHTML=`
-    <a href="/about.html">$1/mo</a><span class="sep">·</span>
     <span class="user"><span class="live"></span>${S.email}</span>
-    <button onclick="logout()">out</button>
-    <span class="sep">·</span><a href="/tools.html">tools</a>`;
+    <span class="sep">·</span>
+    <a href="/tools.html" style="color:#0f0">tools</a>
+    <span class="sep">·</span>
+    <button onclick="logout()" style="color:#666">sign out</button>`;
 }
 
 function logout(){
@@ -388,6 +401,22 @@ async function doSearch(){
     const h={};if(S.token)h['Authorization']='Bearer '+S.token;
     const r=await fetch(API+'/api/search?q='+encodeURIComponent(q),{headers:h});
     const d=await r.json();
+    // If we thought we were logged in but server says no, token is dead — auto-reauth
+    if(S.token && d.authed===false && S.email && !S._reauthing){
+      S._reauthing=true;
+      try{
+        const ar=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:S.email,source_domain:'death2data.com'})});
+        const ad=await ar.json();
+        if(ad.token){
+          S.token=ad.token;S.tier=ad.tier;
+          sessionStorage.setItem('d2d_token',ad.token);
+          showAuthed();updateCounter();
+          S._reauthing=false;
+          return doSearch(); // retry with new token
+        }
+      }catch(re){}
+      S._reauthing=false;
+    }
     if(d.results&&d.results.length>0){
       results=d.results;
       // If web results are locked, hint at upgrade
@@ -410,13 +439,13 @@ function localResults(q){
 
 function renderResults(results,q){
   const el=document.getElementById('results');
-  const words=q.toLowerCase().split(/\s+/);
   el.innerHTML=results.map(r=>{
-    let sn=r.snippet||r.content||'';
-    words.forEach(w=>{if(w.length>2)sn=sn.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');});
+    const sn=r.snippet||r.content||'';
     const url=r.url||'#';
     const domain=url!=='#'?url.replace(/^https?:\/\//,'').split('/')[0]:'';
-    return`<div class="r"><a class="r-t" href="${url}" target="_blank" rel="noopener">${r.title||''}</a>${domain?`<div class="r-u">${domain}</div>`:''}<div class="r-s">${sn}</div></div>`;
+    // Favicon from Google's service
+    const ico=domain?`<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=16" width="14" height="14" style="vertical-align:-2px;margin-right:6px;border-radius:2px;opacity:.7" onerror="this.style.display='none'">`:'';
+    return`<div class="r"><a class="r-t" href="${url}" target="_blank" rel="noopener">${r.title||''}</a>${domain?`<div class="r-u">${ico}${domain}</div>`:''}<div class="r-s">${sn}</div></div>`;
   }).join('');
 }
 
