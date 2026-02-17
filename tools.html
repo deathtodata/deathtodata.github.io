@@ -189,22 +189,23 @@
 </footer>
 
 <script>
-// Validate token
+// Validate token — check sessionStorage (primary) and localStorage (legacy)
 async function validateToken() {
-  // Check if user is logged in
-  const paid = localStorage.getItem('d2d_paid');
-  const email = localStorage.getItem('d2d_email');
+  const token = sessionStorage.getItem('d2d_token');
+  const email = sessionStorage.getItem('d2d_email') || localStorage.getItem('d2d_email');
+  const legacyPaid = localStorage.getItem('d2d_paid');
 
-  if (!paid || !email) {
-    showAccessDenied('Please log in first');
+  if (token && email) {
+    showTools(email);
     return;
   }
 
-  if (paid) {
+  if (legacyPaid && email) {
     showTools(email);
-  } else {
-    showAccessDenied('Invalid token');
+    return;
   }
+
+  showAccessDenied('Sign in on the search page first');
 }
 
 function showTools(token) {
