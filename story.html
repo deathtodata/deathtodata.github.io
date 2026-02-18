@@ -450,7 +450,20 @@ body {
 <!-- LOADING -->
 <div class="story-loading" id="story-loading">
   <div class="spinner"></div>
-  <p>Loading story...</p>
+  <p id="loading-text">Loading story...</p>
+  <button onclick="window.location.href='/'" style="margin-top:20px;padding:8px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:12px;cursor:pointer;">Cancel &times;</button>
+</div>
+
+<!-- ERROR STATE -->
+<div id="story-error" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:1002;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
+  <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">&#9888;</div>
+  <h2 style="font-size:18px;color:var(--white);margin-bottom:8px;" id="error-title">Could not load story</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:24px;max-width:400px;" id="error-detail">The page could not be fetched. The server might be waking up or the site may block external access.</p>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+    <a id="error-retry" href="#" style="padding:10px 20px;background:var(--green);color:#000;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;">Try again</a>
+    <a id="error-original" href="#" target="_blank" style="padding:10px 20px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;">View original page</a>
+    <a href="/" style="padding:10px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);text-decoration:none;font-size:13px;">Back to search</a>
+  </div>
 </div>
 
 <!-- STORY CONTAINER -->
@@ -752,12 +765,21 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') exitStory();
 });
 
-// ── Exit ──
+// ── Exit — always reliable, never black screen ──
 function exitStory() {
-  if (document.referrer && document.referrer.includes(location.hostname)) {
-    window.history.back();
-  } else {
-    window.location.href = '/';
+  window.location.href = '/';
+}
+
+// ── Error state ──
+function showError(msg, url) {
+  document.getElementById('story-loading').style.display = 'none';
+  document.getElementById('story-container').style.display = 'none';
+  const errEl = document.getElementById('story-error');
+  errEl.style.display = 'flex';
+  if (msg) document.getElementById('error-detail').textContent = msg;
+  if (url) {
+    document.getElementById('error-original').href = url;
+    document.getElementById('error-retry').href = '/story.html?url=' + encodeURIComponent(url);
   }
 }
 
@@ -840,8 +862,22 @@ function loadDemo() {
   const url = params.get('url');
 
   if (url) {
-    document.getElementById('source-url').textContent = url.replace(/^https?:\/\//, '').split('/')[0];
+    const domain = url.replace(/^https?:\/\//, '').split('/')[0];
+    document.getElementById('source-url').textContent = domain;
+    document.getElementById('loading-text').textContent = 'Fetching ' + domain + '...';
+
+    // Timeout: if API takes > 15s, show error (Render cold starts can be slow)
+    let timedOut = false;
+    const timeout = setTimeout(() => {
+      timedOut = true;
+      showError('The server is taking too long to respond. It might be waking up — try again in 30 seconds.', url);
+    }, 15000);
+
     const data = await loadStory(url);
+    clearTimeout(timeout);
+
+    if (timedOut) return; // error already shown
+
     if (data) {
       cards = parseContentToCards(data);
       renderCards();
@@ -849,7 +885,7 @@ function loadDemo() {
       document.getElementById('story-loading').style.display = 'none';
       document.getElementById('story-container').style.display = 'flex';
     } else {
-      window.location.href = url;
+      showError('Could not extract content from this page. The site may block external access or returned an error.', url);
     }
   } else {
     loadDemo();
