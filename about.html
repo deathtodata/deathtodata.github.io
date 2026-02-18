@@ -319,7 +319,7 @@ h1 .price {
       <span class="label">BUILDING IN PUBLIC</span>
       <span class="values">
         <span class="mrr" id="mrr-display">$--</span> MRR ·
-        <a href="/admin/revenue.html" style="color: var(--gray)">see all stats →</a>
+        <a href="/revenue.html" style="color: var(--gray)">see all stats →</a>
       </span>
     </div>
 
@@ -392,7 +392,7 @@ h1 .price {
         <h4>Resources</h4>
         <a href="/docs/index.html">Docs</a>
         <a href="/docs/faq.html">FAQ</a>
-        <a href="/admin/revenue.html">Open Revenue</a>
+        <a href="/revenue.html">Open Revenue</a>
       </div>
       <div class="footer-col">
         <h4>Account</h4>
@@ -410,20 +410,28 @@ h1 .price {
 </footer>
 
 <script>
-// Load live stats from fortune0 server
-fetch('https://fortune0-com.onrender.com/api/public/stats')
-  .then(r => r.json())
-  .then(d => {
+async function loadAboutStats() {
+  // Show stats.json immediately (fast, always available)
+  try {
+    const s = await fetch('/stats.json').then(r => r.json());
+    document.getElementById('member-count').textContent = s.customers;
+    document.getElementById('mrr-display').textContent = '$' + s.mrr.toFixed(0);
+  } catch {
+    // Last resort hardcoded fallback (real numbers)
+    document.getElementById('member-count').textContent = '7';
+    document.getElementById('mrr-display').textContent = '$6';
+  }
+
+  // Silently try to update with live data (short timeout — if server's awake, great)
+  try {
+    const res = await fetch('https://fortune0-com.onrender.com/api/public/stats',
+                            { signal: AbortSignal.timeout(4000) });
+    const d = await res.json();
     document.getElementById('member-count').textContent = d.customers;
     document.getElementById('mrr-display').textContent = '$' + d.mrr.toFixed(0);
-    // Show search volume if elements exist
-    const st = document.getElementById('searches-total');
-    if(st) st.textContent = d.searches_total.toLocaleString();
-  })
-  .catch(() => {
-    document.getElementById('member-count').textContent = '12';
-    document.getElementById('mrr-display').textContent = '$12';
-  });
+  } catch {}
+}
+loadAboutStats();
 </script>
 
 </body>

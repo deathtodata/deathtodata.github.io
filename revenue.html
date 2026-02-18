@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open Revenue - Building in Public | Death2Data</title>
+<meta name="description" content="Death2Data revenue dashboard. Real MRR, subscriber count, and financial transparency. No bullshit.">
+<meta name="keywords" content="open revenue, mrr, building in public, transparent startup">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/revenue.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Open Revenue - Building in Public">
+<meta property="og:description" content="Death2Data revenue dashboard. Real MRR, subscriber count, and financial transparency.">
+<meta property="og:url" content="https://death2data.com/revenue.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@death2data">
+<meta name="twitter:creator" content="@death2data">
+<meta name="twitter:title" content="Open Revenue - Building in Public">
+<meta name="twitter:description" content="Death2Data revenue dashboard. Real MRR, subscriber count, and financial transparency.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Open Revenue - Building in Public",
+  "description": "Death2Data revenue dashboard. Real-time MRR, subscriber count, and financial transparency.",
+  "url": "https://death2data.com/revenue.html",
+  "provider": {
+    "@type": "Organization",
+    "name": "Death2Data",
+    "url": "https://death2data.com",
+    "email": "matt@death2data.com"
+  }
+}
+</script>
+
+<!-- Favicon -->
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- PWA -->
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1a1a1a;
+  --green: #00ff00;
+  --green-dim: rgba(0, 255, 0, 0.1);
+  --white: #fff;
+  --gray: #888;
+  --muted: #444;
+}
+
+body {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 60px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-decoration: none;
+}
+
+.brand:hover { text-decoration: underline; }
+
+.updated {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.data-badge.live {
+  background: rgba(0, 255, 0, 0.15);
+  color: var(--green);
+  border: 1px solid var(--green);
+}
+
+.data-badge.cached {
+  background: rgba(136, 136, 136, 0.15);
+  color: var(--gray);
+  border: 1px solid var(--muted);
+}
+
+h1 {
+  font-size: 14px;
+  color: var(--gray);
+  font-weight: 400;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+/* BIG NUMBERS */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 60px;
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 30px;
+}
+
+.metric-value {
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.metric-label {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+
+/* GOAL PROGRESS */
+.goal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 30px;
+  margin-bottom: 60px;
+}
+
+.goal-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.goal-title {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.goal-numbers {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.goal-bar {
+  height: 8px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.goal-fill {
+  height: 100%;
+  background: var(--green);
+  transition: width 1s ease;
+  width: 0%;
+}
+
+.goal-detail {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* WHY PUBLIC */
+.why {
+  background: var(--green-dim);
+  border: 1px solid var(--green);
+  padding: 30px;
+  margin-bottom: 60px;
+}
+
+.why h2 {
+  font-size: 12px;
+  color: var(--green);
+  margin-bottom: 16px;
+  font-weight: 400;
+  letter-spacing: 1px;
+}
+
+.why p {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.8;
+}
+
+/* DATA SOURCE NOTE */
+.data-source {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px 30px;
+  margin-bottom: 60px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.data-source strong {
+  color: var(--gray);
+}
+
+/* CTA */
+.cta {
+  text-align: center;
+  padding: 40px 0;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: 16px 32px;
+  background: var(--green);
+  color: var(--bg);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cta-btn:hover { background: #00cc00; }
+
+.cta-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 16px;
+}
+
+/* LOADING STATE */
+.loading .metric-value {
+  opacity: 0.3;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.5; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .metrics { grid-template-columns: 1fr; }
+  .metric-value { font-size: 36px; }
+  .goal-header { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <a href="/" class="brand">DEATH2DATA</a>
+    <div class="updated">
+      <span id="updated">Loading...</span>
+      <span class="data-badge cached" id="data-badge" style="display:none"></span>
+    </div>
+  </header>
+
+  <h1>OPEN REVENUE DASHBOARD</h1>
+
+  <div class="metrics loading" id="metrics">
+    <div class="metric">
+      <div class="metric-value" id="mrr">$--</div>
+      <div class="metric-label">MONTHLY RECURRING REVENUE</div>
+    </div>
+    <div class="metric">
+      <div class="metric-value" id="customers">--</div>
+      <div class="metric-label">PAYING MEMBERS</div>
+    </div>
+    <div class="metric" id="searches-metric" style="display:none">
+      <div class="metric-value" id="searches">--</div>
+      <div class="metric-label">TOTAL SEARCHES</div>
+    </div>
+  </div>
+
+  <div class="goal">
+    <div class="goal-header">
+      <div class="goal-title">GOAL: 4,200 MEMBERS (RAMEN PROFITABLE)</div>
+      <div class="goal-numbers"><span id="goal-current">0</span> / 4,200</div>
+    </div>
+    <div class="goal-bar">
+      <div class="goal-fill" id="goal-fill"></div>
+    </div>
+    <div class="goal-detail">
+      At $1/member × 4,200 = $4,200 MRR → ~$3,800 after Stripe fees → sustainable
+    </div>
+  </div>
+
+  <div class="why">
+    <h2>WHY PUBLIC?</h2>
+    <p>
+      Building in public keeps us accountable. No inflated metrics. No "enterprise clients" that don't exist. Just real numbers from real Stripe data.<br><br>
+      If we say we're building privacy tools that don't track you, you should be able to verify everything else too.
+    </p>
+  </div>
+
+  <div class="data-source">
+    <strong>Data source:</strong> Live data from Render server (Stripe webhooks). Falls back to cached stats.json if server is sleeping. Last updated: <span id="source-date">—</span>
+  </div>
+
+  <div class="cta">
+    <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="cta-btn">Join for $1/month →</a>
+    <p class="cta-note">Be part of the numbers above</p>
+  </div>
+
+</div>
+
+<script>
+function timeAgo(dateStr) {
+  if (!dateStr) return 'unknown';
+  const date = new Date(dateStr);
+  const seconds = Math.floor((new Date() - date) / 1000);
+  if (seconds < 60) return 'just now';
+  if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+  if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+  return Math.floor(seconds / 86400) + 'd ago';
+}
+
+function updateUI(mrr, customers, updatedAt, source) {
+  document.getElementById('metrics').classList.remove('loading');
+  document.getElementById('mrr').textContent = '$' + mrr.toFixed(2);
+  document.getElementById('customers').textContent = customers;
+  document.getElementById('goal-current').textContent = customers;
+  const progress = (customers / 4200) * 100;
+  document.getElementById('goal-fill').style.width = Math.min(progress, 100) + '%';
+
+  const badge = document.getElementById('data-badge');
+  badge.style.display = '';
+  if (source === 'live') {
+    badge.textContent = 'LIVE';
+    badge.className = 'data-badge live';
+  } else {
+    badge.textContent = 'CACHED';
+    badge.className = 'data-badge cached';
+  }
+
+  if (updatedAt) {
+    document.getElementById('updated').textContent = 'Updated ' + timeAgo(updatedAt);
+    document.getElementById('source-date').textContent = new Date(updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } else {
+    document.getElementById('updated').textContent = 'Data loaded';
+  }
+}
+
+function updateSearches(total) {
+  if (total && total > 0) {
+    document.getElementById('searches').textContent = total.toLocaleString();
+    document.getElementById('searches-metric').style.display = '';
+  }
+}
+
+async function loadStats() {
+  // Show stats.json immediately (non-blocking — may be stale but visible fast)
+  try {
+    const s = await fetch('/stats.json').then(r => r.json());
+    updateUI(s.mrr, s.customers, s.updated_at, 'cached');
+  } catch {
+    // Absolute fallback if stats.json missing
+    updateUI(6.48, 7, null, 'cached');
+    document.getElementById('updated').textContent = 'Using cached data';
+  }
+
+  // Then try server — if sleeping, this takes 30-60s but we're already showing data
+  try {
+    const res = await fetch('https://fortune0-com.onrender.com/api/public/stats',
+                            { signal: AbortSignal.timeout(60000) });
+    if (res.ok) {
+      const d = await res.json();
+      updateUI(d.mrr, d.customers, new Date().toISOString(), 'live');
+      if (d.searches_total) updateSearches(d.searches_total);
+    }
+  } catch (_) {}
+}
+
+loadStats();
+</script>
+
+</body>
+</html>

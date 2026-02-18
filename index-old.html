@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Death2Data — Private Search</title>
+<meta name="description" content="Search the web privately. No tracking. No ads. No data harvesting. 3 free searches, then $1/month.">
+<meta name="author" content="Death2Data">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://death2data.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Death2Data — Private Search">
+<meta property="og:description" content="Search the web privately. No tracking. No ads. 3 free searches.">
+<meta property="og:url" content="https://death2data.com/">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Death2Data — Private Search">
+<meta name="twitter:description" content="Search the web privately. No tracking. No ads. 3 free searches.">
+<meta name="twitter:image" content="https://death2data.com/og-image.png">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Death2Data","url":"https://death2data.com/",
+"potentialAction":{"@type":"SearchAction","target":"https://death2data.com/?q={search_term_string}","query-input":"required name=search_term_string"}}
+</script>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* === RESET === */
+*{margin:0;padding:0;box-sizing:border-box}
+a{color:inherit;text-decoration:none}
+
+/* === FULL-SCREEN LAYOUT === */
+html,body{height:100%;overflow:hidden}
+body{
+  font-family:'JetBrains Mono','SF Mono','Fira Code',monospace;
+  background:#0a0a0a;color:#fff;
+  display:flex;flex-direction:column;
+  transition:background .6s ease;
+}
+
+/* ============================================
+   ENTRY STATE — RED / OUTSIDE
+   ============================================ */
+
+/* entry: red accent, dark, closed feel */
+.bar{
+  display:flex;align-items:center;padding:0 16px;
+  height:44px;border-bottom:1px solid #222;
+  flex-shrink:0;gap:12px;font-size:12px;background:#0a0a0a;
+  transition:border-color .4s ease;
+}
+.bar-logo{font-weight:700;letter-spacing:2px;font-size:13px;margin-right:auto;
+  color:#f00;transition:color .4s ease;display:flex;align-items:center;gap:6px}
+.bar-icon{flex-shrink:0}
+.bar a:not(.bar-logo){color:#555}
+.bar a:not(.bar-logo):hover{color:#fff}
+.bar a.on{color:#fff}
+
+.foot{
+  display:flex;align-items:center;padding:0 16px;
+  height:44px;border-top:1px solid #222;
+  flex-shrink:0;gap:8px;font-size:12px;background:#0a0a0a;
+  transition:border-color .4s ease;
+}
+.foot-icon{color:#f00;flex-shrink:0;margin-right:4px;transition:color .4s ease}
+body.inside .foot-icon{color:#0f0}
+.foot a{color:#555;white-space:nowrap}
+.foot a:hover{color:#f00}
+.foot .sep{color:#222}
+.foot input{
+  padding:6px 10px;background:#000;border:1px solid #222;
+  color:#fff;font-family:inherit;font-size:12px;outline:none;
+  flex:1;min-width:0;max-width:200px;
+}
+.foot input:focus{border-color:#0f0}
+.foot button{
+  padding:6px 14px;background:#111;border:1px solid #222;
+  color:#0f0;font-family:inherit;font-size:12px;cursor:pointer;white-space:nowrap;
+}
+.foot button:hover{border-color:#0f0}
+.foot .user{color:#0f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.foot .live{display:inline-block;width:6px;height:6px;background:#0f0;border-radius:50%;margin-right:4px}
+
+.mid{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+  display:flex;flex-direction:column;align-items:center;
+}
+.mid.center{justify-content:center}
+
+/* entry content */
+#entry{text-align:center;padding:0 24px;max-width:400px;
+  animation:fadeUp .5s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.eye-mark{color:#f00;margin-bottom:20px;transition:color .4s ease}
+body.inside .eye-mark{color:#0f0}
+#entry .brand{font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:6px}
+#entry .brand span{color:#f00}
+#entry .tagline{font-size:10px;color:#444;letter-spacing:.25em;margin-bottom:40px}
+#entry .pitch{font-size:12px;color:#666;line-height:1.8;margin-bottom:40px}
+#entry .pitch strong{color:#ccc;font-weight:500}
+#entry .enter-btn{
+  display:inline-block;padding:16px 56px;
+  background:#f00;color:#000;font-family:inherit;
+  font-weight:700;font-size:14px;letter-spacing:.2em;
+  border:none;cursor:pointer;margin-bottom:28px;
+  transition:all .2s ease;
+}
+#entry .enter-btn:hover{background:#ff2222;box-shadow:0 0 30px rgba(255,0,0,.3)}
+#entry .fine{font-size:9px;color:#333;line-height:1.7}
+#entry .fine a{color:#444;text-decoration:underline}
+#entry .fine a:hover{color:#f00}
+
+::selection{background:rgba(255,0,0,.2)}
+
+
+/* ============================================
+   SEARCH STATE — GREEN / INSIDE
+   ============================================ */
+body.inside{background:#050505}
+body.inside ::selection{background:rgba(0,255,0,.15)}
+body.inside .bar{border-bottom-color:#1a1a1a}
+body.inside .bar-logo{color:#0f0}
+body.inside .foot{border-top-color:#1a1a1a}
+body.inside .foot a:hover{color:#0f0}
+
+body.inside #entry{display:none}
+body.inside #search{display:flex;flex-direction:column;align-items:center;width:100%;
+  animation:fadeUp .4s ease both}
+
+#search{display:none;width:100%}
+
+.s-brand{font-size:18px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;color:#0f0}
+.s-brand span{color:#0f0}
+
+.s-tag{font-size:9px;color:#333;margin-bottom:20px;letter-spacing:.2em}
+
+.sbox{display:flex;max-width:520px;width:100%;padding:0 16px;margin-bottom:8px}
+.sbox input{
+  flex:1;padding:12px 14px;
+  background:#000;border:1px solid #1a1a1a;border-right:none;
+  color:#fff;font-family:inherit;font-size:14px;outline:none;
+  transition:border-color .2s;
+}
+.sbox input:focus{border-color:#0f0}
+.sbox input::placeholder{color:#222}
+.sbox button{
+  padding:12px 20px;background:#0f0;border:1px solid #0f0;
+  color:#000;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px;
+  transition:all .2s;
+}
+.sbox button:hover{background:#00ff44;box-shadow:0 0 20px rgba(0,255,0,.2)}
+
+.counter{font-size:10px;color:#222;margin-bottom:16px}
+.counter.on{color:#0f0}
+
+/* results */
+.results{max-width:600px;width:100%;padding:0 16px 20px}
+.r{padding:16px 14px;margin-bottom:8px;border:1px solid #1a1a1a;border-radius:6px;
+  background:#0d0d0d;transition:border-color .2s}
+.r:hover{border-color:#1f3a1f}
+a.r-t{color:#0f0;font-size:14px;margin-bottom:4px;text-decoration:none;display:block;cursor:pointer;
+  line-height:1.4;font-weight:500}
+a.r-t:hover{text-decoration:underline}
+.r-u{color:#888;font-size:11px;margin-bottom:6px}
+.r-s{color:#999;font-size:12px;line-height:1.6}
+.hint{text-align:center;color:#444;padding:30px 0;font-size:11px}
+
+/* gate */
+.gate{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.96);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;z-index:200;
+}
+.gate.show{display:flex}
+.gbox{
+  max-width:340px;width:100%;text-align:center;
+  border:1px solid #1a1a1a;padding:32px;background:#050505;
+  animation:fadeUp .3s ease both;
+}
+.gbox h2{font-size:13px;font-weight:500;margin-bottom:12px;color:#0f0}
+.gbox p{font-size:11px;color:#555;margin-bottom:16px}
+.gbox input{
+  width:100%;padding:10px;background:#000;border:1px solid #1a1a1a;
+  color:#fff;font-family:inherit;font-size:13px;margin-bottom:8px;outline:none;
+}
+.gbox input:focus{border-color:#0f0}
+.gbox .gbtn{
+  width:100%;padding:12px;background:#0f0;color:#000;border:none;
+  font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;letter-spacing:.1em;
+}
+.gbox .gbtn:hover{background:#00ff44}
+.gbox .dismiss{display:block;margin-top:12px;font-size:10px;color:#222;cursor:pointer}
+.gbox .dismiss:hover{color:#555}
+.gbox .status{font-size:10px;color:#333;margin-top:6px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="bar" id="topbar">
+  <a href="/" class="bar-logo"><svg class="bar-icon" viewBox="0 0 100 100" width="18" height="18"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg> D2D</a>
+</div>
+
+<!-- MIDDLE -->
+<div class="mid center" id="mid">
+
+  <!-- ENTRY: the door (red) -->
+  <div id="entry">
+    <div class="eye-mark">
+      <svg viewBox="0 0 100 100" width="64" height="64"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="4"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="4"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="4"/></svg>
+    </div>
+    <div class="brand">death<span>2</span>data</div>
+    <div class="tagline">PRIVATE SEARCH ENGINE</div>
+    <div class="pitch">
+      Search without surveillance.<br>
+      <strong>No tracking. No ads. No data harvesting.</strong><br><br>
+      3 free searches. Then <strong>$1/month</strong>.
+    </div>
+    <button class="enter-btn" onclick="enter()">ENTER</button>
+    <div class="fine">
+      By entering you acknowledge our<br>
+      <a href="/privacy.html">privacy policy</a> &amp; <a href="/terms.html">terms of use</a>
+    </div>
+  </div>
+
+  <!-- SEARCH: the app (green, hidden until entry) -->
+  <div id="search">
+    <div class="s-brand">DEATH2DATA</div>
+    <div class="s-tag">SEARCH WITHOUT SURVEILLANCE</div>
+    <div class="sbox">
+      <input type="text" id="q" placeholder="search..." autocomplete="off"
+             onkeydown="if(event.key==='Enter')doSearch()">
+      <button onclick="doSearch()">SEARCH</button>
+    </div>
+    <div class="counter" id="counter">domain search — sign in for web results</div>
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<!-- GATE -->
+<div class="gate" id="gate">
+  <div class="gbox">
+    <h2>ENTER EMAIL TO CONTINUE</h2>
+    <p>No password. No tracking. Just your email.</p>
+    <input type="email" id="gate-email" placeholder="email"
+      onkeydown="if(event.key==='Enter')gateLogin()">
+    <button class="gbtn" onclick="gateLogin()">UNLOCK SEARCH</button>
+    <div class="status" id="gate-status"></div>
+    <span class="dismiss" onclick="dismissGate()">not now</span>
+  </div>
+</div>
+
+<!-- BOTTOM BAR -->
+<div class="foot" id="foot">
+  <svg class="foot-icon" viewBox="0 0 100 100" width="14" height="14"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg>
+  <a href="/privacy.html">privacy</a>
+  <span class="sep">·</span>
+  <a href="/terms.html">terms</a>
+  <span class="sep">·</span>
+  <a href="/about.html">about</a>
+</div>
+
+<script>
+const S = { token:null, email:null, tier:null, searches:0, maxFree:Infinity };
+const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrender.com';
+
+function enter(){
+  sessionStorage.setItem('d2d_entered','1');
+  activate();
+}
+
+function activate(){
+  document.body.classList.add('inside');
+  // top bar: logo + nav
+  document.getElementById('topbar').innerHTML = `
+    <a href="/" class="bar-logo"><svg class="bar-icon" viewBox="0 0 100 100" width="18" height="18"><ellipse cx="50" cy="50" rx="38" ry="24" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="50" cy="50" r="10" fill="currentColor"/><line x1="18" y1="18" x2="82" y2="82" stroke="currentColor" stroke-width="5"/><line x1="82" y1="18" x2="18" y2="82" stroke="currentColor" stroke-width="5"/></svg> D2D</a>
+    <a href="/" class="on">Search</a>
+    <a href="/about.html">About</a>
+    <a href="/tools.html">Tools</a>
+    <a href="/docs/index.html">Docs</a>
+    <a href="/admin/manage.html">Account</a>`;
+  // bottom bar: auth
+  if(S.token){
+    showAuthed();
+  } else {
+    document.getElementById('foot').innerHTML = `
+      <input type="email" id="email" placeholder="sign in with email" onkeydown="if(event.key==='Enter')login()" style="max-width:220px">
+      <button onclick="login()">go</button>
+      <span class="sep">·</span>
+      <a href="/about.html" style="color:#0f0">join $1/mo</a>`;
+  }
+  updateCounter();
+  document.getElementById('q').focus();
+}
+
+(function init(){
+  const t=sessionStorage.getItem('d2d_token'), e=sessionStorage.getItem('d2d_email');
+  if(t&&e){ S.token=t; S.email=e; S.maxFree=Infinity; }
+  const hasQ = new URLSearchParams(location.search).get('q');
+  if(sessionStorage.getItem('d2d_entered') || S.token || hasQ){
+    activate();
+    if(hasQ){ document.getElementById('q').value=hasQ; doSearch(); }
+  }
+  // Proactively verify session on load — re-auth if token is dead
+  if(S.token && S.email){
+    fetch(API+'/api/search?q=ping',{headers:{'Authorization':'Bearer '+S.token}})
+      .then(r=>r.json()).then(d=>{
+        if(d.authed===false){
+          // Token is dead — try to get a new one
+          fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:S.email,source_domain:'death2data.com'})})
+            .then(r=>r.json()).then(ad=>{
+              if(ad.token){ S.token=ad.token;S.tier=ad.tier;sessionStorage.setItem('d2d_token',ad.token);showAuthed();updateCounter(); }
+            }).catch(()=>{});
+        }
+      }).catch(()=>{});
+  }
+})();
+
+async function login(){
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  if(!email||!email.includes('@'))return;
+  try{
+    const r=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source_domain:'death2data.com'})});
+    const d=await r.json();
+    if(d.token){
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
+      sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+      showAuthed();updateCounter();
+    } else if(d.exists){
+      // Existing user — show key input in footer
+      document.getElementById('foot').innerHTML=`
+        <span class="user">${email}</span><span class="sep">·</span>
+        <input type="password" id="lkey" placeholder="license key" style="width:120px;font-size:11px;padding:2px 6px;border:1px solid #444;background:#111;color:#0f0;border-radius:3px" onkeydown="if(event.key==='Enter')loginWithKey()">
+        <button onclick="loginWithKey()">go</button>
+        <button onclick="resetFooter()" style="opacity:.5">back</button>`;
+      S._pendingEmail=email;
+      document.getElementById('lkey').focus();
+    }
+  }catch(e){ console.error(e); }
+}
+
+async function loginWithKey(){
+  const key=document.getElementById('lkey').value.trim();
+  const email=S._pendingEmail;
+  if(!key||!email)return;
+  try{
+    const r=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,key})});
+    const d=await r.json();
+    if(d.token){
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
+      sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+      showAuthed();updateCounter();
+    } else if(d.error){
+      const el=document.getElementById('lkey');
+      el.value='';el.placeholder=d.error;el.focus();
+    }
+  }catch(e){ console.error(e); }
+}
+
+function resetFooter(){
+  delete S._pendingEmail;
+  document.getElementById('foot').innerHTML=`
+    <input type="email" id="email" placeholder="sign in with email" onkeydown="if(event.key==='Enter')login()" style="max-width:220px">
+    <button onclick="login()">go</button>
+    <span class="sep">·</span>
+    <a href="/about.html" style="color:#0f0">join $1/mo</a>`;
+}
+
+function showAuthed(){
+  document.getElementById('foot').innerHTML=`
+    <span class="user"><span class="live"></span>${S.email}</span>
+    <span class="sep">·</span>
+    <a href="/tools.html" style="color:#0f0">tools</a>
+    <span class="sep">·</span>
+    <button onclick="logout()" style="color:#666">sign out</button>`;
+}
+
+function logout(){
+  S.token=null;S.email=null;S.tier=null;S.maxFree=Infinity;S.searches=0;
+  sessionStorage.removeItem('d2d_token');sessionStorage.removeItem('d2d_email');
+  sessionStorage.removeItem('d2d_entered');
+  location.reload();
+}
+
+async function doSearch(){
+  const q=document.getElementById('q').value.trim();
+  if(!q)return;
+  S.searches++;updateCounter();
+  document.getElementById('mid').classList.remove('center');
+  document.getElementById('results').innerHTML='<div class="hint">searching...</div>';
+  let results;
+  try{
+    const h={};if(S.token)h['Authorization']='Bearer '+S.token;
+    const r=await fetch(API+'/api/search?q='+encodeURIComponent(q),{headers:h});
+    const d=await r.json();
+    // If we thought we were logged in but server says no, token is dead — auto-reauth
+    if(S.token && d.authed===false && S.email && !S._reauthing){
+      S._reauthing=true;
+      try{
+        const ar=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:S.email,source_domain:'death2data.com'})});
+        const ad=await ar.json();
+        if(ad.token){
+          S.token=ad.token;S.tier=ad.tier;
+          sessionStorage.setItem('d2d_token',ad.token);
+          showAuthed();updateCounter();
+          S._reauthing=false;
+          return doSearch(); // retry with new token
+        }
+      }catch(re){}
+      S._reauthing=false;
+    }
+    if(d.results&&d.results.length>0){
+      results=d.results;
+      // If web results are locked, hint at upgrade
+      if(d.web_locked){
+        results.push({title:'Web results available',snippet:'Sign in with your license key for full web search results.',engine:'info'});
+      }
+    }
+    else results=localResults(q);
+  }catch(e){results=localResults(q);}
+  renderResults(results,q);
+}
+
+function localResults(q){
+  return[
+    {title:q+' — overview',snippet:'Sign in with your email for live web results.'},
+    {title:'About '+q,snippet:'Private search powered by death2data. No tracking. No ads.'},
+    {title:q+' — more results',snippet:'Unlock unlimited search with a $1/month membership.'},
+  ];
+}
+
+function renderResults(results,q){
+  const el=document.getElementById('results');
+  el.innerHTML=results.map(r=>{
+    const sn=r.snippet||r.content||'';
+    const url=r.url||'#';
+    const domain=url!=='#'?url.replace(/^https?:\/\//,'').split('/')[0]:'';
+    // Favicon from Google's service
+    const ico=domain?`<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=16" width="14" height="14" style="vertical-align:-2px;margin-right:6px;border-radius:2px;opacity:.7" onerror="this.style.display='none'">`:'';
+    return`<div class="r"><a class="r-t" href="${url}" target="_blank" rel="noopener">${r.title||''}</a>${domain?`<div class="r-u">${ico}${domain}</div>`:''}<div class="r-s">${sn}</div></div>`;
+  }).join('');
+}
+
+function showGate(){
+  document.getElementById('gate').classList.add('show');
+  const b=document.getElementById('email'),g=document.getElementById('gate-email');
+  if(b&&b.value&&g)g.value=b.value;
+  if(g)g.focus();
+}
+
+async function gateLogin(){
+  const gateBox=document.querySelector('.gbox');
+  const emailEl=document.getElementById('gate-email');
+  const keyEl=document.getElementById('gate-key');
+  const status=document.getElementById('gate-status');
+
+  // If key input is showing, do key login
+  if(keyEl && keyEl.offsetParent!==null){
+    const key=keyEl.value.trim();
+    const email=S._pendingEmail;
+    if(!key||!email){status.textContent='enter your license key';status.style.color='#f00';return;}
+    status.textContent='signing in...';status.style.color='#0f0';
+    try{
+      const r=await fetch(API+'/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,key})});
+      const d=await r.json();
+      if(d.token){
+        S.token=d.token;S.email=d.email;S.tier=d.tier;
+        sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+        showAuthed();document.getElementById('gate').classList.remove('show');updateCounter();doSearch();
+      } else if(d.error){status.textContent=d.error;status.style.color='#f00';}
+    }catch(e){status.textContent='offline — try again';status.style.color='#f00';}
+    return;
+  }
+
+  // Otherwise, try signup with email
+  const email=emailEl.value.trim().toLowerCase();
+  if(!email||!email.includes('@')){status.textContent='enter a valid email';status.style.color='#f00';return;}
+  status.textContent='connecting...';status.style.color='#0f0';
+  try{
+    const r=await fetch(API+'/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,source_domain:'death2data.com'})});
+    const d=await r.json();
+    if(d.token){
+      S.token=d.token;S.email=d.email;S.tier=d.tier;
+      sessionStorage.setItem('d2d_token',d.token);sessionStorage.setItem('d2d_email',d.email);
+      showAuthed();document.getElementById('gate').classList.remove('show');updateCounter();doSearch();
+    } else if(d.exists){
+      // Existing user — show key input in gate
+      S._pendingEmail=email;
+      gateBox.querySelector('h2').textContent='ENTER LICENSE KEY';
+      gateBox.querySelector('p').innerHTML='Have a key? Enter it below.<br><span style="color:#555;font-size:11px">No key? <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" target="_blank" style="color:#0f0">Get full access for $1/mo</a></span>';
+      emailEl.style.display='none';
+      const ki=document.createElement('input');ki.type='password';ki.id='gate-key';ki.placeholder='license key (IK-...)';
+      ki.onkeydown=function(e){if(e.key==='Enter')gateLogin();};
+      emailEl.after(ki);ki.focus();
+      gateBox.querySelector('.gbtn').textContent='SIGN IN';
+      status.textContent='';
+    } else if(d.error){status.textContent=d.error;status.style.color='#f00';}
+  }catch(e){status.textContent='offline — try again';status.style.color='#f00';}
+}
+
+function dismissGate(){document.getElementById('gate').classList.remove('show');S.maxFree=S.searches+1;updateCounter();}
+
+function updateCounter(){
+  const el=document.getElementById('counter');
+  if(!el)return;
+  if(S.token){el.textContent='signed in — full search';el.classList.add('on');}
+  else{el.textContent='domain search — sign in for web results';el.classList.remove('on');}
+}
+</script>
+</body>
+</html>
