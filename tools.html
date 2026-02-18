@@ -2,205 +2,247 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Tools | Death2Data</title>
 <link rel="stylesheet" href="/css/style.css">
 <script src="/js/member-gate.js"></script>
 <style>body { visibility: hidden; }</style>
 <style>
-/* Tools page-specific styles */
-
-/* Custom header for tools (shows token status) */
-.tools-header{
-  background: var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+/* Tools page header — matches index.html nav */
+.tools-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-.tools-header .logo{
-  font-size:14px;
-  font-weight:700;
+.tools-nav .logo {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 700;
   color: var(--green);
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  margin-right: auto;
 }
-.token-status{
-  font-size:12px;
+.tools-nav a {
+  font-size: 12px;
   color: var(--muted);
+  text-decoration: none;
 }
-.token-status.valid{color: var(--green);}
-.token-status.invalid{color: var(--red);}
+.tools-nav a:hover { color: var(--white); }
+.tools-nav a.active { color: var(--white); }
 
-/* Tools Grid */
-.tools-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-  margin-top:30px;
-}
-.tool-card{
-  background: var(--surface);
-  border:1px solid var(--border);
-  padding:30px;
-  cursor:pointer;
-  transition:border-color 0.2s;
-}
-.tool-card:hover{
-  border-color: var(--green);
-}
-.tool-card h2{
-  font-size:1.2rem;
-  margin-bottom:15px;
+/* Status badge */
+.status-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background: var(--green-dim);
   color: var(--green);
 }
-.tool-card p{
-  color: var(--gray);
-  font-size:0.9rem;
-  line-height:1.6;
-}
-.tool-card.disabled{
-  opacity:0.5;
-  cursor:not-allowed;
-}
-.tool-card.disabled:hover{
-  border-color: var(--border);
-}
-.coming-soon{
-  font-size:0.7rem;
-  color: var(--muted);
-  letter-spacing:0.2em;
-  margin-top:10px;
-}
-
-/* Access Denied */
-.access-denied{
-  text-align:center;
-  padding:60px 20px;
-}
-.access-denied h1{
+.status-badge.invalid {
+  background: rgba(204,0,0,0.15);
   color: var(--red);
 }
 
-@media(max-width:768px){
-  .tools-grid{
-    grid-template-columns:1fr;
-  }
+/* Main content area */
+.tools-main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.tools-main h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.tools-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+
+/* Tool cards */
+.tools-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.tool-card:hover {
+  border-color: var(--border-hover);
+}
+
+.tool-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-dim);
+  border-radius: 8px;
+}
+
+.tool-info h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.tool-info p {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.tool-card.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.tool-card.disabled:hover {
+  border-color: var(--border);
+}
+
+.coming-tag {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Access denied */
+.access-denied {
+  text-align: center;
+  padding: 80px 20px;
+}
+.access-denied h2 {
+  color: var(--red);
+  font-size: 20px;
+  margin-bottom: 12px;
+}
+.access-denied p {
+  color: var(--gray);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+/* Footer bar — matches index.html */
+.tools-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  z-index: 100;
+}
+.tools-footer a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.tools-footer a:hover { color: var(--white); }
+.tools-footer .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
 }
 </style>
-<!-- SEO/AEO/LLMEO Head -->
-<title>Member Tools - QR Generator, Privacy Search, Notebook</title>
+
+<!-- SEO -->
 <meta name="description" content="Access all Death2Data member tools: QR code generator, privacy-first search engine, 28-day digital notebook. No tracking. No ads.">
-<meta name="keywords" content="privacy tools, qr generator, search engine, digital notebook, member tools">
 <meta name="author" content="Death2Data">
-<meta name="robots" content="index, follow">
 <link rel="canonical" href="https://death2data.com/tools.html">
 
-<!-- Open Graph (Facebook, LinkedIn, Discord) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Death2Data">
-<meta property="og:title" content="Member Tools - QR Generator, Privacy Search, Notebook">
-<meta property="og:description" content="Access all Death2Data member tools: QR code generator, privacy-first search engine, 28-day digital notebook. No tracking. No ads.">
+<meta property="og:title" content="Member Tools | Death2Data">
+<meta property="og:description" content="Privacy tools that don't track you.">
 <meta property="og:url" content="https://death2data.com/tools.html">
 <meta property="og:image" content="https://death2data.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
 
-<!-- Twitter Cards -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@death2data">
-<meta name="twitter:creator" content="@death2data">
-<meta name="twitter:title" content="Member Tools - QR Generator, Privacy Search, Notebook">
-<meta name="twitter:description" content="Access all Death2Data member tools: QR code generator, privacy-first search engine, 28-day digital notebook. No tracking. No ads.">
-<meta name="twitter:image" content="https://death2data.com/og-image.png">
-
-<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "Member Tools - QR Generator, Privacy Search, Notebook",
-  "description": "Access all Death2Data member tools: QR code generator, privacy-first search engine, 28-day digital notebook. No tracking. No ads.",
+  "name": "Death2Data Member Tools",
+  "description": "Privacy tools: QR identity, search, notebook. No tracking. No ads.",
   "url": "https://death2data.com/tools.html",
   "provider": {
     "@type": "Organization",
     "name": "Death2Data",
-    "url": "https://death2data.com",
-    "email": "matt@death2data.com"
+    "url": "https://death2data.com"
   }
 }
 </script>
 
-
-<!-- Favicon -->
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- PWA -->
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
-
 </head>
 <body>
 
-<header class="tools-header">
-  <div class="logo">D2D TOOLS</div>
-  <div class="token-status" id="token-status">Validating...</div>
-</header>
+<!-- Nav — same structure as index.html -->
+<nav class="tools-nav">
+  <span class="logo">D2D</span>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html" class="active">Tools</a>
+  <span class="status-badge" id="status-badge">...</span>
+</nav>
 
-<main id="main-content" class="page-content container wide">
-  <!-- Content loaded by JavaScript after token validation -->
-</main>
+<!-- Main -->
+<div class="tools-main" id="main-content">
+  <!-- Filled by JS -->
+</div>
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="logo">DEATH2DATA</span>
-      <p>Privacy tools that don't track you.</p>
-    </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Product</h4>
-        <a href="/">Home</a>
-        <a href="/tools.html">Tools</a>
-        <a href="/tools/notebook.html">Notebook</a>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="/docs/">Docs</a>
-        <a href="/docs/faq.html">FAQ</a>
-        <a href="/admin/revenue.html">Open Revenue</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="/admin/manage.html">Manage Subscription</a>
-        <a href="mailto:matt@death2data.com">Support</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 Death2Data. All rights reserved.</p>
-      <p class="footer-contact">
-        <a href="mailto:matt@death2data.com">matt@death2data.com</a>
-      </p>
-    </div>
-  </div>
-</footer>
+<!-- Footer -->
+<div class="tools-footer" id="tools-footer">
+  <span class="dot"></span>
+  <span id="footer-user">loading...</span>
+  <span>&middot;</span>
+  <a href="/">search</a>
+  <span>&middot;</span>
+  <button onclick="logout()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--font)">sign out</button>
+</div>
 
 <script>
-// Validate token — check sessionStorage (primary) and localStorage (legacy)
-async function validateToken() {
-  const token = sessionStorage.getItem('d2d_token');
-  const email = sessionStorage.getItem('d2d_email') || localStorage.getItem('d2d_email');
-  const legacyPaid = localStorage.getItem('d2d_paid');
+// Auth — check localStorage (primary)
+function validateToken() {
+  const token = localStorage.getItem('d2d_token');
+  const email = localStorage.getItem('d2d_email');
 
   if (token && email) {
-    showTools(email);
-    return;
-  }
-
-  if (legacyPaid && email) {
     showTools(email);
     return;
   }
@@ -208,112 +250,105 @@ async function validateToken() {
   showAccessDenied('Sign in on the search page first');
 }
 
-function showTools(token) {
-  const statusEl = document.getElementById('token-status');
-  statusEl.textContent = `✓ Access Valid (Token: ${token.substr(0, 12)}...)`;
-  statusEl.className = 'token-status valid';
+function showTools(email) {
+  document.getElementById('status-badge').textContent = 'active';
+  document.getElementById('footer-user').textContent = email;
 
   document.getElementById('main-content').innerHTML = `
-    <h1><span style="color:var(--green)">YOUR</span> PRIVACY TOOLS</h1>
-
-    <p style="color:var(--gray);margin-bottom:30px">
-      All tools are local-first. Your data never leaves your device.
-    </p>
+    <h1>Your Tools</h1>
+    <p class="tools-subtitle">All tools are local-first. Your data never leaves your device.</p>
 
     <div class="tools-grid">
       <div class="tool-card" onclick="openTool('search')">
-        <h2>PRIVACY SEARCH</h2>
-        <p>Search without tracking. Powered by SearXNG. No logs, no profiling, no bullshit.</p>
-      </div>
-
-      <div class="tool-card" onclick="openTool('reasoning')">
-        <h2>AI REASONING WIKI</h2>
-        <p>Local LLM-powered reasoning engine. Uses Ollama. Your queries stay on your machine.</p>
-      </div>
-
-      <div class="tool-card" onclick="openTool('parser')">
-        <h2>EXPORT PARSER</h2>
-        <p>Turn Google Takeout, Apple Privacy exports into readable format. Process locally.</p>
-      </div>
-
-      <div class="tool-card" onclick="openTool('leak-score')">
-        <h2>LEAK SCORE</h2>
-        <p>Check how exposed you are. Email, phone, passwords in breaches. Check locally.</p>
-      </div>
-
-      <div class="tool-card" onclick="openTool('identity-vault')">
-        <h2>IDENTITY VAULT</h2>
-        <p>Manage your cryptographic identities. Generate keys, sign messages, verify signatures.</p>
-      </div>
-
-      <div class="tool-card" onclick="openTool('qr-generator')">
-        <h2>QR CODE GENERATOR</h2>
-        <p>Display your D2D identity at events. Others scan to add you to their Trust Circle.</p>
+        <div class="tool-icon">&#128269;</div>
+        <div class="tool-info">
+          <h3>Privacy Search</h3>
+          <p>Search the web without tracking. No logs, no profiling.</p>
+        </div>
       </div>
 
       <div class="tool-card" onclick="openTool('notebook')">
-        <h2>28-DAY NOTEBOOK</h2>
-        <p>Deep-dive on any topic. One question per day for 28 days. Get physical copy at events.</p>
+        <div class="tool-icon">&#128211;</div>
+        <div class="tool-info">
+          <h3>28-Day Notebook</h3>
+          <p>Deep-dive on any topic. One question per day for 28 days.</p>
+        </div>
+      </div>
+
+      <div class="tool-card" onclick="openTool('qr-generator')">
+        <div class="tool-icon">&#128241;</div>
+        <div class="tool-info">
+          <h3>QR Identity</h3>
+          <p>Your D2D identity card. Share at events, verify trust circles.</p>
+        </div>
+      </div>
+
+      <div class="tool-card" onclick="openTool('identity-vault')">
+        <div class="tool-icon">&#128272;</div>
+        <div class="tool-info">
+          <h3>Identity Vault</h3>
+          <p>Manage cryptographic identities. Generate keys, sign messages.</p>
+        </div>
       </div>
 
       <div class="tool-card disabled">
-        <h2>DATA SANITIZER</h2>
-        <p>Strip metadata from photos, PDFs, documents before sharing. Remove EXIF, GPS, more.</p>
-        <div class="coming-soon">COMING SOON</div>
+        <div class="tool-icon">&#128465;</div>
+        <div class="tool-info">
+          <h3>Data Sanitizer</h3>
+          <p>Strip metadata from photos, PDFs, documents before sharing.</p>
+          <div class="coming-tag">coming soon</div>
+        </div>
       </div>
-    </div>
 
-    <div style="margin-top:60px;padding-top:40px;border-top:1px solid var(--border);text-align:center">
-      <p style="color:var(--muted);font-size:0.9rem">
-        Token expires in 30 days. All tools will remain accessible until then.
-        <br><br>
-        Questions? Email <a href="mailto:matt@death2data.com" style="color:var(--gray)">matt@death2data.com</a>
-      </p>
+      <div class="tool-card disabled">
+        <div class="tool-icon">&#128200;</div>
+        <div class="tool-info">
+          <h3>Leak Score</h3>
+          <p>Check how exposed you are. Emails, phones, passwords in breaches.</p>
+          <div class="coming-tag">coming soon</div>
+        </div>
+      </div>
     </div>
   `;
 }
 
 function showAccessDenied(reason) {
-  const statusEl = document.getElementById('token-status');
-  statusEl.textContent = `✗ ${reason}`;
-  statusEl.className = 'token-status invalid';
+  const badge = document.getElementById('status-badge');
+  badge.textContent = 'not signed in';
+  badge.className = 'status-badge invalid';
+  document.getElementById('tools-footer').style.display = 'none';
 
   document.getElementById('main-content').innerHTML = `
     <div class="access-denied">
-      <h1>ACCESS DENIED</h1>
-      <p style="color:var(--gray);margin-top:20px">
-        ${reason}. You need a valid access token to use D2D tools.
-      </p>
-      <a href="/" class="btn btn-primary">PURCHASE ACCESS →</a>
+      <h2>Sign in to access tools</h2>
+      <p>${reason}</p>
+      <a href="/" class="btn btn-primary" style="margin-top:8px">Go to Search &rarr;</a>
     </div>
   `;
 }
 
 function openTool(toolName) {
-  const token = localStorage.getItem('d2d_email');
-
-  // Check if tool exists
   const toolUrls = {
+    'search': '/',
     'identity-vault': '/tools/identity-vault.html',
     'qr-generator': '/tools/qr-generator.html',
     'notebook': '/notebook.html',
-    // Coming soon:
-    // 'search': '/tools/search.html',
-    // 'reasoning': '/tools/reasoning.html',
-    // 'parser': '/tools/parser.html',
-    // 'leak-score': '/tools/leak-score.html'
   };
 
   if (toolUrls[toolName]) {
-    // Tool exists, navigate to it
-    window.location.href = toolUrls[toolName] + (token ? `?token=${token}` : '');
+    window.location.href = toolUrls[toolName];
   } else {
-    // Tool not built yet
-    alert(`${toolName.toUpperCase()} tool coming soon!\\n\\nBuilding this week.`);
+    alert(toolName.replace(/-/g,' ').toUpperCase() + ' — coming soon');
   }
 }
 
-// Validate on load
+function logout() {
+  localStorage.removeItem('d2d_token');
+  localStorage.removeItem('d2d_email');
+  window.location.href = '/';
+}
+
+// Run on load
 validateToken();
 </script>
 

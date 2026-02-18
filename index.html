@@ -387,8 +387,8 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
 
 /* ── Auth ── */
 (function init(){
-  const t = sessionStorage.getItem('d2d_token');
-  const e = sessionStorage.getItem('d2d_email');
+  const t = localStorage.getItem('d2d_token');
+  const e = localStorage.getItem('d2d_email');
   if (t && e) { S.token = t; S.email = e; showLoggedIn(); }
   else { showLoggedOut(); }
 
@@ -437,8 +437,8 @@ async function login() {
     const d = await r.json();
     if (d.token) {
       S.token = d.token; S.email = d.email; S.tier = d.tier;
-      sessionStorage.setItem('d2d_token', d.token);
-      sessionStorage.setItem('d2d_email', d.email);
+      localStorage.setItem('d2d_token', d.token);
+      localStorage.setItem('d2d_email', d.email);
       showLoggedIn();
     } else if (d.exists) {
       // needs license key — show key input
@@ -465,8 +465,8 @@ async function loginWithKey(email) {
     const d = await r.json();
     if (d.token) {
       S.token = d.token; S.email = d.email; S.tier = d.tier;
-      sessionStorage.setItem('d2d_token', d.token);
-      sessionStorage.setItem('d2d_email', d.email);
+      localStorage.setItem('d2d_token', d.token);
+      localStorage.setItem('d2d_email', d.email);
       showLoggedIn();
     } else if (d.error) {
       el.value = ''; el.placeholder = d.error;
@@ -485,14 +485,15 @@ async function reauth() {
     const d = await r.json();
     if (d.token) {
       S.token = d.token; S.tier = d.tier;
-      sessionStorage.setItem('d2d_token', d.token);
+      localStorage.setItem('d2d_token', d.token);
     }
   } catch(e) {}
 }
 
 function logout() {
   S.token = null; S.email = null; S.tier = null; S.searches = 0;
-  sessionStorage.clear();
+  localStorage.removeItem('d2d_token');
+  localStorage.removeItem('d2d_email');
   location.reload();
 }
 
