@@ -65,7 +65,7 @@ body {
   height: 48px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  gap: 16px;
+  gap: 12px;
 }
 .hd-logo {
   font-family: var(--mono);
@@ -78,6 +78,77 @@ body {
 .hd a:not(.hd-logo) { color: var(--text-muted); font-size: 13px; }
 .hd a:not(.hd-logo):hover { color: var(--text); }
 .hd a.active { color: var(--text); }
+
+/* Header auth */
+.hd-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hd-auth input {
+  height: 30px;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 12px;
+  outline: none;
+  width: 170px;
+}
+.hd-auth input:focus { border-color: var(--green); }
+.hd-auth .go-btn {
+  height: 30px;
+  padding: 0 12px;
+  background: var(--green);
+  border: none;
+  border-radius: 4px;
+  color: #000;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hd-auth .go-btn:hover { background: var(--green-hover); }
+.hd-user {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hd-user .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+}
+.hd-user .tier-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: var(--green-dim);
+  color: var(--green);
+  letter-spacing: 0.3px;
+}
+.hd-user .tier-badge.free {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.hd-user button {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: var(--font);
+  font-size: 11px;
+  cursor: pointer;
+}
+.hd-user button:hover { color: var(--text-muted); }
+@media (max-width: 480px) {
+  .hd-auth input { width: 120px; }
+  .hd a:not(.hd-logo) { display: none; }
+}
 
 /* === MAIN === */
 .main {
@@ -342,6 +413,7 @@ body.searching .main { justify-content: flex-start; }
   <a href="/" class="active">Search</a>
   <a href="/about.html">About</a>
   <a href="/tools.html">Tools</a>
+  <div id="hd-auth-area"></div>
 </div>
 
 <!-- MAIN -->
@@ -358,7 +430,7 @@ body.searching .main { justify-content: flex-start; }
     </div>
     <div class="home-pitch">
       <strong>No tracking. No ads. No data harvesting.</strong><br>
-      3 free searches, then $1/month.
+      Sign in with your email to get started.
     </div>
   </div>
 
@@ -379,6 +451,8 @@ body.searching .main { justify-content: flex-start; }
   <a href="/about.html">about</a>
   <span class="ft-sep">·</span>
   <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">·</span>
+  <a href="mailto:matt@death2data.com">support</a>
 </div>
 
 <script>
@@ -401,34 +475,52 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
     fetch(API+'/api/search?q=ping', {headers:{'Authorization':'Bearer '+S.token}})
       .then(r=>r.json()).then(d=>{
         if (d.authed === false) reauth();
+        // Store tier info
+        if (d.tier) { S.tier = d.tier; updateTierBadge(); }
       }).catch(()=>{});
   }
 })();
 
 function showLoggedIn() {
-  document.getElementById('ft').innerHTML = `
-    <span class="ft-dot"></span>
-    <span class="ft-user">${S.email}</span>
-    <span class="ft-sep">·</span>
-    <a href="/tools.html">tools</a>
-    <span class="ft-sep">·</span>
-    <button class="signout" onclick="logout()">sign out</button>`;
+  const tier = S.tier || 'member';
+  const isMember = tier === 'active';
+  document.getElementById('hd-auth-area').innerHTML = `
+    <div class="hd-user">
+      <span class="dot"></span>
+      <span>${S.email}</span>
+      <span class="tier-badge ${isMember ? '' : 'free'}">${isMember ? 'member' : 'free'}</span>
+      <button onclick="logout()">sign out</button>
+    </div>`;
 }
 
 function showLoggedOut() {
-  document.getElementById('ft').innerHTML = `
-    <input type="email" id="email" placeholder="sign in with email"
-      onkeydown="if(event.key==='Enter')login()">
-    <button onclick="login()">go</button>
-    <span class="ft-sep">·</span>
-    <a href="/about.html" class="cta">join $1/mo</a>`;
+  document.getElementById('hd-auth-area').innerHTML = `
+    <div class="hd-auth">
+      <input type="email" id="email" placeholder="email"
+        onkeydown="if(event.key==='Enter')login()">
+      <button class="go-btn" onclick="login()">Sign in</button>
+    </div>`;
+}
+
+function updateTierBadge() {
+  const badge = document.querySelector('.tier-badge');
+  if (!badge) return;
+  const isMember = S.tier === 'active';
+  badge.textContent = isMember ? 'member' : 'free';
+  badge.className = 'tier-badge' + (isMember ? '' : ' free');
 }
 
 async function login() {
   const el = document.getElementById('email');
   const email = el.value.trim().toLowerCase();
-  if (!email || !email.includes('@')) return;
+  if (!email || !email.includes('@')) {
+    el.placeholder = 'enter your email';
+    return;
+  }
+  el.disabled = true;
+
   try {
+    // Try signup first (creates account or returns existing token)
     const r = await fetch(API+'/api/signup', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
@@ -440,38 +532,33 @@ async function login() {
       localStorage.setItem('d2d_token', d.token);
       localStorage.setItem('d2d_email', d.email);
       showLoggedIn();
-    } else if (d.exists) {
-      // needs license key — show key input
-      el.type = 'password';
-      el.placeholder = 'license key';
-      el.value = '';
-      el.onkeydown = function(e) { if(e.key==='Enter') loginWithKey(email); };
-      const btn = el.nextElementSibling;
-      btn.onclick = function() { loginWithKey(email); };
+      return;
     }
-  } catch(e) { console.error(e); }
-}
-
-async function loginWithKey(email) {
-  const el = document.getElementById('email');
-  const key = el.value.trim();
-  if (!key) return;
-  try {
-    const r = await fetch(API+'/api/login', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({email, key})
-    });
-    const d = await r.json();
-    if (d.token) {
-      S.token = d.token; S.email = d.email; S.tier = d.tier;
-      localStorage.setItem('d2d_token', d.token);
-      localStorage.setItem('d2d_email', d.email);
-      showLoggedIn();
-    } else if (d.error) {
-      el.value = ''; el.placeholder = d.error;
+    // If signup says 'exists', try login with email only (no key)
+    if (d.exists) {
+      const r2 = await fetch(API+'/api/login', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({email, key: ''})
+      });
+      const d2 = await r2.json();
+      if (d2.token) {
+        S.token = d2.token; S.email = d2.email; S.tier = d2.tier;
+        localStorage.setItem('d2d_token', d2.token);
+        localStorage.setItem('d2d_email', d2.email);
+        showLoggedIn();
+        return;
+      }
     }
-  } catch(e) { console.error(e); }
+    // Fallback: store email, show as free user
+    S.email = email;
+    localStorage.setItem('d2d_email', email);
+    showLoggedIn();
+  } catch(e) {
+    console.error(e);
+    el.disabled = false;
+    el.placeholder = 'try again';
+  }
 }
 
 async function reauth() {
@@ -486,6 +573,7 @@ async function reauth() {
     if (d.token) {
       S.token = d.token; S.tier = d.tier;
       localStorage.setItem('d2d_token', d.token);
+      updateTierBadge();
     }
   } catch(e) {}
 }
