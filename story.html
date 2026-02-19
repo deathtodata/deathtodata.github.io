@@ -459,7 +459,7 @@ body {
   <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
     <button id="error-retry" onclick="retryStory()" style="padding:12px 28px;background:var(--green);color:#000;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">Try again</button>
     <a id="error-original" href="#" target="_blank" style="padding:12px 28px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:8px;text-decoration:none;font-size:13px;font-family:var(--font);">View original</a>
-    <a href="/" style="padding:12px 28px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-family:var(--font);">Back to search</a>
+    <a href="#" onclick="exitStory();return false;" style="padding:12px 28px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-family:var(--font);">Back to search</a>
   </div>
 </div>
 
@@ -809,7 +809,15 @@ document.addEventListener('keydown', e => {
 
 // ═══ EXIT ═══
 function exitStory() {
-  window.location.href = '/';
+  // Try to go back to search results if we came from there
+  if (document.referrer && document.referrer.includes('death2data.com')) {
+    history.back();
+  } else {
+    // Preserve search query if we have one in the URL params
+    const sp = new URLSearchParams(location.search);
+    const q = sp.get('q');
+    window.location.href = q ? '/?q=' + encodeURIComponent(q) : '/';
+  }
 }
 
 // ═══ ERROR ═══
@@ -833,12 +841,16 @@ function retryStory() {
   document.getElementById('loading-text').textContent = 'Retrying...';
 
   let timedOut = false;
+  const warmMsg = setTimeout(() => {
+    document.getElementById('loading-text').textContent = 'Server is waking up...';
+  }, 8000);
   const timeout = setTimeout(() => {
     timedOut = true;
     showError('Still taking too long. The server might need a minute to warm up.', storyUrl);
-  }, 20000);
+  }, 45000);
 
   loadStory(storyUrl).then(data => {
+    clearTimeout(warmMsg);
     clearTimeout(timeout);
     if (timedOut) return;
     if (data) {
@@ -941,13 +953,18 @@ function loadDemo() {
     document.getElementById('source-url').textContent = domain;
     document.getElementById('loading-text').textContent = 'Fetching ' + domain + '...';
 
+    // Render free tier cold-starts in 30-50s — show progressive messages
     let timedOut = false;
+    const warmMsg = setTimeout(() => {
+      document.getElementById('loading-text').textContent = 'Server is waking up...';
+    }, 8000);
     const timeout = setTimeout(() => {
       timedOut = true;
-      showError('The server is taking too long. It might be waking up — try again in 30 seconds.', url);
-    }, 15000);
+      showError('The server is taking too long. Hit "Try again" — it should be warm now.', url);
+    }, 45000);
 
     const data = await loadStory(url);
+    clearTimeout(warmMsg);
     clearTimeout(timeout);
     if (timedOut) return;
 
