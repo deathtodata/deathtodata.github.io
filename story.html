@@ -743,8 +743,9 @@ function parseContentToCards(data) {
       <h2>End of story</h2>
       <div class="end-source">${sourceBadge(domain)}</div>
       <div class="end-actions">
+        <a class="end-btn primary" href="/tools/notebook.html?topic=${encodeURIComponent(title)}" style="text-decoration:none;">Start a notebook on this</a>
         <a class="end-btn secondary" href="${esc(url)}" target="_blank" rel="noopener">View original</a>
-        <button class="end-btn primary" onclick="exitStory()">Back to search</button>
+        <button class="end-btn secondary" onclick="exitStory()">Back to search</button>
       </div>
     </div>`
   });

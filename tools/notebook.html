@@ -142,6 +142,48 @@ body {
   margin-top: 12px;
 }
 
+/* Domain picker */
+.domain-picker {
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+.domain-picker h3 {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.domain-picker-sub {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+#domainGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.domain-chip {
+  padding: 7px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.domain-chip:hover {
+  border-color: var(--green-dim);
+  color: var(--green);
+}
+.domain-chip .chip-name {
+  font-weight: 500;
+  color: var(--text);
+}
+.domain-chip:hover .chip-name { color: var(--green); }
+
 .how-it-works {
   margin-top: 32px;
   background: var(--surface);
@@ -381,11 +423,17 @@ body {
     <button class="start-btn" id="startBtn" disabled>Type a topic to start</button>
     <p class="landing-note">Day 1 is free. Full 28 days with membership.</p>
 
+    <div class="domain-picker">
+      <h3>OR PICK A DOMAIN TO EXPLORE</h3>
+      <p class="domain-picker-sub">230 domains. One membership. Pick one and spend 28 days figuring out if it's worth building.</p>
+      <div id="domainGrid"></div>
+    </div>
+
     <div class="how-it-works">
       <h3>HOW IT WORKS</h3>
       <div class="how-step">
         <span class="step-num">01</span>
-        <span class="step-text">Pick any topic you want to explore</span>
+        <span class="step-text">Pick any topic — or a domain from the portfolio</span>
       </div>
       <div class="how-step">
         <span class="step-num">02</span>
@@ -411,6 +459,7 @@ body {
     <div class="nb-header">
       <h2>Exploring <span class="topic" id="nbTopic">--</span></h2>
       <p>One question per day for 28 days</p>
+      <div id="nbLinks" style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;"></div>
     </div>
 
     <div class="progress-wrap">
@@ -487,6 +536,24 @@ const QUESTIONS = [
   "Write a letter to past-you about {topic}."
 ];
 
+// Top domains from the 230-domain portfolio
+const DOMAINS = [
+  {d:'sellthismvp.com', c:'AI pitch deck generator'},
+  {d:'toneswitch.com', c:'AI writing tone adjuster'},
+  {d:'ghostmemeter.com', c:'Are they ghosting you? AI analyzes it'},
+  {d:'ipomyidea.com', c:'IPO simulator for startup ideas'},
+  {d:'tweetaudit.com', c:'Analyze your Twitter tone'},
+  {d:'knowwhatstuck.com', c:'AI debugging assistant'},
+  {d:'whoswronghere.com', c:'AI argument settler'},
+  {d:'adrgen.com', c:'Ad creative generator'},
+  {d:'howmucharemyideasworth.com', c:'AI idea valuation'},
+  {d:'howwasthevibe.com', c:'Post-event feedback tool'},
+  {d:'soulfra.ai', c:'AI co-op matching builders to domains'},
+  {d:'vibe-browser.com', c:'Browser that filters by vibe'},
+  {d:'calclip.com', c:'Quick math during video calls'},
+  {d:'thevibetool.com', c:'Mood tracker for daily vibes'},
+];
+
 let data = null;
 
 // Check D2D membership
@@ -512,6 +579,20 @@ function init() {
   } else {
     data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   }
+
+  // Support ?topic= param for direct links
+  const topicParam = params.get('topic');
+  if (topicParam && !data) {
+    // Pre-fill the input but don't auto-start
+    render();
+    const input = document.getElementById('topicInput');
+    if (input) {
+      input.value = topicParam;
+      input.dispatchEvent(new Event('input'));
+    }
+    return;
+  }
+
   render();
 }
 
@@ -551,16 +632,36 @@ function setupLanding() {
   btn.addEventListener('click', () => {
     const topic = input.value.trim();
     if (!topic) return;
-    // Start immediately — day 1 is free
-    data = {
-      topic,
-      startDate: Date.now(),
-      paid: isMember(),
-      entries: {}
-    };
-    save();
-    render();
+    startNotebook(topic);
   });
+
+  // Render domain chips
+  const grid = document.getElementById('domainGrid');
+  grid.innerHTML = DOMAINS.map(d =>
+    `<div class="domain-chip" data-topic="${d.d}: ${d.c}">
+      <span class="chip-name">${d.d}</span>
+    </div>`
+  ).join('');
+
+  grid.querySelectorAll('.domain-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const topic = chip.dataset.topic;
+      input.value = topic;
+      input.dispatchEvent(new Event('input'));
+      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+}
+
+function startNotebook(topic) {
+  data = {
+    topic,
+    startDate: Date.now(),
+    paid: isMember(),
+    entries: {}
+  };
+  save();
+  render();
 }
 
 function renderNotebook() {
@@ -586,8 +687,13 @@ function renderNotebook() {
     timer.innerHTML = `<strong>${daysLeft}</strong> days left`;
   }
 
-  // Header + progress
+  // Header + progress + links back to search/story
   document.getElementById('nbTopic').textContent = topic;
+  const searchQ = topic.split(':')[0].trim(); // use domain name or first part as query
+  document.getElementById('nbLinks').innerHTML = `
+    <a href="/?q=${encodeURIComponent(searchQ)}" style="font-size:12px;color:var(--green);text-decoration:none;padding:4px 10px;border:1px solid var(--green-dim);border-radius:4px;">Search D2D for this</a>
+    <a href="/story.html?url=${encodeURIComponent('https://'+searchQ)}" style="font-size:12px;color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:4px;">Read ${searchQ} in Story Mode</a>
+  `;
   document.getElementById('progressText').textContent = `${completed} / 28`;
   document.getElementById('progressFill').style.width = `${(completed/28)*100}%`;
 

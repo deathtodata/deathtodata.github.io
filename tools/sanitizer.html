@@ -243,24 +243,23 @@ function readExif(buffer) {
   while (offset < view.byteLength - 2) {
     const marker = view.getUint16(offset);
 
-    // APP1 = EXIF
-    if (marker === 0xFFE1) {
-      const length = view.getUint16(offset + 2);
-      const exifData = buffer.slice(offset + 4, offset + 2 + length);
-      const exifView = new DataView(exifData);
+    // Categorize marker
+    if ((marker & 0xFF00) !== 0xFF00) break;
+    const len = view.getUint16(offset + 2);
+    const segData = buffer.slice(offset + 4, offset + 2 + len);
 
-      // Check "Exif\0\0"
-      const exifHeader = String.fromCharCode(
+    // APP1 = EXIF / XMP
+    if (marker === 0xFFE1) {
+      const exifView = new DataView(segData);
+      const header = String.fromCharCode(
         exifView.getUint8(0), exifView.getUint8(1),
         exifView.getUint8(2), exifView.getUint8(3)
       );
 
-      if (exifHeader === 'Exif') {
+      if (header === 'Exif') {
         meta._hasExif = true;
-        meta._exifStart = offset;
-        meta._exifEnd = offset + 2 + length;
 
-        // Parse TIFF header
+        // Parse TIFF header for readable tags
         const tiffOffset = 6;
         const littleEndian = exifView.getUint16(tiffOffset) === 0x4949;
 
@@ -270,16 +269,15 @@ function readExif(buffer) {
 
           for (let i = 0; i < Math.min(ifdCount, 50); i++) {
             const entryOffset = tiffOffset + ifdOffset + 2 + (i * 12);
-            if (entryOffset + 12 > exifData.byteLength) break;
+            if (entryOffset + 12 > segData.byteLength) break;
 
             const tag = exifView.getUint16(entryOffset, littleEndian);
             const type = exifView.getUint16(entryOffset + 2, littleEndian);
             const count = exifView.getUint32(entryOffset + 4, littleEndian);
 
-            // Read string values
-            const readStr = (off, len) => {
+            const readStr = (off, n) => {
               let s = '';
-              for (let j = 0; j < Math.min(len, 64); j++) {
+              for (let j = 0; j < Math.min(n, 64); j++) {
                 const c = exifView.getUint8(off + j);
                 if (c === 0) break;
                 s += String.fromCharCode(c);
@@ -292,58 +290,74 @@ function readExif(buffer) {
               valOffset = tiffOffset + exifView.getUint32(entryOffset + 8, littleEndian);
             }
 
-            // Tag mapping (common EXIF tags)
             const tagMap = {
-              0x010F: 'Camera Make',
-              0x0110: 'Camera Model',
-              0x0131: 'Software',
-              0x0132: 'Date/Time',
-              0x013B: 'Artist',
-              0x8298: 'Copyright',
-              0x9003: 'Date Original',
-              0x9004: 'Date Digitized',
-              0xA434: 'Lens Model',
+              0x010F: 'Camera Make', 0x0110: 'Camera Model',
+              0x0131: 'Software', 0x0132: 'Date/Time',
+              0x013B: 'Artist', 0x8298: 'Copyright',
+              0x9003: 'Date Original', 0x9004: 'Date Digitized',
+              0xA434: 'Lens Model', 0x9286: 'User Comment',
+              0x927C: 'Maker Note',
             };
 
-            if (tagMap[tag] && type === 2 && valOffset + count <= exifData.byteLength) {
+            if (tagMap[tag] && type === 2 && valOffset + count <= segData.byteLength) {
               const val = readStr(valOffset, count);
               if (val) meta[tagMap[tag]] = val;
             }
           }
-        } catch (e) {
-          // EXIF parsing is best-effort
+        } catch (e) { /* EXIF parsing is best-effort */ }
+
+        // Scan for GPS IFD marker
+        const exifBytes = new Uint8Array(segData);
+        for (let i = 0; i < exifBytes.length - 1; i++) {
+          if (exifBytes[i] === 0x88 && exifBytes[i + 1] === 0x25) {
+            meta['GPS Data'] = 'Present (your location is embedded)';
+            break;
+          }
         }
       }
 
-      // Look for GPS IFD markers in raw bytes
-      const exifStr = new Uint8Array(exifData);
-      for (let i = 0; i < exifStr.length - 1; i++) {
-        // GPS tag markers (0x8825)
-        if (exifStr[i] === 0x88 && exifStr[i + 1] === 0x25) {
-          meta['GPS Data'] = 'Present (location embedded)';
-          break;
-        }
+      // Check if it's XMP in APP1
+      const xmpSig = 'http://ns.adobe.com/xap/1.0/';
+      const segStr = new TextDecoder('ascii', { fatal: false }).decode(new Uint8Array(segData).slice(0, 64));
+      if (segStr.includes(xmpSig)) {
+        meta['XMP Data'] = 'Present (Adobe/editing metadata)';
+        meta._hasXMP = true;
       }
-
-      break;
     }
 
-    // Skip non-APP1 markers
-    if ((marker & 0xFF00) === 0xFF00) {
-      const len = view.getUint16(offset + 2);
-      offset += 2 + len;
-    } else {
-      break;
+    // APP2 = ICC Profile (can contain PII)
+    if (marker === 0xFFE2) {
+      meta['ICC Profile'] = 'Present (color profile — may contain device info)';
     }
-  }
 
-  // Check for XMP
-  const bytes = new Uint8Array(buffer);
-  const searchXMP = 'http://ns.adobe.com/xap/1.0/';
-  const str = new TextDecoder('ascii').decode(bytes.slice(0, Math.min(bytes.length, 65536)));
-  if (str.includes(searchXMP)) {
-    meta['XMP Data'] = 'Present (Adobe metadata)';
-    meta._hasXMP = true;
+    // APP3-APP11 = Vendor-specific (Samsung, Qualcomm, etc.)
+    if (marker >= 0xFFE3 && marker <= 0xFFEB) {
+      meta['Vendor Metadata (APP' + (marker - 0xFFE0) + ')'] = 'Present (device-specific data)';
+    }
+
+    // APP12 = Picture Info / Ducky
+    if (marker === 0xFFEC) {
+      meta['APP12 (Ducky/PictureInfo)'] = 'Present';
+    }
+
+    // APP13 = IPTC / Photoshop
+    if (marker === 0xFFED) {
+      meta['IPTC Data'] = 'Present (Photoshop/news metadata — may contain author, caption, location)';
+    }
+
+    // APP14 = Adobe
+    if (marker === 0xFFEE) {
+      meta['Adobe Metadata'] = 'Present';
+    }
+
+    // COM = JPEG Comment (0xFFFE) — can contain ANYTHING
+    if (marker === 0xFFFE) {
+      const commentBytes = new Uint8Array(segData);
+      const comment = new TextDecoder('utf-8', { fatal: false }).decode(commentBytes).trim();
+      meta['JPEG Comment'] = comment.length > 80 ? comment.slice(0, 80) + '...' : (comment || 'Present');
+    }
+
+    offset += 2 + len;
   }
 
   return meta;
@@ -394,39 +408,52 @@ function readPngMeta(buffer) {
   return meta;
 }
 
-// ── Strip EXIF from JPEG ──
+// ── Strip ALL metadata from JPEG ──
+// Keep ONLY: SOI, APP0 (JFIF — needed for display), DQT, DHT, SOF, SOS, image data
 function stripJpeg(buffer) {
   const view = new DataView(buffer);
   if (view.getUint16(0) !== 0xFFD8) return buffer;
 
   const parts = [];
-  parts.push(new Uint8Array(buffer, 0, 2)); // SOI
+  parts.push(new Uint8Array(buffer, 0, 2)); // SOI marker
+
+  // Markers that are SAFE to keep (essential for image display)
+  const keepMarkers = new Set([
+    0xFFE0, // APP0 — JFIF header (required)
+    0xFFC0, // SOF0 — baseline
+    0xFFC1, // SOF1
+    0xFFC2, // SOF2 — progressive
+    0xFFC4, // DHT — Huffman tables
+    0xFFDB, // DQT — quantization tables
+    0xFFDD, // DRI — restart interval
+    0xFFDA, // SOS — start of scan
+  ]);
 
   let offset = 2;
   while (offset < buffer.byteLength - 2) {
     const marker = view.getUint16(offset);
 
+    // Start of scan = image data begins, keep everything from here
     if (marker === 0xFFDA) {
-      // Start of scan — keep everything from here
       parts.push(new Uint8Array(buffer, offset));
       break;
     }
 
-    if ((marker & 0xFF00) === 0xFF00) {
-      const len = view.getUint16(offset + 2);
-      const segType = marker;
-
-      // Skip APP1 (EXIF), APP2 (ICC sometimes has PII), APP12, APP13 (IPTC), APP14
-      const strip = [0xFFE1, 0xFFE2, 0xFFEC, 0xFFED, 0xFFEE];
-      if (!strip.includes(segType)) {
-        parts.push(new Uint8Array(buffer, offset, 2 + len));
-      }
-
-      offset += 2 + len;
-    } else {
+    if ((marker & 0xFF00) !== 0xFF00) {
       parts.push(new Uint8Array(buffer, offset));
       break;
     }
+
+    const len = view.getUint16(offset + 2);
+
+    // ONLY keep markers that are essential for rendering
+    // Everything else (APP1-APP15, COM, IPTC, XMP, ICC, vendor) gets stripped
+    if (keepMarkers.has(marker)) {
+      parts.push(new Uint8Array(buffer, offset, 2 + len));
+    }
+    // Else: silently drop it (this is the strip)
+
+    offset += 2 + len;
   }
 
   const total = parts.reduce((a, b) => a + b.length, 0);
@@ -537,10 +564,17 @@ async function processFile(file) {
       if (isJpeg) cleaned = stripJpeg(buffer);
       else if (isPng) cleaned = stripPng(buffer);
       else {
-        // WebP and others — we can't strip without re-encoding, so use canvas
-        reencodeAndDownload(file, btn);
+        reencodeAndDownload(file, btn, card);
         return;
       }
+
+      // ── VERIFY: re-scan the cleaned buffer to PROVE it's clean ──
+      let verifyMeta = {};
+      if (isJpeg) verifyMeta = readExif(cleaned);
+      else if (isPng) verifyMeta = readPngMeta(cleaned);
+
+      const remainingKeys = Object.keys(verifyMeta).filter(k => !k.startsWith('_'));
+      const verified = remainingKeys.length === 0;
 
       const blob = new Blob([cleaned], { type: file.type });
       const url = URL.createObjectURL(blob);
@@ -550,25 +584,34 @@ async function processFile(file) {
       a.click();
       URL.revokeObjectURL(url);
 
-      btn.textContent = 'Downloaded clean copy';
+      btn.textContent = verified ? '✓ Verified clean — downloaded' : 'Downloaded clean copy';
       btn.disabled = true;
       btn.style.background = 'var(--green-dim)';
       btn.style.color = 'var(--green)';
 
-      // Show savings
+      // Show verification proof
+      const proof = document.createElement('div');
       const saved = file.size - blob.size;
-      if (saved > 0) {
-        const note = document.createElement('div');
-        note.style.cssText = 'font-size:12px;color:var(--green);margin-top:8px;text-align:center;';
-        note.textContent = `Stripped ${formatSize(saved)} of metadata`;
-        btn.after(note);
+      if (verified) {
+        proof.style.cssText = 'background:var(--green-dim);border:1px solid rgba(0,204,68,0.3);border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12px;color:var(--green);line-height:1.5;';
+        proof.innerHTML = `<strong>&#10003; Verified clean.</strong> Re-scanned output file — zero metadata fields remain.${saved > 0 ? ' Removed ' + formatSize(saved) + ' of hidden data.' : ''}`;
+      } else {
+        proof.style.cssText = 'background:rgba(204,136,0,0.1);border:1px solid rgba(204,136,0,0.3);border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12px;color:#cc8800;line-height:1.5;';
+        proof.innerHTML = `<strong>&#9888; Partial strip.</strong> ${remainingKeys.length} field(s) may remain in an unusual format. Use the nuclear option below for guaranteed clean output.`;
+        const fallback = document.createElement('button');
+        fallback.style.cssText = 'display:block;width:100%;margin-top:8px;padding:12px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;';
+        fallback.textContent = 'Re-encode via canvas (nuclear option — guaranteed clean)';
+        fallback.onclick = () => reencodeAndDownload(file, fallback, card);
+        proof.appendChild(fallback);
       }
+      btn.after(proof);
     });
   }
 }
 
-// ── Fallback: re-encode via canvas (strips all metadata) ──
-function reencodeAndDownload(file, btn) {
+// ── Fallback: re-encode via canvas (nuclear option — guaranteed clean) ──
+// Canvas re-encoding creates brand new pixel data with ZERO metadata
+function reencodeAndDownload(file, btn, card) {
   const img = new Image();
   img.onload = () => {
     const c = document.createElement('canvas');
@@ -580,13 +623,20 @@ function reencodeAndDownload(file, btn) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'clean-' + file.name;
+      a.download = 'clean-' + file.name.replace(/\.\w+$/, '.png'); // Always output PNG for max safety
       a.click();
       URL.revokeObjectURL(url);
 
-      btn.textContent = 'Downloaded clean copy';
+      btn.textContent = '✓ Re-encoded & downloaded (guaranteed clean)';
       btn.disabled = true;
-    }, file.type, 0.95);
+      btn.style.background = 'var(--green-dim)';
+      btn.style.color = 'var(--green)';
+
+      const proof = document.createElement('div');
+      proof.style.cssText = 'background:var(--green-dim);border:1px solid rgba(0,204,68,0.3);border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12px;color:var(--green);line-height:1.5;';
+      proof.innerHTML = '<strong>&#10003; Guaranteed clean.</strong> Image was re-encoded from raw pixels. No original metadata can survive canvas re-encoding.';
+      btn.after(proof);
+    }, 'image/png');
   };
   img.src = URL.createObjectURL(file);
 }
