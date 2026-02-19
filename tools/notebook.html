@@ -2,274 +2,419 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>D2D Notebook</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>28-Day Notebook | Death2Data</title>
+<meta name="description" content="Pick any topic. Answer one question per day for 28 days. Everything stored locally on your device.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: -apple-system, monospace;
-  background: #0a0a0a;
-  color: #fff;
-  min-height: 100vh;
-  padding: 40px 20px;
-}
-.container { max-width: 600px; margin: 0 auto; }
-.brand { font-size: 12px; color: #00ff00; letter-spacing: 2px; margin-bottom: 40px; }
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@700&display=swap');
 
-/* PAGES */
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --border-hover: #2a3a2a;
+  --text: #e0e0e0;
+  --text-body: #b0b0b0;
+  --text-muted: #666;
+  --text-dim: #444;
+  --green: #00cc44;
+  --green-dim: #004d1a;
+  --green-hover: #00e64d;
+  --red: #cc0000;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --pad: 16px;
+  --radius: 8px;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: inherit; text-decoration: none; }
+html, body { min-height:100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === HEADER === */
+.hd {
+  display: flex;
+  align-items: center;
+  padding: 0 var(--pad);
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
+}
+.hd-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-right: auto;
+}
+.hd a:not(.hd-logo) { color: var(--text-muted); font-size: 13px; }
+.hd a:not(.hd-logo):hover { color: var(--text); }
+
+/* === MAIN === */
+.main {
+  flex: 1;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 32px var(--pad) 80px;
+}
+
+/* === PAGES === */
 .page { display: none; }
 .page.active { display: block; }
 
-/* LANDING */
-h1 { font-size: 32px; margin-bottom: 16px; }
-h1 .green { color: #00ff00; }
-.subtitle { color: #888; margin-bottom: 40px; line-height: 1.6; }
+/* === LANDING === */
+.landing-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.landing-title .accent { color: var(--green); }
+.landing-sub {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
 
 .topic-box {
-  background: #111;
-  border: 1px solid #222;
-  padding: 24px;
-  margin-bottom: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
 }
 .topic-box label {
   display: block;
   font-size: 11px;
-  color: #666;
-  margin-bottom: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
 }
 .topic-box input {
   width: 100%;
-  padding: 16px;
-  background: #0a0a0a;
-  border: 1px solid #333;
-  color: #fff;
-  font-family: inherit;
-  font-size: 16px;
+  padding: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 15px;
+  outline: none;
 }
-.topic-box input:focus { outline: none; border-color: #00ff00; }
+.topic-box input:focus { border-color: var(--green); }
 
-.cta {
+.start-btn {
   display: block;
   width: 100%;
-  padding: 20px;
-  background: #00ff00;
+  padding: 16px;
+  background: var(--green);
   color: #000;
   text-align: center;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: var(--font);
   border: none;
+  border-radius: var(--radius);
   cursor: pointer;
+  transition: background .2s;
 }
-.cta:disabled { background: #333; color: #666; cursor: not-allowed; }
+.start-btn:hover { background: var(--green-hover); }
+.start-btn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
 
-.note { text-align: center; font-size: 12px; color: #444; margin-top: 16px; }
+.landing-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 12px;
+}
 
-/* NOTEBOOK */
+.how-it-works {
+  margin-top: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.how-it-works h3 {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.how-step {
+  display: flex;
+  gap: 12px;
+  padding: 8px 0;
+}
+.how-step .step-num {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--green-dim);
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+.how-step .step-text {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.5;
+}
+
+/* === NOTEBOOK === */
 .agent-bar {
   display: flex;
   justify-content: space-between;
-  padding: 16px;
-  background: #111;
-  border: 1px solid #222;
-  margin-bottom: 30px;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
   font-size: 12px;
 }
-.agent-bar .dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  background: #00ff00;
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.agent-dot {
+  width: 8px; height: 8px;
+  background: var(--green);
   border-radius: 50%;
-  margin-right: 8px;
   animation: pulse 2s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-.agent-bar .dot.dead { background: #ff4444; animation: none; }
-.agent-bar .status { color: #00ff00; }
-.agent-bar .status.dead { color: #ff4444; }
-.agent-bar .timer { color: #666; }
-.agent-bar .timer strong { color: #00ff00; }
+.agent-dot.done { background: var(--text-dim); animation: none; }
+.agent-label { color: var(--green); font-weight: 500; }
+.agent-label.done { color: var(--text-muted); }
+.agent-timer { color: var(--text-muted); }
+.agent-timer strong { color: var(--green); }
 
-.header { margin-bottom: 30px; }
-.header h2 { font-size: 20px; margin-bottom: 8px; }
-.header h2 .topic { color: #00ff00; }
-.header p { color: #666; font-size: 13px; }
+.nb-header { margin-bottom: 24px; }
+.nb-header h2 { font-size: 18px; margin-bottom: 4px; }
+.nb-header h2 .topic { color: var(--green); }
+.nb-header p { font-size: 13px; color: var(--text-muted); }
 
-.progress { margin-bottom: 30px; }
-.progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #666; margin-bottom: 8px; }
-.progress-bar { height: 4px; background: #222; border-radius: 2px; }
-.progress-fill { height: 100%; background: #00ff00; border-radius: 2px; }
-
-.cell {
-  background: #111;
-  border: 1px solid #222;
-  border-left: 3px solid #00ff00;
-  padding: 24px;
-  margin-bottom: 24px;
+.progress-wrap { margin-bottom: 24px; }
+.progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
 }
-.cell.locked { opacity: 0.4; pointer-events: none; border-left-color: #333; }
-.cell-day { font-size: 11px; color: #00ff00; margin-bottom: 16px; }
-.cell-q { font-size: 16px; margin-bottom: 20px; line-height: 1.5; }
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width .3s;
+}
+
+/* Today's cell */
+.cell {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.cell.locked { opacity: 0.4; pointer-events: none; border-left-color: var(--border); }
+.cell-day {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--green);
+  margin-bottom: 12px;
+}
+.cell-q {
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
 .cell textarea {
   width: 100%;
   min-height: 120px;
-  background: #0a0a0a;
-  border: 1px solid #333;
-  padding: 16px;
-  color: #fff;
-  font-family: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 14px;
+  color: var(--text);
+  font-family: var(--font);
   font-size: 14px;
   resize: vertical;
-  margin-bottom: 12px;
+  outline: none;
+  margin-bottom: 10px;
 }
-.cell textarea:focus { outline: none; border-color: #00ff00; }
-.cell-footer { display: flex; justify-content: space-between; align-items: center; }
-.cell-footer .hint { font-size: 11px; color: #444; }
+.cell textarea:focus { border-color: var(--green); }
+.cell-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.cell-footer .hint { font-size: 11px; color: var(--text-dim); }
 .cell-footer button {
-  padding: 12px 24px;
-  background: #00ff00;
+  padding: 10px 20px;
+  background: var(--green);
   color: #000;
   border: none;
-  font-family: inherit;
-  font-weight: bold;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
 }
+.cell-footer button:hover { background: var(--green-hover); }
 
-.past { margin-top: 40px; }
-.past h3 { font-size: 11px; color: #666; margin-bottom: 16px; }
-.past-entry {
-  background: #111;
-  border: 1px solid #222;
-  padding: 16px;
+/* Paywall (after day 1) */
+.nb-paywall {
+  background: var(--surface);
+  border: 1px dashed var(--green-dim);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.nb-paywall h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+.nb-paywall p {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+.nb-paywall a {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--green);
+  color: #000;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: var(--radius);
+}
+
+/* Past entries */
+.past { margin-top: 32px; }
+.past h3 {
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
   margin-bottom: 12px;
 }
-.past-entry-head { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 8px; }
-.past-entry-day { color: #00ff00; }
-.past-entry-date { color: #444; }
-.past-entry-q { font-size: 12px; color: #666; margin-bottom: 8px; }
-.past-entry-a { font-size: 14px; line-height: 1.5; }
+.past-entry {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 8px;
+}
+.past-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  margin-bottom: 6px;
+}
+.past-day { color: var(--green); }
+.past-date { color: var(--text-dim); }
+.past-q { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+.past-a { font-size: 14px; line-height: 1.5; }
 
-/* EXPIRED */
-.expired-box {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(10,10,10,0.95);
-  display: none;
+/* === FOOTER === */
+.ft {
+  display: flex;
   align-items: center;
-  justify-content: center;
-  z-index: 100;
+  padding: 0 var(--pad);
+  height: 44px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  font-size: 12px;
+  background: var(--bg);
 }
-.expired-box.show { display: flex; }
-.expired-inner {
-  text-align: center;
-  padding: 40px;
-  max-width: 400px;
-}
-.expired-inner h2 { font-size: 24px; margin-bottom: 16px; color: #ffaa00; }
-.expired-inner p { color: #888; margin-bottom: 24px; line-height: 1.6; }
-.expired-inner .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-.expired-inner .btn-secondary {
-  padding: 12px 24px;
-  background: #222;
-  color: #888;
-  border: 1px solid #333;
-  font-family: inherit;
-  cursor: pointer;
-}
+.ft a { color: var(--text-muted); }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
 </style>
-<!-- SEO/AEO/LLMEO Head -->
-<title>28-Day Digital Notebook - Privacy-First Journaling</title>
-<meta name="description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
-<meta name="keywords" content="28-day notebook, digital journal, privacy notebook, local storage">
-<meta name="author" content="Death2Data">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://death2data.com/tools/notebook.html">
-
-<!-- Open Graph (Facebook, LinkedIn, Discord) -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Death2Data">
-<meta property="og:title" content="28-Day Digital Notebook - Privacy-First Journaling">
-<meta property="og:description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
-<meta property="og:url" content="https://death2data.com/notebook.html">
-<meta property="og:image" content="https://death2data.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
-
-<!-- Twitter Cards -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@death2data">
-<meta name="twitter:creator" content="@death2data">
-<meta name="twitter:title" content="28-Day Digital Notebook - Privacy-First Journaling">
-<meta name="twitter:description" content="Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.">
-<meta name="twitter:image" content="https://death2data.com/og-image.png">
-
-<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "28-Day Digital Notebook - Privacy-First Journaling",
-  "description": "Digital-first notebook with 28-day cycles. Unlimited topics, stored locally. Print at D2D events.",
-  "url": "https://death2data.com/notebook.html",
-  "provider": {
-    "@type": "Organization",
-    "name": "Death2Data",
-    "url": "https://death2data.com",
-    "email": "matt@death2data.com"
-  }
-}
-</script>
-
-
-<!-- Favicon -->
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- PWA -->
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
-
 </head>
 <body>
 
-<div class="container">
-  <div class="brand">DEATH2DATA</div>
-  
+<!-- HEADER -->
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html">Tools</a>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
   <!-- PAGE: LANDING -->
   <div class="page" id="pageLanding">
-    <h1><span class="green">$1</span> for 28 days</h1>
-    <p class="subtitle">Pick a topic. Answer one question per day. Get a physical notebook at the end.</p>
-    
+    <div class="landing-title">28-day <span class="accent">notebook</span></div>
+    <p class="landing-sub">Pick any topic. Get one question per day. Write your answer. Everything stays on your device.</p>
+
     <div class="topic-box">
       <label>WHAT DO YOU WANT TO EXPLORE?</label>
       <input type="text" id="topicInput" placeholder="fermentation, grief, starting a business...">
     </div>
-    
-    <button class="cta" id="payBtn" disabled>Enter a topic first</button>
-    <p class="note">One-time payment. No account needed.</p>
+
+    <button class="start-btn" id="startBtn" disabled>Type a topic to start</button>
+    <p class="landing-note">Day 1 is free. Full 28 days with membership.</p>
+
+    <div class="how-it-works">
+      <h3>HOW IT WORKS</h3>
+      <div class="how-step">
+        <span class="step-num">01</span>
+        <span class="step-text">Pick any topic you want to explore</span>
+      </div>
+      <div class="how-step">
+        <span class="step-num">02</span>
+        <span class="step-text">Answer one question per day — stored locally, never sent anywhere</span>
+      </div>
+      <div class="how-step">
+        <span class="step-num">03</span>
+        <span class="step-text">After 28 days, download your notebook as a file</span>
+      </div>
+    </div>
   </div>
-  
+
   <!-- PAGE: NOTEBOOK -->
   <div class="page" id="pageNotebook">
     <div class="agent-bar">
-      <div>
-        <span class="dot" id="agentDot"></span>
-        <span>AGENT: </span>
-        <span class="status" id="agentStatus">ACTIVE</span>
+      <div class="agent-status">
+        <div class="agent-dot" id="agentDot"></div>
+        <span class="agent-label" id="agentLabel">ACTIVE</span>
       </div>
-      <div class="timer" id="agentTimer"><strong>--</strong> days left</div>
+      <div class="agent-timer" id="agentTimer"><strong>--</strong> days left</div>
     </div>
-    
-    <div class="header">
-      <h2>Learning <span class="topic" id="notebookTopic">--</span></h2>
+
+    <div class="nb-header">
+      <h2>Exploring <span class="topic" id="nbTopic">--</span></h2>
       <p>One question per day for 28 days</p>
     </div>
-    
-    <div class="progress">
-      <div class="progress-label">
+
+    <div class="progress-wrap">
+      <div class="progress-meta">
         <span>Progress</span>
         <span id="progressText">0 / 28</span>
       </div>
@@ -277,46 +422,40 @@ h1 .green { color: #00ff00; }
         <div class="progress-fill" id="progressFill" style="width:0%"></div>
       </div>
     </div>
-    
+
+    <div id="paywallSlot"></div>
+
     <div class="cell" id="todayCell">
       <div class="cell-day" id="cellDay">DAY 1</div>
-      <div class="cell-q" id="cellQuestion">Loading...</div>
+      <div class="cell-q" id="cellQ">Loading...</div>
       <textarea id="cellInput" placeholder="Write your thoughts..."></textarea>
       <div class="cell-footer">
         <span class="hint" id="saveHint"></span>
-        <button onclick="saveEntry()">Save →</button>
+        <button onclick="saveEntry()">Save</button>
       </div>
     </div>
-    
+
     <div class="past">
       <h3>PREVIOUS ENTRIES</h3>
       <div id="pastEntries"></div>
     </div>
   </div>
+
 </div>
 
-<!-- EXPIRED OVERLAY -->
-<div class="expired-box" id="expiredBox">
-  <div class="expired-inner">
-    <h2>🎉 28 Days Complete</h2>
-    <p>Your agent has finished its cycle. Download your notebook or start a new journey.</p>
-    <div class="btns">
-      <button class="btn-secondary" onclick="downloadNotebook()">Download</button>
-      <button class="cta" onclick="startNew()">New Notebook ($1)</button>
-    </div>
-  </div>
+<!-- FOOTER -->
+<div class="ft">
+  <a href="/about.html">about</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
 </div>
 
 <script>
-// ========================================
-// CONFIG
-// ========================================
-
-// YOUR STRIPE PAYMENT LINK - get from Stripe Dashboard → Payment Links
-// Set success URL to: https://yoursite.com/?paid=1
 const STRIPE_LINK = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
+const STORAGE_KEY = 'd2d_notebook';
 
-// Questions (would come from Ollama eventually)
 const QUESTIONS = [
   "What do you already know about {topic}?",
   "Why does {topic} interest you?",
@@ -348,65 +487,46 @@ const QUESTIONS = [
   "Write a letter to past-you about {topic}."
 ];
 
-// ========================================
-// STATE
-// ========================================
-const STORAGE_KEY = 'd2d_notebook';
 let data = null;
 
-// ========================================
-// INIT
-// ========================================
+// Check D2D membership
+function isMember() {
+  const token = localStorage.getItem('d2d_token');
+  return !!token;
+}
+
 function init() {
   // Check if returning from Stripe
-  const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(location.search);
   if (params.get('paid') === '1') {
-    // They just paid! Start their notebook
     const topic = localStorage.getItem('d2d_pending_topic') || 'your topic';
     localStorage.removeItem('d2d_pending_topic');
-    
     data = {
-      topic: topic,
+      topic,
       startDate: Date.now(),
-      expires: Date.now() + (28 * 24 * 60 * 60 * 1000), // 28 days
+      paid: true,
       entries: {}
     };
     save();
-    
-    // Clean URL
-    window.history.replaceState({}, '', window.location.pathname);
+    history.replaceState({}, '', location.pathname);
   } else {
-    // Load existing
     data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   }
-  
   render();
 }
 
-// ========================================
-// RENDER
-// ========================================
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 function render() {
-  // No data = show landing
   if (!data) {
     showPage('pageLanding');
     setupLanding();
     return;
   }
-  
-  // Check expiry
-  const now = Date.now();
-  const daysLeft = Math.ceil((data.expires - now) / (24 * 60 * 60 * 1000));
-  
-  if (daysLeft <= 0) {
-    showPage('pageNotebook');
-    renderNotebook(0);
-    document.getElementById('expiredBox').classList.add('show');
-    return;
-  }
-  
   showPage('pageNotebook');
-  renderNotebook(daysLeft);
+  renderNotebook();
 }
 
 function showPage(id) {
@@ -416,147 +536,127 @@ function showPage(id) {
 
 function setupLanding() {
   const input = document.getElementById('topicInput');
-  const btn = document.getElementById('payBtn');
-  
+  const btn = document.getElementById('startBtn');
+
   input.addEventListener('input', () => {
     if (input.value.trim()) {
       btn.disabled = false;
-      btn.textContent = `Start "${input.value.trim()}" → $1`;
+      btn.textContent = 'Start day 1 — free';
     } else {
       btn.disabled = true;
-      btn.textContent = 'Enter a topic first';
+      btn.textContent = 'Type a topic to start';
     }
   });
-  
+
   btn.addEventListener('click', () => {
-    localStorage.setItem('d2d_pending_topic', input.value.trim());
-    window.location.href = STRIPE_LINK;
+    const topic = input.value.trim();
+    if (!topic) return;
+    // Start immediately — day 1 is free
+    data = {
+      topic,
+      startDate: Date.now(),
+      paid: isMember(),
+      entries: {}
+    };
+    save();
+    render();
   });
 }
 
-function renderNotebook(daysLeft) {
+function renderNotebook() {
   const topic = data.topic;
   const entries = data.entries || {};
   const completed = Object.keys(entries).length;
-  
-  // Calculate current day (1-28)
   const daysSinceStart = Math.floor((Date.now() - data.startDate) / (24*60*60*1000)) + 1;
   const currentDay = Math.min(Math.max(1, daysSinceStart), 28);
-  
-  // Agent status
+  const canAccess = currentDay === 1 || data.paid || isMember();
+
+  // Agent bar
   const dot = document.getElementById('agentDot');
-  const status = document.getElementById('agentStatus');
+  const label = document.getElementById('agentLabel');
   const timer = document.getElementById('agentTimer');
-  
+  const daysLeft = Math.max(0, 28 - daysSinceStart + 1);
+
   if (daysLeft <= 0) {
-    dot.classList.add('dead');
-    status.classList.add('dead');
-    status.textContent = 'COMPLETE';
-  } else if (daysLeft <= 3) {
-    status.textContent = 'DECAYING';
-    status.style.color = '#ffaa00';
+    dot.classList.add('done');
+    label.classList.add('done');
+    label.textContent = 'COMPLETE';
+    timer.innerHTML = '<strong>0</strong> days left';
+  } else {
+    timer.innerHTML = `<strong>${daysLeft}</strong> days left`;
   }
-  timer.innerHTML = `<strong>${Math.max(0, daysLeft)}</strong> days left`;
-  
-  // Header
-  document.getElementById('notebookTopic').textContent = topic;
-  
-  // Progress
+
+  // Header + progress
+  document.getElementById('nbTopic').textContent = topic;
   document.getElementById('progressText').textContent = `${completed} / 28`;
   document.getElementById('progressFill').style.width = `${(completed/28)*100}%`;
-  
-  // Today's cell
-  const cell = document.getElementById('todayCell');
-  const question = QUESTIONS[currentDay - 1] || QUESTIONS[0];
-  
-  document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
-  document.getElementById('cellQuestion').textContent = question.replace(/{topic}/g, topic);
-  document.getElementById('cellInput').value = entries[currentDay]?.answer || '';
-  
-  if (daysLeft <= 0) {
-    cell.classList.add('locked');
+
+  // Paywall check — show after day 1 if not paid
+  const paywallSlot = document.getElementById('paywallSlot');
+  if (!canAccess) {
+    let stripeUrl = STRIPE_LINK;
+    const email = localStorage.getItem('d2d_email');
+    if (email) stripeUrl += '?prefilled_email=' + encodeURIComponent(email);
+    paywallSlot.innerHTML = `
+      <div class="nb-paywall">
+        <h3>Day 1 complete</h3>
+        <p>Unlock all 28 days with a $1/month D2D membership.</p>
+        <a href="${stripeUrl}">Continue for $1/mo</a>
+      </div>`;
+
+    // Lock the cell
+    document.getElementById('todayCell').classList.add('locked');
+    document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
+    document.getElementById('cellQ').textContent = QUESTIONS[currentDay - 1].replace(/{topic}/g, topic);
     document.getElementById('cellInput').disabled = true;
+  } else {
+    paywallSlot.innerHTML = '';
+    const cell = document.getElementById('todayCell');
+    cell.classList.remove('locked');
+    document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
+    document.getElementById('cellQ').textContent = QUESTIONS[currentDay - 1].replace(/{topic}/g, topic);
+    document.getElementById('cellInput').value = entries[currentDay]?.answer || '';
+    document.getElementById('cellInput').disabled = daysLeft <= 0;
+    if (daysLeft <= 0) cell.classList.add('locked');
   }
-  
+
   // Past entries
   const past = document.getElementById('pastEntries');
-  const days = Object.keys(entries).filter(d => d != currentDay).sort((a,b) => b-a);
-  
+  const days = Object.keys(entries).filter(d => d != currentDay).sort((a,b) => b - a);
   if (days.length === 0) {
-    past.innerHTML = '<p style="color:#444;font-size:13px">No previous entries yet</p>';
+    past.innerHTML = '<p style="color:var(--text-dim);font-size:13px;">No previous entries yet</p>';
   } else {
     past.innerHTML = days.map(day => {
       const e = entries[day];
       const q = QUESTIONS[day-1] || QUESTIONS[0];
-      return `
-        <div class="past-entry">
-          <div class="past-entry-head">
-            <span class="past-entry-day">DAY ${day}</span>
-            <span class="past-entry-date">${new Date(e.date).toLocaleDateString()}</span>
-          </div>
-          <div class="past-entry-q">${q.replace(/{topic}/g, topic)}</div>
-          <div class="past-entry-a">${e.answer}</div>
+      return `<div class="past-entry">
+        <div class="past-head">
+          <span class="past-day">DAY ${day}</span>
+          <span class="past-date">${new Date(e.date).toLocaleDateString()}</span>
         </div>
-      `;
+        <div class="past-q">${q.replace(/{topic}/g, topic)}</div>
+        <div class="past-a">${e.answer}</div>
+      </div>`;
     }).join('');
   }
 }
 
-// ========================================
-// ACTIONS
-// ========================================
 function saveEntry() {
   const input = document.getElementById('cellInput');
   const answer = input.value.trim();
   if (!answer) return;
-  
+
   const daysSinceStart = Math.floor((Date.now() - data.startDate) / (24*60*60*1000)) + 1;
   const currentDay = Math.min(Math.max(1, daysSinceStart), 28);
-  
+
   if (!data.entries) data.entries = {};
-  data.entries[currentDay] = {
-    answer,
-    date: Date.now()
-  };
-  
+  data.entries[currentDay] = { answer, date: Date.now() };
   save();
-  document.getElementById('saveHint').textContent = '✓ Saved';
-  
-  const daysLeft = Math.ceil((data.expires - Date.now()) / (24*60*60*1000));
-  renderNotebook(daysLeft);
+
+  document.getElementById('saveHint').textContent = 'Saved';
+  renderNotebook();
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function downloadNotebook() {
-  let md = `# ${data.topic}\n## 28-Day Notebook\n\n`;
-  
-  for (let i = 1; i <= 28; i++) {
-    const q = QUESTIONS[i-1] || QUESTIONS[0];
-    const e = data.entries?.[i];
-    md += `### Day ${i}\n**${q.replace(/{topic}/g, data.topic)}**\n\n`;
-    md += e ? `${e.answer}\n\n` : `_(no entry)_\n\n`;
-  }
-  
-  const blob = new Blob([md], {type: 'text/markdown'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `${data.topic.replace(/\s+/g,'-')}-notebook.md`;
-  a.click();
-}
-
-function startNew() {
-  localStorage.removeItem(STORAGE_KEY);
-  data = null;
-  document.getElementById('expiredBox').classList.remove('show');
-  render();
-}
-
-// ========================================
-// GO
-// ========================================
 init();
 </script>
 </body>
