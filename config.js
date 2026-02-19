@@ -29,7 +29,7 @@ const D2D_CONFIG = {
   // Staging (staging.death2data.com or GitHub staging branch)
   staging: {
     env: 'staging',
-    apiUrl: 'https://d2d-api.mattmauersp.workers.dev',
+    apiUrl: 'https://fortune0-com.onrender.com',
     siteUrl: 'https://staging.death2data.com',
     stripe: {
       publishableKey: window.ENV_STRIPE_PUBLISHABLE_KEY || '',
@@ -47,7 +47,7 @@ const D2D_CONFIG = {
   // Production (death2data.com)
   prod: {
     env: 'production',
-    apiUrl: 'https://d2d-api.mattmauersp.workers.dev',
+    apiUrl: 'https://fortune0-com.onrender.com',
     siteUrl: 'https://death2data.com',
     stripe: {
       publishableKey: window.ENV_STRIPE_PUBLISHABLE_KEY || '',

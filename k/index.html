@@ -84,7 +84,7 @@ async function load() {
   
   // Get prompt from WOTD or use default
   try {
-    const wotd = await fetch('https://api.death2data.com/wotd').then(r => r.json());
+    const wotd = await fetch('https://fortune0-com.onrender.com/wotd').then(r => r.json());
     if (wotd.word === keyword) {
       document.getElementById('prompt').textContent = wotd.prompt;
     } else {
@@ -96,7 +96,7 @@ async function load() {
   
   // Load existing perspectives
   try {
-    const data = await fetch(`https://api.death2data.com/perspectives?keyword=${keyword}`).then(r => r.json());
+    const data = await fetch(`https://fortune0-com.onrender.com/perspectives?keyword=${keyword}`).then(r => r.json());
     if (data.perspectives && data.perspectives.length > 0) {
       document.getElementById('others').style.display = 'block';
       document.getElementById('perspectives').innerHTML = data.perspectives
@@ -111,7 +111,7 @@ async function submit() {
   const response = document.getElementById('response').value.trim();
   if (!response) return;
   
-  await fetch('https://api.death2data.com/perspective', {
+  await fetch('https://fortune0-com.onrender.com/perspective', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ keyword, perspective: response })

@@ -919,16 +919,29 @@ function retryStory() {
 // ═══ FETCH ═══
 async function loadStory(url) {
   try {
-    const token = localStorage.getItem('d2d_token');
-    const headers = {};
-    if (token) headers['Authorization'] = 'Bearer ' + token;
+    let rawHtml;
+    const parsedUrl = new URL(url);
+    const isLocal = parsedUrl.hostname === 'death2data.com' || parsedUrl.hostname === 'deathtodata.github.io' || parsedUrl.hostname === location.hostname;
 
-    const r = await fetch(`${API}/fetch?url=${encodeURIComponent(url)}`, { headers });
-    const data = await r.json();
-    if (data.error) throw new Error(data.error);
+    if (isLocal) {
+      // Same-origin pages — fetch directly, no server needed
+      const localPath = parsedUrl.pathname;
+      const r = await fetch(localPath);
+      if (!r.ok) throw new Error('Page not found');
+      rawHtml = await r.text();
+    } else {
+      // External pages — use the proxy server
+      const token = localStorage.getItem('d2d_token');
+      const headers = {};
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      const r = await fetch(`${API}/fetch?url=${encodeURIComponent(url)}`, { headers });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error);
+      rawHtml = data.content;
+    }
 
     const parser = new DOMParser();
-    const doc = parser.parseFromString(data.content, 'text/html');
+    const doc = parser.parseFromString(rawHtml, 'text/html');
     doc.querySelectorAll('script,style,nav,footer,header,iframe,noscript,.ad,.ads,.sidebar,.menu,.nav,aside,[role="navigation"],[role="banner"]').forEach(el => el.remove());
 
     const title = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || url;

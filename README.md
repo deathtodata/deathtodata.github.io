@@ -1,199 +1,150 @@
-# Death2Data - Privacy-First Search & Tools
+# Death2Data
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Live Site](https://img.shields.io/badge/live-death2data.com-brightgreen)](https://death2data.com)
+> Privacy search engine. $1/mo gets your email across 230 domains.
 
-> Privacy-focused search engine and digital toolkit. No tracking. No ads. No data collection.
+**Live:** [death2data.com](https://death2data.com)
 
-## What is Death2Data?
+## What It Is
 
-Death2Data is a privacy-first platform offering:
+Search the web without being tracked. $1/month unlocks full web results and gives you an email identity across 230+ domains (death2data.com, and growing). Free tier gets basic search + all privacy tools.
 
-- **Private Search** - Browse the web without being tracked
-- **QR Code Generator** - Create QR codes for any URL
-- **PDF Processor** - Process PDFs without uploading to third-party servers
-- **Digital Notebook** - 28-day cycling notebook (automatic data deletion)
-- **Identity Vault** - Secure storage for personal information
-- **Word of the Day** - Daily privacy & security terms
+## How It Works
 
-## Membership
+```
+Search (free) → Story Mode (read any page) → Notebook (save notes)
+                                                    ↓
+                                            $1/mo for full results
+```
 
-**$1 every 28 days** for full access to all tools.
+- **Search** — privacy-first web search. Free tier shows limited results, $1/mo unlocks everything.
+- **Story Mode** — read any webpage in a clean, card-based format. No ads, no tracking.
+- **Notebook** — 28-day cycling notebook. Take notes, pin domains, auto-deletes for privacy.
+- **Tools** — leak score checker, data sanitizer, QR generator, identity vault. All free, all client-side.
 
-- No contracts or commitments
-- Cancel anytime
-- All tools included
-- No hidden fees
+## Stack
 
-## Tech Stack
-
-- **Frontend:** Static HTML/CSS/JavaScript hosted on GitHub Pages
-- **Backend:** Cloudflare Workers API (`d2d-api.mattmauersp.workers.dev`)
-- **Payments:** Stripe ($1 every 28 days)
-- **Hosting:** GitHub Pages (frontend) + Cloudflare Workers (backend)
-- **CI/CD:** GitHub Actions for automated testing and deployment
+| Layer | Tech | Where |
+|-------|------|-------|
+| Frontend | Static HTML/CSS/JS | GitHub Pages ([deathtodata.github.io](https://github.com/deathtodata/deathtodata.github.io)) |
+| Backend | Node.js / Express | Render free tier ([fortune0-site](https://github.com/deathtodata/fortune0-site)) |
+| Payments | Stripe ($1/mo) | [Hosted link](https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00) |
+| Auth | JWT tokens | Backend issues, frontend stores in localStorage |
+| Domain | death2data.com | GitHub Pages CNAME |
 
 ## Project Structure
 
 ```
-/
-├── public/              # Public-facing site pages
-│   ├── index.html      # Homepage
-│   ├── browse.html     # Private browsing
-│   ├── join.html       # Signup page
-│   └── pricing.html    # Pricing info
-│
-├── admin/              # Admin dashboards (requires auth)
-│   ├── dashboard.html  # Main admin dashboard
-│   ├── admin.html      # Admin controls
-│   └── manage.html     # User management
-│
-├── tools/              # Member tools
-│   ├── qr-generator.html
-│   ├── identity-vault.html
-│   └── account.html
-│
-├── docs/               # Documentation
-│   ├── faq.html
-│   └── guides/
-│
-├── k/                  # Word of the Day system
-│   └── index.html
-│
-├── css/                # Stylesheets
-├── js/                 # JavaScript modules
-│   ├── auth.js        # Authentication
-│   ├── security.js    # Security utilities (XSS protection, etc.)
-│   └── env.js         # Environment configuration
-│
-└── .github/            # CI/CD workflows
+/                          ← GitHub Pages root
+├── index.html             ← Homepage: search + $1 CTA + tool links
+├── story.html             ← Story Mode reader
+├── about.html             ← About page
+├── revenue.html           ← Revenue/transparency
+├── tools.html             ← Tools hub
+├── tools/
+│   ├── notebook.html      ← 28-day notebook
+│   ├── leak-score.html    ← HIBP email breach checker
+│   ├── sanitizer.html     ← Data sanitizer
+│   ├── qr-generator.html  ← QR code generator
+│   ├── identity-vault.html← Encrypted local vault
+│   ├── notary.html        ← Document notary (Ollama)
+│   └── account.html       ← Account settings
+├── admin/                 ← Admin dashboard (auth required)
+├── marketing/             ← Brochures, handouts, architecture docs
+├── docs/                  ← Documentation pages
+├── js/                    ← Shared JS (auth, security, env, ollama)
+├── css/                   ← Shared CSS
+├── images/                ← PWA icons (192, 512)
+├── d2d-image.png          ← Shield logo (main brand mark)
+├── d2d-logo.svg           ← Eye-X anti-surveillance icon
+├── logo.svg               ← Green "DEATH2DATA" wordmark
+├── logo-white.svg         ← Light background version
+├── favicon.svg            ← Browser tab icon
+└── config.js              ← Environment auto-detection
 ```
 
-## Getting Started
+## Assets & Branding
 
-### Local Development
+| File | What | Use |
+|------|------|-----|
+| `d2d-image.png` | 3D shield icon | Main brand mark, social, print |
+| `d2d-logo.svg` | Eye with X | Anti-surveillance icon |
+| `logo.svg` | Green "DEATH2DATA" on black | Header, dark backgrounds |
+| `logo-white.svg` | "D2D / DEATH2DATA" | Light backgrounds, print |
+| `og-image.png` | Social sharing card | og:image meta tag |
+| `favicon.svg` | Green "D2D" on black | Browser tab |
+| `apple-touch-icon.png` | App icon | iOS home screen |
+| `images/logo-192.png` | 192px icon | PWA manifest |
+| `images/logo-512.png` | 512px icon | PWA manifest |
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/deathtodata/deathtodata.github.io.git
-   cd deathtodata.github.io
-   ```
+**Colors:**
+- Background: `#0a0a0a`
+- Green: `#00cc44`
+- Surface: `#111`
+- Border: `#1e1e1e`
+- Text: `#e0e0e0`
+- Font: Inter (body), JetBrains Mono (brand)
 
-2. Set up environment variables (copy `.env.example` to `.env`):
-   ```bash
-   cp .env.example .env
-   ```
+## What Works Without the Server
 
-3. Edit `.env` with your local configuration:
-   ```env
-   STRIPE_PUBLISHABLE_KEY=pk_test_...
-   D2D_API_URL=http://localhost:8787
-   NODE_ENV=development
-   ```
+These work on GitHub Pages alone (no Render backend needed):
 
-4. Serve the site locally:
-   ```bash
-   python3 -m http.server 3000
-   # or
-   npx serve .
-   ```
+- Notebook (localStorage)
+- QR Generator (client-side)
+- Data Sanitizer (client-side)
+- Leak Score (public HIBP API)
+- Identity Vault (client-side encrypted)
+- Story Mode for D2D's own pages (same-origin fetch)
+- About, Privacy, Terms, Revenue pages
 
-5. Visit `http://localhost:3000`
+## What Needs the Backend
 
-### Environment Variables
+These hit the Render free tier server (30-50s cold start):
 
-The site uses environment variables for sensitive configuration:
+- Search (`/api/search`)
+- Story Mode for external URLs (`/fetch`)
+- Auth (`/api/signup`, `/api/login`)
+- Stripe webhook (`/api/stripe-webhook`)
 
-- `STRIPE_PUBLISHABLE_KEY` - Stripe publishable key (pk_live_... or pk_test_...)
-- `STRIPE_PRICE_ID` - Stripe price ID for the $1/28-day subscription
-- `D2D_API_URL` - Backend API URL (defaults to production Cloudflare Worker)
-- `NODE_ENV` - Environment (development/staging/production)
-
-See `.env.example` for the complete list and `js/env.js` for how they're loaded.
-
-## Security
-
-Death2Data takes security seriously:
-
-- ✅ All secrets stored as environment variables (never committed to git)
-- ✅ XSS protection via `js/security.js` sanitization
-- ✅ HTTPS enforced on all production pages
-- ✅ Client-side rate limiting (server-side enforcement required)
-- ✅ URL validation to prevent SSRF attacks
-- 🚧 **TODO:** Server-side authentication (currently client-side only)
-
-**Found a security vulnerability?** Please report it privately to: matt@death2data.com
-
-See [SECURITY_FIX_PLAN.md](SECURITY_FIX_PLAN.md) for ongoing security improvements.
-
-## Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-Quick start:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Make your changes
-4. Run security audit: `python .github/scripts/site-audit.py`
-5. Commit your changes (`git commit -m 'Add amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
-
-## Testing
-
-Run the automated site audit:
+## Running Locally
 
 ```bash
-cd .github/scripts
-python site-audit.py
+git clone https://github.com/deathtodata/deathtodata.github.io.git
+cd deathtodata.github.io
+python3 -m http.server 3000
+# → http://localhost:3000
 ```
 
-This checks for:
-- Broken links
-- JavaScript syntax errors
-- Missing security.js includes
-- Hardcoded secrets
-- Accessibility issues
+For backend features, also run [fortune0-site](https://github.com/deathtodata/fortune0-site) locally.
 
-## Deployment
+## Stripe
 
-The site automatically deploys to GitHub Pages when changes are pushed to the `main` branch.
+- Payment link: `https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00`
+- Price: $1/month
+- Webhook upgrades user tier from `free` to `active`
+- Email pre-filled from auth when possible
 
-**Production URL:** https://death2data.com
-**Staging URL:** https://staging.death2data.com (if configured)
+## Known Issues
 
-## Roadmap
+- Render free tier cold starts (30-50s) — search shows warm-up message after 6s
+- 9 orphan HTML files need cleanup (see cleanup section below)
+- 10+ pages still have inconsistent colors/headers
+- Git lock files may need manual cleanup
 
-- [x] Privacy-first search engine
-- [x] QR code generator
-- [x] 28-day cycling notebook
-- [x] Word of the Day system
-- [ ] Server-side authentication (currently client-side only)
-- [ ] PDF processor (offline mode)
-- [ ] Browser extension
-- [ ] Mobile apps (iOS/Android)
-- [ ] Multi-language support
+## Cleanup Needed
+
+**Orphan pages** (not linked from anywhere):
+`welcome.html`, `members.html`, `gate.html`, `auth.html`, `onboard.html`, `restore.html`, `index-old.html`, `index-v2.html`, `test-live.html`
+
+**Root-level scripts** (one-time patches, should be deleted or moved):
+`check_prod.py`, `patch_frontend.py`, `patch_reauth.py`, `patch_tools_auth.py`, `patch_ux.py`, `update_stats.py`, `add-security-js.sh`, `fix-links.sh`, `reorganize.sh`
+
+**Stale docs:**
+`IMPLEMENTATION_SUMMARY.md`, `SECURITY_AUDIT.md`, `SECURITY_FIX_PLAN.md`, `CONTRIBUTING.md`
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-- **Documentation:** [docs/](./docs/)
-- **FAQ:** [docs/faq.html](./docs/faq.html)
-- **Email:** matt@death2data.com
-- **Issues:** [GitHub Issues](https://github.com/deathtodata/deathtodata.github.io/issues)
-
-## Philosophy
-
-Death2Data believes in:
-- **Privacy by Default** - No tracking, no ads, no data collection
-- **Simplicity** - Clean, fast, accessible tools
-- **Transparency** - Open source, auditable code
-- **Affordability** - $1/month for everything
-- **User Control** - Your data, your choice
+Apache 2.0 — see [LICENSE](LICENSE)
 
 ---
 
-**Built with ❤️ for privacy advocates everywhere.**
+Built by Matt. One person. 230 domains. $1/mo.

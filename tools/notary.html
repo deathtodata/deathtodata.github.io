@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IPOMyAgent — Privacy Notary</title>
+<style>
+:root {
+  --gold: #D4AF37;
+  --bg: #000;
+  --surface: #0a0a0a;
+  --surface2: #141414;
+  --border: #1a1a1a;
+  --border-l: #2a2a2a;
+  --white: #FFFFFF;
+  --text: rgba(255,255,255,0.6);
+  --dim: rgba(255,255,255,0.3);
+  --red: #EF476F;
+  --green: #06D6A0;
+  --mono: 'SF Mono', 'Menlo', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── TOP BAR ── */
+.bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(0,0,0,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.bar-brand {
+  font-weight: 700; font-size: 15px; letter-spacing: -0.3px;
+  color: var(--gold);
+}
+.bar-brand span { color: var(--dim); font-weight: 400; font-size: 12px; margin-left: 8px; }
+.bar-actions { display: flex; gap: 8px; align-items: center; }
+.bar-link {
+  color: var(--text); text-decoration: none; font-size: 12px; padding: 4px 8px;
+  border-radius: 6px; transition: color 0.2s;
+}
+.bar-link:hover { color: var(--gold); }
+
+/* ── LAYOUT ── */
+.main { max-width: 740px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── STEPS ── */
+.steps {
+  display: flex; gap: 0; margin-bottom: 32px;
+}
+.step-item {
+  flex: 1; display: flex; align-items: center; gap: 8px;
+  padding: 10px 12px; border-bottom: 2px solid var(--border);
+  color: var(--dim); font-size: 12px; font-weight: 500;
+  cursor: default; transition: all 0.2s;
+}
+.step-item.active {
+  color: var(--gold); border-bottom-color: var(--gold);
+}
+.step-item.done {
+  color: var(--green); border-bottom-color: var(--green);
+}
+.step-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.step-item.done .step-num { background: var(--green); border-color: var(--green); color: #000; }
+
+/* ── PANEL ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+.section-title {
+  font-size: 20px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.4px;
+}
+.section-sub { color: var(--text); font-size: 13px; margin-bottom: 28px; line-height: 1.5; }
+
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px; margin-bottom: 16px;
+}
+.card-title {
+  font-size: 11px; color: var(--dim); text-transform: uppercase;
+  letter-spacing: 1px; margin-bottom: 12px;
+}
+
+/* ── FILE DROP ── */
+.drop-zone {
+  border: 2px dashed var(--border-l);
+  border-radius: 12px; padding: 48px 24px;
+  text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--gold); background: rgba(212,175,55,0.03);
+}
+.drop-zone input[type="file"] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.drop-icon { font-size: 32px; margin-bottom: 12px; }
+.drop-label { color: var(--text); font-size: 13px; }
+.drop-label strong { color: var(--gold); }
+.drop-sub { color: var(--dim); font-size: 11px; margin-top: 6px; }
+
+/* ── FILE INFO ── */
+#file-info {
+  display: none; align-items: center; gap: 12px;
+  background: var(--surface2); border: 1px solid var(--border-l);
+  border-radius: 10px; padding: 14px 16px; margin-top: 12px;
+}
+#file-info .fi-icon { font-size: 24px; }
+#file-info .fi-name { font-weight: 600; font-size: 13px; }
+#file-info .fi-meta { color: var(--dim); font-size: 11px; margin-top: 2px; }
+#file-info .fi-clear {
+  margin-left: auto; color: var(--dim); cursor: pointer; font-size: 16px;
+  background: none; border: none; color: var(--dim); padding: 4px;
+}
+#file-info .fi-clear:hover { color: var(--red); }
+
+/* ── PROGRESS ── */
+.progress-bar-wrap {
+  background: var(--border); border-radius: 4px; height: 4px;
+  margin: 12px 0; overflow: hidden; display: none;
+}
+.progress-bar-fill {
+  height: 100%; background: var(--gold); border-radius: 4px;
+  transition: width 0.4s ease; width: 0%;
+}
+
+/* ── AI STATUS ── */
+#ai-status {
+  display: none; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--dim); padding: 10px 0;
+}
+.ai-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--gold); animation: pulse 1s infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ── HASH DISPLAY ── */
+.hash-box {
+  background: #0a0a0a; border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--gold); word-break: break-all; line-height: 1.6;
+}
+.hash-label { font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+
+/* ── FORM ELEMENTS ── */
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block; font-size: 11px; color: var(--dim);
+  text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  color: var(--white); padding: 10px 12px; border-radius: 8px;
+  font-size: 13px; font-family: inherit; transition: border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--gold); outline: none;
+}
+.form-group select option { background: #111; }
+
+/* ── TAGS ── */
+.tags-wrap {
+  display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px;
+  cursor: text;
+}
+.tags-wrap:focus-within { border-color: var(--gold); }
+.tag-pill {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3);
+  color: var(--gold); padding: 3px 8px; border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+}
+.tag-pill button {
+  background: none; border: none; color: rgba(212,175,55,0.5);
+  cursor: pointer; font-size: 14px; line-height: 1; padding: 0 0 0 2px;
+}
+.tag-pill button:hover { color: var(--gold); }
+.tag-input {
+  background: none; border: none; outline: none;
+  color: var(--white); font-size: 13px; flex: 1; min-width: 80px; padding: 2px 0;
+}
+.tag-hint { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+/* ── AI TAG SUGGESTIONS ── */
+.ai-suggestions { display: none; margin-top: 8px; }
+.ai-suggestions-label { font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+.ai-suggestion-pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.ai-pill {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border-l);
+  color: var(--dim); padding: 3px 10px; border-radius: 20px;
+  font-size: 12px; cursor: pointer; transition: all 0.15s;
+}
+.ai-pill:hover { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.06); }
+.ai-pill.used { opacity: 0.3; pointer-events: none; }
+
+/* ── AI SUMMARY ── */
+.ai-summary {
+  display: none; background: rgba(212,175,55,0.04);
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 10px; padding: 14px 16px;
+  font-size: 13px; color: var(--text); line-height: 1.6;
+  margin-top: 12px;
+}
+.ai-summary-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+  color: var(--gold); margin-bottom: 8px;
+}
+
+/* ── CLAUSES ── */
+.clause-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.clause-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px;
+  font-size: 12px; color: var(--text);
+}
+.risk-badge {
+  flex-shrink: 0; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 2px 6px; border-radius: 4px;
+}
+.risk-low { background: rgba(6,214,160,0.1); color: var(--green); }
+.risk-medium { background: rgba(255,214,0,0.1); color: #FFD166; }
+.risk-high { background: rgba(239,71,111,0.1); color: var(--red); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  border: none; transition: all 0.2s; text-decoration: none;
+}
+.btn-gold {
+  background: var(--gold); color: #000;
+}
+.btn-gold:hover {
+  box-shadow: 0 0 24px rgba(212,175,55,0.4); transform: scale(1.02);
+}
+.btn-ghost {
+  background: none; border: 1px solid var(--border); color: var(--text);
+}
+.btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+.btn:disabled {
+  opacity: 0.4; cursor: not-allowed; transform: none !important;
+  box-shadow: none !important;
+}
+.btn-row { display: flex; gap: 10px; align-items: center; margin-top: 20px; }
+
+/* ── PRIVACY NOTE ── */
+.privacy-note {
+  display: flex; align-items: flex-start; gap: 10px;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 16px; margin: 16px 0;
+  font-size: 12px; color: var(--text); line-height: 1.5;
+}
+.privacy-icon { font-size: 18px; flex-shrink: 0; }
+
+/* ── IDENTITY STATUS ── */
+#identity-banner {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; border-radius: 10px; margin-bottom: 20px;
+  font-size: 12px; border: 1px solid var(--border-l);
+  background: var(--surface);
+}
+#identity-banner.loaded { border-color: rgba(6,214,160,0.3); background: rgba(6,214,160,0.04); }
+#identity-banner.error { border-color: rgba(239,71,111,0.3); background: rgba(239,71,111,0.04); }
+.id-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); flex-shrink: 0; }
+.id-dot.on { background: var(--green); }
+.id-name { font-family: var(--mono); font-size: 12px; color: var(--gold); }
+.id-link { margin-left: auto; color: var(--dim); text-decoration: none; font-size: 11px; }
+.id-link:hover { color: var(--gold); }
+
+/* ── SIGN REVIEW ── */
+.review-grid {
+  display: grid; grid-template-columns: 120px 1fr; gap: 10px 16px;
+  font-size: 13px; padding: 4px 0;
+}
+.review-label { color: var(--dim); font-size: 11px; }
+.review-value { color: var(--white); font-family: var(--mono); font-size: 12px; word-break: break-all; }
+.review-value.normal { font-family: inherit; font-size: 13px; }
+
+/* ── CERTIFICATE ── */
+#certificate { display: none; }
+.cert-box {
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 14px; padding: 28px; text-align: center;
+  background: rgba(212,175,55,0.03); position: relative;
+  overflow: hidden;
+}
+.cert-box::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    45deg, transparent, transparent 20px,
+    rgba(212,175,55,0.015) 20px, rgba(212,175,55,0.015) 21px
+  );
+  pointer-events: none;
+}
+.cert-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
+  color: var(--dim); margin-bottom: 10px;
+}
+.cert-seal { font-size: 40px; margin-bottom: 12px; }
+.cert-doc-name {
+  font-size: 18px; font-weight: 700; color: var(--white);
+  margin-bottom: 6px; letter-spacing: -0.3px;
+}
+.cert-time { color: var(--dim); font-size: 12px; margin-bottom: 18px; }
+.cert-id {
+  font-family: var(--mono); font-size: 11px; color: var(--gold);
+  background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.2);
+  border-radius: 6px; padding: 6px 12px; display: inline-block;
+  margin-bottom: 20px; word-break: break-all;
+}
+.cert-url {
+  font-size: 12px; color: var(--text); margin-bottom: 20px;
+}
+.cert-url a { color: var(--gold); text-decoration: none; }
+.cert-url a:hover { text-decoration: underline; }
+.cert-buttons { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+/* ── REFERRAL CARD ── */
+.ref-card-wrap {
+  border: 1px solid var(--border-l); border-radius: 12px;
+  padding: 20px; margin-top: 20px; text-align: center;
+}
+.ref-card-label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+.ref-card-inner {
+  display: inline-block; border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 10px; padding: 16px 24px;
+  background: rgba(212,175,55,0.04); min-width: 240px;
+}
+.ref-card-brand { font-size: 14px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+.ref-card-tagline { font-size: 11px; color: var(--dim); margin-bottom: 12px; }
+.ref-qr { width: 80px; height: 80px; background: #fff; border-radius: 6px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.ref-qr canvas { display: block; }
+.ref-card-code { font-family: var(--mono); font-size: 11px; color: var(--text); }
+
+/* ── UPGRADE PROMPT ── */
+#upgrade-prompt {
+  display: none; text-align: center; padding: 32px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; margin-top: 20px;
+}
+#upgrade-prompt h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+#upgrade-prompt p { color: var(--text); font-size: 13px; margin-bottom: 20px; line-height: 1.6; }
+
+/* ── MISC ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.text-muted { color: var(--dim); }
+.text-gold { color: var(--gold); }
+.mono { font-family: var(--mono); }
+hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+@media print {
+  body { background: white; color: black; }
+  .bar, .steps, #step-upload, #step-tag, #step-sign-form, .btn-row, #ai-status { display: none !important; }
+  .cert-box { border: 2px solid #D4AF37; }
+}
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <div class="bar-brand">IPOMyAgent <span>Privacy Notary</span></div>
+  <div class="bar-actions">
+    <a class="bar-link" href="/ipomyagent-app">My Documents</a>
+    <a class="bar-link" href="/ipomyagent-landing">About</a>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- Step indicators -->
+  <div class="steps">
+    <div class="step-item active" id="si-1">
+      <div class="step-num">1</div> Upload
+    </div>
+    <div class="step-item" id="si-2">
+      <div class="step-num">2</div> Tag
+    </div>
+    <div class="step-item" id="si-3">
+      <div class="step-num">3</div> Sign
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- STEP 1: UPLOAD -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel active" id="step-upload">
+    <div class="section-title">Upload your document</div>
+    <div class="section-sub">Your file stays in the browser. Nothing is sent to the server yet.</div>
+
+    <div class="privacy-note">
+      <div class="privacy-icon">🔒</div>
+      <div><strong>Zero-knowledge design:</strong> Your document never leaves your device. We only store a cryptographic fingerprint (SHA-256 hash) and your signature — never the document itself.</div>
+    </div>
+
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="file-input" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg">
+      <div class="drop-icon">📄</div>
+      <div class="drop-label">Drop a file or <strong>click to browse</strong></div>
+      <div class="drop-sub">PDF, DOCX, TXT, images — any document</div>
+    </div>
+
+    <div id="file-info">
+      <div class="fi-icon" id="fi-icon">📄</div>
+      <div>
+        <div class="fi-name" id="fi-name"></div>
+        <div class="fi-meta" id="fi-meta"></div>
+      </div>
+      <button class="fi-clear" id="fi-clear" onclick="clearFile()">✕</button>
+    </div>
+
+    <div class="progress-bar-wrap" id="hash-progress-wrap">
+      <div class="progress-bar-fill" id="hash-progress"></div>
+    </div>
+
+    <div class="hash-label" id="hash-label" style="display:none">Document fingerprint (SHA-256)</div>
+    <div class="hash-box" id="hash-display" style="display:none"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-gold" id="btn-next-1" disabled onclick="goToStep2()">
+        Continue to Tag →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- STEP 2: TAG -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="step-tag">
+    <div class="section-title">Tag your document</div>
+    <div class="section-sub">Add metadata that will be stored publicly with your proof record. AI suggestions load if Ollama is running locally.</div>
+
+    <div id="ai-status">
+      <div class="ai-dot"></div>
+      <span id="ai-status-text">Analyzing with local AI…</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Document info</div>
+      <div class="form-group">
+        <label>Document name</label>
+        <input type="text" id="doc-name" placeholder="e.g. Lease Agreement — 123 Main St" maxlength="255">
+      </div>
+      <div class="form-group">
+        <label>Document type</label>
+        <select id="doc-type">
+          <option value="">— Select type —</option>
+          <option>Contract</option>
+          <option>Lease</option>
+          <option>NDA</option>
+          <option>Invoice</option>
+          <option>Agreement</option>
+          <option>Letter</option>
+          <option>Real Estate</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Tags</div>
+      <div class="tags-wrap" id="tags-wrap" onclick="focusTagInput()">
+        <input class="tag-input" id="tag-input" placeholder="Add tag…" onkeydown="handleTagKey(event)">
+      </div>
+      <div class="tag-hint">Press Enter or comma to add a tag</div>
+
+      <div class="ai-suggestions" id="ai-suggestions">
+        <div class="ai-suggestions-label">✨ AI suggestions (click to add)</div>
+        <div class="ai-suggestion-pills" id="ai-pills"></div>
+      </div>
+    </div>
+
+    <div id="ai-summary" class="ai-summary">
+      <div class="ai-summary-label">✦ AI Summary</div>
+      <div id="ai-summary-text"></div>
+    </div>
+
+    <div id="ai-clauses-wrap" style="display:none">
+      <div class="card-title" style="padding-top:12px">Key clauses</div>
+      <div class="clause-list" id="clause-list"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="goToStep(1)">← Back</button>
+      <button class="btn btn-gold" id="btn-next-2" onclick="goToStep3()">
+        Continue to Sign →
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════ -->
+  <!-- STEP 3: SIGN -->
+  <!-- ══════════════════════════════════════ -->
+  <div class="panel" id="step-sign">
+
+    <!-- Identity banner -->
+    <div id="identity-banner">
+      <div class="id-dot" id="id-dot"></div>
+      <div>
+        <div style="font-size:12px;color:var(--text)" id="id-status-text">Loading identity…</div>
+        <div class="id-name" id="id-name-display"></div>
+      </div>
+      <a class="id-link" href="/tools/identity-vault" target="_blank">Manage keys ↗</a>
+    </div>
+
+    <div id="step-sign-form">
+      <div class="section-title">Review &amp; sign</div>
+      <div class="section-sub">Signing happens entirely in your browser using your private key. Your document is offered for local download (encrypted), then only the proof record goes to the server.</div>
+
+      <div class="card">
+        <div class="card-title">What you're signing</div>
+        <div class="review-grid">
+          <div class="review-label">Document</div>
+          <div class="review-value normal" id="rv-name">—</div>
+          <div class="review-label">Type</div>
+          <div class="review-value normal" id="rv-type">—</div>
+          <div class="review-label">Tags</div>
+          <div class="review-value normal" id="rv-tags">—</div>
+          <div class="review-label">SHA-256</div>
+          <div class="review-value" id="rv-hash">—</div>
+          <div class="review-label">Timestamp</div>
+          <div class="review-value" id="rv-time">—</div>
+        </div>
+      </div>
+
+      <div class="privacy-note">
+        <div class="privacy-icon">🛡️</div>
+        <div>
+          <strong>The server will store:</strong> hash, signature, public key, tags, doc name, timestamp.<br>
+          <strong>The server will NOT store:</strong> your document, your real name, or your IP address.
+        </div>
+      </div>
+
+      <div id="upgrade-prompt">
+        <h3>Free limit reached</h3>
+        <p>Free accounts get 3 notarizations per month.<br>Upgrade to <strong>$1/month</strong> for unlimited signing.</p>
+        <a class="btn btn-gold" href="https://ipomyagent.com" target="_blank">Upgrade for $1/mo →</a>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="goToStep(2)">← Back</button>
+        <button class="btn btn-gold" id="btn-sign" onclick="signDocument()">
+          ✦ Sign &amp; Notarize
+        </button>
+      </div>
+    </div>
+
+    <!-- Certificate (shown after signing) -->
+    <div id="certificate">
+      <div class="cert-box" id="cert-print">
+        <div class="cert-title">Notarization Certificate</div>
+        <div class="cert-seal">✦</div>
+        <div class="cert-doc-name" id="cert-doc-name"></div>
+        <div class="cert-time" id="cert-time"></div>
+        <div class="cert-id" id="cert-id"></div>
+        <div class="cert-url">
+          Verify at: <a id="cert-url-link" href="#" target="_blank"></a>
+        </div>
+        <div class="cert-buttons">
+          <button class="btn btn-gold" onclick="window.print()">🖨 Print Certificate</button>
+          <button class="btn btn-ghost" onclick="copyCertUrl()">Copy Verify URL</button>
+          <a class="btn btn-ghost" id="cert-view-link" href="#" target="_blank">View Record ↗</a>
+        </div>
+      </div>
+
+      <!-- Referral card -->
+      <div class="ref-card-wrap" id="ref-card-wrap" style="display:none">
+        <div class="ref-card-label">Share the word — earn when friends sign up</div>
+        <div class="ref-card-inner">
+          <div class="ref-card-brand">IPOMyAgent.com</div>
+          <div class="ref-card-tagline">Make it official. We never read it.</div>
+          <div class="ref-qr" id="ref-qr"></div>
+          <div class="ref-card-code" id="ref-code-display"></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+          <button class="btn btn-ghost" onclick="printReferralCard()">🖨 Print Referral Card</button>
+          <button class="btn btn-ghost" onclick="copyReferralLink()">Copy Link</button>
+        </div>
+      </div>
+
+      <div class="btn-row" style="justify-content:center;margin-top:20px">
+        <button class="btn btn-ghost" onclick="resetAll()">+ Notarize Another</button>
+        <a class="btn btn-ghost" href="/ipomyagent-app">View All Documents →</a>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<script src="/js/ollama.js"></script>
+<script src="/js/ollama-tools.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════════════════════════════
+
+const API_BASE = location.hostname === 'localhost'
+  ? 'http://localhost:8080'
+  : 'https://fortune0-com.onrender.com';
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+
+let state = {
+  file: null,
+  fileBytes: null,
+  docHash: null,
+  tags: [],
+  aiSuggestions: [],
+  privateKey: null,
+  publicKeyPEM: null,
+  anonName: null,
+  currentStep: 1,
+  signResult: null,
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CRYPTO UTILITIES (from identity-vault.html)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function arrayBufferToBase64(buffer) {
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+}
+
+function base64ToArrayBuffer(base64) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes.buffer;
+}
+
+function pemToArrayBuffer(pem, type) {
+  const b64 = pem
+    .replace(`-----BEGIN ${type}-----`, '')
+    .replace(`-----END ${type}-----`, '')
+    .replace(/\s/g, '');
+  return base64ToArrayBuffer(b64);
+}
+
+async function importPrivateKey(pemKey) {
+  const keyData = pemToArrayBuffer(pemKey, 'PRIVATE KEY');
+  return await crypto.subtle.importKey(
+    'pkcs8', keyData, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']
+  );
+}
+
+function arrayBufferToHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function sha256hex(bytes) {
+  const hash = await crypto.subtle.digest('SHA-256', bytes);
+  return arrayBufferToHex(hash);
+}
+
+async function aesEncrypt(bytes, exportKey = true) {
+  const key = await crypto.subtle.generateKey({ name: 'AES-GCM', length: 256 }, exportKey, ['encrypt', 'decrypt']);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const encrypted = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, bytes);
+  const keyExported = exportKey ? await crypto.subtle.exportKey('raw', key) : null;
+  return { encrypted: new Uint8Array(encrypted), iv, key: keyExported ? new Uint8Array(keyExported) : null };
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// IDENTITY LOADING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function loadIdentity() {
+  const privateKeyPEM = localStorage.getItem('d2d_private_key');
+  const publicKeyPEM = localStorage.getItem('d2d_public_key');
+  const anonName = localStorage.getItem('d2d_anon_name');
+
+  const banner = document.getElementById('identity-banner');
+  const dot = document.getElementById('id-dot');
+  const statusText = document.getElementById('id-status-text');
+  const nameDisplay = document.getElementById('id-name-display');
+
+  if (!privateKeyPEM || !publicKeyPEM || !anonName) {
+    banner.className = 'error';
+    statusText.textContent = 'No identity key found.';
+    nameDisplay.textContent = 'Visit Identity Vault to create one →';
+    document.getElementById('btn-sign').disabled = true;
+    return;
+  }
+
+  try {
+    state.privateKey = await importPrivateKey(privateKeyPEM);
+    state.publicKeyPEM = publicKeyPEM;
+    state.anonName = anonName;
+    dot.className = 'id-dot on';
+    banner.className = 'loaded';
+    statusText.textContent = 'Signing with identity:';
+    nameDisplay.textContent = anonName;
+  } catch (e) {
+    banner.className = 'error';
+    statusText.textContent = 'Error loading key: ' + e.message;
+    document.getElementById('btn-sign').disabled = true;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FILE HANDLING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function getFileIcon(type) {
+  if (type.includes('pdf')) return '📕';
+  if (type.includes('image')) return '🖼️';
+  if (type.includes('word') || type.includes('docx')) return '📘';
+  if (type.includes('text')) return '📝';
+  return '📄';
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+document.getElementById('file-input').addEventListener('change', (e) => {
+  if (e.target.files[0]) handleFile(e.target.files[0]);
+});
+
+const dropZone = document.getElementById('drop-zone');
+dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+async function handleFile(file) {
+  state.file = file;
+  state.fileBytes = null;
+  state.docHash = null;
+
+  // Show file info
+  document.getElementById('fi-icon').textContent = getFileIcon(file.type);
+  document.getElementById('fi-name').textContent = file.name;
+  document.getElementById('fi-meta').textContent = `${formatBytes(file.size)} · ${file.type || 'unknown type'}`;
+  document.getElementById('file-info').style.display = 'flex';
+  document.getElementById('btn-next-1').disabled = true;
+
+  // Pre-fill doc name
+  if (!document.getElementById('doc-name').value) {
+    document.getElementById('doc-name').value = file.name.replace(/\.[^/.]+$/, '');
+  }
+
+  // Show progress
+  const wrap = document.getElementById('hash-progress-wrap');
+  const bar = document.getElementById('hash-progress');
+  wrap.style.display = 'block';
+  bar.style.width = '0%';
+
+  // Read and hash
+  const reader = new FileReader();
+  reader.onprogress = (e) => {
+    if (e.lengthComputable) bar.style.width = (e.loaded / e.total * 80) + '%';
+  };
+  reader.onload = async (e) => {
+    bar.style.width = '90%';
+    state.fileBytes = new Uint8Array(e.target.result);
+    state.docHash = await sha256hex(state.fileBytes);
+    bar.style.width = '100%';
+    setTimeout(() => { wrap.style.display = 'none'; }, 400);
+
+    document.getElementById('hash-label').style.display = 'block';
+    document.getElementById('hash-display').textContent = state.docHash;
+    document.getElementById('hash-display').style.display = 'block';
+    document.getElementById('btn-next-1').disabled = false;
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function clearFile() {
+  state.file = null;
+  state.fileBytes = null;
+  state.docHash = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-info').style.display = 'none';
+  document.getElementById('hash-label').style.display = 'none';
+  document.getElementById('hash-display').style.display = 'none';
+  document.getElementById('btn-next-1').disabled = true;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STEP NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function goToStep(n) {
+  state.currentStep = n;
+  ['step-upload', 'step-tag', 'step-sign'].forEach((id, i) => {
+    document.getElementById(id).classList.toggle('active', i + 1 === n);
+  });
+  [1, 2, 3].forEach(i => {
+    const el = document.getElementById(`si-${i}`);
+    el.classList.remove('active', 'done');
+    if (i === n) el.classList.add('active');
+    else if (i < n) el.classList.add('done');
+  });
+  window.scrollTo(0, 0);
+}
+
+async function goToStep2() {
+  if (!state.docHash) return;
+  goToStep(2);
+
+  // Try Ollama AI tagging
+  try {
+    const tools = new OllamaTools();
+    const available = await tools.isAvailable();
+    if (!available) return;
+
+    // Extract text from file for AI analysis
+    let text = '';
+    if (state.file.type.includes('text') || state.file.name.endsWith('.txt')) {
+      text = new TextDecoder().decode(state.fileBytes);
+    } else {
+      // For binary files, use filename + type as minimal context
+      text = `File: ${state.file.name}\nType: ${state.file.type}\nSize: ${formatBytes(state.file.size)}`;
+    }
+
+    const aiStatus = document.getElementById('ai-status');
+    aiStatus.style.display = 'flex';
+    document.getElementById('ai-status-text').textContent = 'Analyzing with local AI (1/4)…';
+
+    const result = await tools.analyze(text, (step, total) => {
+      document.getElementById('ai-status-text').textContent = `AI analyzing… (${step}/${total})`;
+    });
+
+    aiStatus.style.display = 'none';
+
+    // Auto-fill doc type
+    if (result.parsed?.doc_type && result.parsed.doc_type !== 'Unknown') {
+      const sel = document.getElementById('doc-type');
+      const opts = Array.from(sel.options).map(o => o.value);
+      if (opts.includes(result.parsed.doc_type)) sel.value = result.parsed.doc_type;
+    }
+
+    // Show tag suggestions
+    if (result.tags?.length) {
+      state.aiSuggestions = result.tags;
+      const pillsWrap = document.getElementById('ai-pills');
+      pillsWrap.innerHTML = '';
+      result.tags.forEach(tag => {
+        const pill = document.createElement('span');
+        pill.className = 'ai-pill';
+        pill.textContent = tag;
+        pill.onclick = () => {
+          if (!state.tags.includes(tag)) {
+            addTag(tag);
+            pill.classList.add('used');
+          }
+        };
+        pillsWrap.appendChild(pill);
+      });
+      document.getElementById('ai-suggestions').style.display = 'block';
+    }
+
+    // Show summary
+    if (result.summary) {
+      document.getElementById('ai-summary-text').textContent = result.summary;
+      document.getElementById('ai-summary').style.display = 'block';
+    }
+
+    // Show clauses
+    if (result.clauses?.length) {
+      const list = document.getElementById('clause-list');
+      list.innerHTML = '';
+      result.clauses.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'clause-item';
+        item.innerHTML = `<span class="risk-badge risk-${c.risk}">${c.risk}</span><span>${c.clause}</span>`;
+        list.appendChild(item);
+      });
+      document.getElementById('ai-clauses-wrap').style.display = 'block';
+    }
+  } catch (e) {
+    document.getElementById('ai-status').style.display = 'none';
+    console.log('Ollama not available, skipping AI tagging');
+  }
+}
+
+function goToStep3() {
+  const name = document.getElementById('doc-name').value.trim() || state.file.name;
+  const type = document.getElementById('doc-type').value;
+
+  // Update review panel
+  document.getElementById('rv-name').textContent = name;
+  document.getElementById('rv-type').textContent = type || '—';
+  document.getElementById('rv-tags').textContent = state.tags.join(', ') || '—';
+  document.getElementById('rv-hash').textContent = state.docHash;
+  document.getElementById('rv-time').textContent = new Date().toISOString();
+
+  goToStep(3);
+  loadIdentity();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TAGS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function addTag(text) {
+  const t = text.trim().slice(0, 50);
+  if (!t || state.tags.includes(t)) return;
+  state.tags.push(t);
+  renderTags();
+}
+
+function removeTag(idx) {
+  state.tags.splice(idx, 1);
+  renderTags();
+}
+
+function renderTags() {
+  const wrap = document.getElementById('tags-wrap');
+  // Keep the input
+  const input = document.getElementById('tag-input');
+  wrap.innerHTML = '';
+  state.tags.forEach((tag, i) => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${tag}<button onclick="removeTag(${i})">×</button>`;
+    wrap.appendChild(pill);
+  });
+  wrap.appendChild(input);
+}
+
+function focusTagInput() {
+  document.getElementById('tag-input').focus();
+}
+
+function handleTagKey(e) {
+  const input = e.target;
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    addTag(input.value);
+    input.value = '';
+  } else if (e.key === 'Backspace' && input.value === '' && state.tags.length > 0) {
+    state.tags.pop();
+    renderTags();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SIGNING
+// ═══════════════════════════════════════════════════════════════════════════════
+
+async function signDocument() {
+  if (!state.privateKey) {
+    alert('No identity key loaded. Visit Identity Vault first.');
+    return;
+  }
+  if (!state.docHash) {
+    alert('No document loaded.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-sign');
+  btn.disabled = true;
+  btn.textContent = 'Signing…';
+
+  try {
+    const docName = document.getElementById('doc-name').value.trim() || state.file.name;
+    const docType = document.getElementById('doc-type').value;
+    const timestamp = new Date().toISOString();
+
+    // Sign: hash + metadata + timestamp (all client-side)
+    const signPayload = JSON.stringify({
+      doc_hash: state.docHash,
+      doc_name: docName,
+      doc_type: docType,
+      tags: state.tags,
+      timestamp,
+    });
+    const signatureBuffer = await crypto.subtle.sign(
+      { name: 'ECDSA', hash: 'SHA-256' },
+      state.privateKey,
+      new TextEncoder().encode(signPayload)
+    );
+    const signatureHex = arrayBufferToHex(signatureBuffer);
+
+    // AES-encrypt doc bytes and offer as browser download (stays local)
+    btn.textContent = 'Encrypting…';
+    const { encrypted, iv, key } = await aesEncrypt(state.fileBytes, true);
+
+    // Build download blob: [IV (12 bytes) | AES key (32 bytes) | ciphertext]
+    const downloadBlob = new Uint8Array(12 + 32 + encrypted.length);
+    downloadBlob.set(iv, 0);
+    downloadBlob.set(new Uint8Array(key), 12);
+    downloadBlob.set(encrypted, 44);
+
+    const encBlob = new Blob([downloadBlob], { type: 'application/octet-stream' });
+    const encUrl = URL.createObjectURL(encBlob);
+    const encLink = document.createElement('a');
+    encLink.href = encUrl;
+    encLink.download = docName.replace(/[^a-zA-Z0-9._-]/g, '_') + '.ipom';
+    encLink.click();
+    setTimeout(() => URL.revokeObjectURL(encUrl), 5000);
+
+    // Send proof record to server
+    btn.textContent = 'Recording proof…';
+    const token = getToken();
+    const resp = await fetch(API_BASE + '/api/documents/sign', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({
+        doc_hash: state.docHash,
+        signature: signatureHex,
+        public_key: state.publicKeyPEM,
+        doc_name: docName,
+        doc_type: docType,
+        tags: state.tags,
+        notarized_at: timestamp,
+      }),
+    });
+
+    const data = await resp.json();
+
+    if (resp.status === 401) {
+      // Not logged in — prompt for signup/login
+      const email = prompt('Enter your email to create a free account (3 notarizations/month):');
+      if (!email || !email.includes('@')) {
+        btn.disabled = false;
+        btn.textContent = '✦ Sign & Notarize';
+        return;
+      }
+      // Try signup
+      const signupResp = await fetch(API_BASE + '/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, source_domain: 'ipomyagent.com' }),
+      });
+      const signupData = await signupResp.json();
+      if (signupData.token) {
+        localStorage.setItem('f0_token', signupData.token);
+        // Retry sign
+        btn.disabled = false;
+        btn.textContent = '✦ Sign & Notarize';
+        signDocument();
+        return;
+      } else if (signupData.exists) {
+        const key = prompt('Account exists. Enter your license key (IK-...):');
+        if (!key) { btn.disabled = false; btn.textContent = '✦ Sign & Notarize'; return; }
+        const loginResp = await fetch(API_BASE + '/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, key }),
+        });
+        const loginData = await loginResp.json();
+        if (loginData.token) {
+          localStorage.setItem('f0_token', loginData.token);
+          btn.disabled = false;
+          btn.textContent = '✦ Sign & Notarize';
+          signDocument();
+          return;
+        }
+        throw new Error(loginData.error || 'Login failed');
+      }
+      throw new Error(signupData.error || 'Signup failed');
+    }
+
+    if (resp.status === 402 && data.upgrade) {
+      document.getElementById('upgrade-prompt').style.display = 'block';
+      document.getElementById('btn-sign').style.display = 'none';
+      btn.disabled = false;
+      btn.textContent = '✦ Sign & Notarize';
+      return;
+    }
+
+    if (!resp.ok) {
+      throw new Error(data.error || 'Server error');
+    }
+
+    state.signResult = data;
+    showCertificate(data, docName, timestamp);
+
+  } catch (e) {
+    alert('Signing failed: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = '✦ Sign & Notarize';
+  }
+}
+
+function showCertificate(data, docName, timestamp) {
+  document.getElementById('step-sign-form').style.display = 'none';
+  document.getElementById('certificate').style.display = 'block';
+
+  const verifyUrl = `${API_BASE}${data.verification_url}`;
+  document.getElementById('cert-doc-name').textContent = docName;
+  document.getElementById('cert-time').textContent = new Date(timestamp).toLocaleString();
+  document.getElementById('cert-id').textContent = data.doc_id;
+  document.getElementById('cert-url-link').href = verifyUrl;
+  document.getElementById('cert-url-link').textContent = verifyUrl;
+  document.getElementById('cert-view-link').href = verifyUrl;
+
+  // Show referral card if user has a referral code
+  const member = JSON.parse(localStorage.getItem('d2d_member') || 'null');
+  const refCode = member?.referral_code || localStorage.getItem('f0_referral_code');
+  if (refCode) {
+    const refUrl = `${API_BASE}/r/${refCode}`;
+    document.getElementById('ref-code-display').textContent = refUrl;
+    generateQRCode(refUrl, document.getElementById('ref-qr'));
+    document.getElementById('ref-card-wrap').style.display = 'block';
+    window._referralUrl = refUrl;
+  }
+}
+
+function copyCertUrl() {
+  const url = document.getElementById('cert-url-link').href;
+  navigator.clipboard.writeText(url).then(() => alert('✓ URL copied!'));
+}
+
+function copyReferralLink() {
+  if (window._referralUrl) {
+    navigator.clipboard.writeText(window._referralUrl).then(() => alert('✓ Link copied!'));
+  }
+}
+
+function printReferralCard() {
+  const wrap = document.getElementById('ref-card-wrap');
+  const orig = document.body.innerHTML;
+  document.body.innerHTML = wrap.outerHTML;
+  window.print();
+  document.body.innerHTML = orig;
+  location.reload();
+}
+
+function resetAll() {
+  state = {
+    file: null, fileBytes: null, docHash: null, tags: [],
+    aiSuggestions: [], privateKey: null, publicKeyPEM: null,
+    anonName: null, currentStep: 1, signResult: null,
+  };
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-info').style.display = 'none';
+  document.getElementById('hash-label').style.display = 'none';
+  document.getElementById('hash-display').style.display = 'none';
+  document.getElementById('btn-next-1').disabled = true;
+  document.getElementById('doc-name').value = '';
+  document.getElementById('doc-type').value = '';
+  document.getElementById('tags-wrap').innerHTML = '<input class="tag-input" id="tag-input" placeholder="Add tag…" onkeydown="handleTagKey(event)">';
+  document.getElementById('ai-suggestions').style.display = 'none';
+  document.getElementById('ai-summary').style.display = 'none';
+  document.getElementById('ai-clauses-wrap').style.display = 'none';
+  document.getElementById('step-sign-form').style.display = 'block';
+  document.getElementById('certificate').style.display = 'none';
+  document.getElementById('upgrade-prompt').style.display = 'none';
+  document.getElementById('btn-sign').style.display = '';
+  document.getElementById('btn-sign').disabled = false;
+  document.getElementById('btn-sign').textContent = '✦ Sign & Notarize';
+  goToStep(1);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// AUTH HELPERS
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function getToken() {
+  const member = JSON.parse(localStorage.getItem('d2d_member') || 'null');
+  return member?.token || localStorage.getItem('f0_token') || null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SIMPLE QR CODE (canvas-based, no library)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+function generateQRCode(url, container) {
+  // Minimal visual placeholder — a real implementation would use a QR library
+  const canvas = document.createElement('canvas');
+  canvas.width = 80; canvas.height = 80;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, 80, 80);
+  ctx.fillStyle = '#000';
+  ctx.font = '8px monospace';
+  ctx.fillText('QR:', 4, 14);
+  // Draw a simple representation
+  const hash = url.split('').reduce((a, c) => ((a << 5) - a) + c.charCodeAt(0), 0);
+  for (let i = 0; i < 8; i++) {
+    for (let j = 0; j < 8; j++) {
+      if ((hash >> (i * 8 + j)) & 1) {
+        ctx.fillRect(4 + j * 9, 18 + i * 7, 8, 6);
+      }
+    }
+  }
+  container.innerHTML = '';
+  container.appendChild(canvas);
+}
+</script>
+</body>
+</html>

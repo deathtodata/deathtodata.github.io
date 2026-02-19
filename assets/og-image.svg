@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  
+  <!-- Subtle grid -->
+  <defs>
+    <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <path d="M 50 0 L 0 0 0 50" fill="none" stroke="rgba(0,255,0,0.03)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  
+  <!-- Logo -->
+  <text x="600" y="260" 
+        font-family="ui-monospace, monospace" 
+        font-size="72" 
+        font-weight="bold" 
+        fill="#00ff00" 
+        text-anchor="middle"
+        letter-spacing="4">DEATH2DATA</text>
+  
+  <!-- Tagline -->
+  <text x="600" y="320" 
+        font-family="ui-monospace, monospace" 
+        font-size="28" 
+        fill="#888888" 
+        text-anchor="middle">Privacy tools that don't track you.</text>
+  
+  <!-- Features -->
+  <g font-family="ui-monospace, monospace" font-size="18" fill="#444444">
+    <!-- No tracking -->
+    <circle cx="340" cy="420" r="4" fill="#00ff00"/>
+    <text x="355" y="426">No tracking</text>
+    
+    <!-- No ads -->
+    <circle cx="540" cy="420" r="4" fill="#00ff00"/>
+    <text x="555" y="426">No ads</text>
+    
+    <!-- Local-first -->
+    <circle cx="710" cy="420" r="4" fill="#00ff00"/>
+    <text x="725" y="426">Local-first</text>
+  </g>
+  
+  <!-- Price -->
+  <text x="600" y="550" 
+        font-family="ui-monospace, monospace" 
+        font-size="24" 
+        fill="#00ff00" 
+        text-anchor="middle">$1/month</text>
+</svg>

@@ -18,7 +18,7 @@ const ENV = {
   // API Configuration
   D2D_API_URL: typeof process !== 'undefined' && process.env?.D2D_API_URL
     ? process.env.D2D_API_URL
-    : window.ENV_D2D_API_URL || 'https://d2d-api.mattmauersp.workers.dev',
+    : window.ENV_D2D_API_URL || 'https://fortune0-com.onrender.com',
 
   // Environment type
   ENVIRONMENT: typeof process !== 'undefined' && process.env?.NODE_ENV

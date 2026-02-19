@@ -100,7 +100,7 @@ async function load() {
   
   // Network data
   try {
-    const data = await fetch('https://api.death2data.com/analytics').then(r => r.json());
+    const data = await fetch('https://fortune0-com.onrender.com/api/analytics', {headers:{'Authorization':'Bearer '+(localStorage.getItem('d2d_token')||'')}}).then(r => r.json());
     document.getElementById('network-count').textContent = data.totalSearches;
     
     document.getElementById('insights').innerHTML = `

@@ -90,7 +90,7 @@ document.getElementById('prompt').textContent = `What does "${keyword}" mean to 
 // Load existing perspectives
 async function loadPerspectives() {
   try {
-    const data = await fetch(`https://api.death2data.com/perspectives?keyword=${keyword}`).then(r => r.json());
+    const data = await fetch(`https://fortune0-com.onrender.com/perspectives?keyword=${keyword}`).then(r => r.json());
     if (data.perspectives && data.perspectives.length > 0) {
       document.getElementById('others').style.display = 'block';
       document.getElementById('perspectives').innerHTML = data.perspectives
@@ -112,7 +112,7 @@ async function submit() {
   btn.textContent = 'Saving...';
   
   try {
-    await fetch('https://api.death2data.com/perspective', {
+    await fetch('https://fortune0-com.onrender.com/perspective', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ keyword, perspective: response })
