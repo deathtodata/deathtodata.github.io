@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Data Sanitizer | Death2Data</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+:root {
+  --green: #00cc44;
+  --green-dim: rgba(0,204,68,0.1);
+  --surface: #111;
+  --border: #222;
+  --muted: #666;
+  --gray: #999;
+  --red: #cc0000;
+  --red-dim: rgba(204,0,0,0.1);
+}
+
+/* Nav */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #0a0a0a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav .logo { font-weight: 700; color: var(--green); letter-spacing: 1px; font-size: 15px; margin-right: auto; }
+.nav a { font-size: 12px; color: var(--muted); text-decoration: none; }
+.nav a:hover { color: #e0e0e0; }
+
+/* Main */
+.main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.drop-zone .icon { font-size: 32px; margin-bottom: 12px; }
+.drop-zone .label { font-size: 14px; color: var(--gray); margin-bottom: 4px; }
+.drop-zone .hint { font-size: 11px; color: var(--muted); }
+.drop-zone input { display: none; }
+
+/* Results */
+.results { display: none; }
+.results.show { display: block; }
+
+.file-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.file-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.file-name {
+  font-size: 14px;
+  font-weight: 600;
+  word-break: break-all;
+}
+.file-size { font-size: 11px; color: var(--muted); }
+
+.meta-table {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a1a1a;
+  font-size: 13px;
+}
+.meta-row:last-child { border-bottom: none; }
+.meta-key { color: var(--muted); }
+.meta-val { color: var(--gray); text-align: right; max-width: 60%; word-break: break-all; }
+.meta-val.danger { color: var(--red); }
+.meta-val.safe { color: var(--green); }
+
+.meta-section {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 16px 0 8px;
+}
+
+.strip-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.strip-btn:hover { background: #00e64d; }
+.strip-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+.status-badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+.status-badge.dirty { background: var(--red-dim); color: var(--red); }
+.status-badge.clean { background: var(--green-dim); color: var(--green); }
+
+.summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--gray);
+}
+
+.another-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.another-btn:hover { border-color: var(--green); color: var(--green); }
+</style>
+
+<meta name="description" content="Strip metadata from images and files before sharing. EXIF, GPS, camera info — removed locally. Nothing uploaded.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+</head>
+<body>
+
+<nav class="nav">
+  <span class="logo">D2D</span>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html">Tools</a>
+</nav>
+
+<div class="main">
+  <h1>Data Sanitizer</h1>
+  <p class="subtitle">Strip hidden metadata from images before sharing. Everything runs locally — nothing leaves your device.</p>
+
+  <div class="drop-zone" id="dropZone">
+    <div class="icon">&#128391;</div>
+    <div class="label">Drop an image here or click to select</div>
+    <div class="hint">Supports JPEG, PNG, WebP. Max 25MB.</div>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
+  </div>
+
+  <div class="results" id="results"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA SANITIZER — Client-side EXIF stripper
+// No uploads. No server. All local.
+// ═══════════════════════════════════════
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const results = document.getElementById('results');
+
+// ── Drop zone handlers ──
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => handleFiles(fileInput.files));
+
+function handleFiles(files) {
+  results.innerHTML = '';
+  results.classList.add('show');
+  Array.from(files).forEach(f => processFile(f));
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+// ── EXIF parser (JPEG) ──
+function readExif(buffer) {
+  const view = new DataView(buffer);
+  const meta = {};
+
+  // Check JPEG magic bytes
+  if (view.getUint16(0) !== 0xFFD8) return meta;
+
+  let offset = 2;
+  while (offset < view.byteLength - 2) {
+    const marker = view.getUint16(offset);
+
+    // APP1 = EXIF
+    if (marker === 0xFFE1) {
+      const length = view.getUint16(offset + 2);
+      const exifData = buffer.slice(offset + 4, offset + 2 + length);
+      const exifView = new DataView(exifData);
+
+      // Check "Exif\0\0"
+      const exifHeader = String.fromCharCode(
+        exifView.getUint8(0), exifView.getUint8(1),
+        exifView.getUint8(2), exifView.getUint8(3)
+      );
+
+      if (exifHeader === 'Exif') {
+        meta._hasExif = true;
+        meta._exifStart = offset;
+        meta._exifEnd = offset + 2 + length;
+
+        // Parse TIFF header
+        const tiffOffset = 6;
+        const littleEndian = exifView.getUint16(tiffOffset) === 0x4949;
+
+        try {
+          const ifdOffset = exifView.getUint32(tiffOffset + 4, littleEndian);
+          const ifdCount = exifView.getUint16(tiffOffset + ifdOffset, littleEndian);
+
+          for (let i = 0; i < Math.min(ifdCount, 50); i++) {
+            const entryOffset = tiffOffset + ifdOffset + 2 + (i * 12);
+            if (entryOffset + 12 > exifData.byteLength) break;
+
+            const tag = exifView.getUint16(entryOffset, littleEndian);
+            const type = exifView.getUint16(entryOffset + 2, littleEndian);
+            const count = exifView.getUint32(entryOffset + 4, littleEndian);
+
+            // Read string values
+            const readStr = (off, len) => {
+              let s = '';
+              for (let j = 0; j < Math.min(len, 64); j++) {
+                const c = exifView.getUint8(off + j);
+                if (c === 0) break;
+                s += String.fromCharCode(c);
+              }
+              return s.trim();
+            };
+
+            let valOffset = entryOffset + 8;
+            if (type === 2 && count > 4) {
+              valOffset = tiffOffset + exifView.getUint32(entryOffset + 8, littleEndian);
+            }
+
+            // Tag mapping (common EXIF tags)
+            const tagMap = {
+              0x010F: 'Camera Make',
+              0x0110: 'Camera Model',
+              0x0131: 'Software',
+              0x0132: 'Date/Time',
+              0x013B: 'Artist',
+              0x8298: 'Copyright',
+              0x9003: 'Date Original',
+              0x9004: 'Date Digitized',
+              0xA434: 'Lens Model',
+            };
+
+            if (tagMap[tag] && type === 2 && valOffset + count <= exifData.byteLength) {
+              const val = readStr(valOffset, count);
+              if (val) meta[tagMap[tag]] = val;
+            }
+          }
+        } catch (e) {
+          // EXIF parsing is best-effort
+        }
+      }
+
+      // Look for GPS IFD markers in raw bytes
+      const exifStr = new Uint8Array(exifData);
+      for (let i = 0; i < exifStr.length - 1; i++) {
+        // GPS tag markers (0x8825)
+        if (exifStr[i] === 0x88 && exifStr[i + 1] === 0x25) {
+          meta['GPS Data'] = 'Present (location embedded)';
+          break;
+        }
+      }
+
+      break;
+    }
+
+    // Skip non-APP1 markers
+    if ((marker & 0xFF00) === 0xFF00) {
+      const len = view.getUint16(offset + 2);
+      offset += 2 + len;
+    } else {
+      break;
+    }
+  }
+
+  // Check for XMP
+  const bytes = new Uint8Array(buffer);
+  const searchXMP = 'http://ns.adobe.com/xap/1.0/';
+  const str = new TextDecoder('ascii').decode(bytes.slice(0, Math.min(bytes.length, 65536)));
+  if (str.includes(searchXMP)) {
+    meta['XMP Data'] = 'Present (Adobe metadata)';
+    meta._hasXMP = true;
+  }
+
+  return meta;
+}
+
+// ── PNG metadata reader ──
+function readPngMeta(buffer) {
+  const view = new DataView(buffer);
+  const meta = {};
+
+  // PNG signature check
+  if (view.getUint32(0) !== 0x89504E47) return meta;
+
+  let offset = 8;
+  const textChunks = [];
+
+  while (offset < buffer.byteLength - 8) {
+    const length = view.getUint32(offset);
+    const type = String.fromCharCode(
+      view.getUint8(offset + 4), view.getUint8(offset + 5),
+      view.getUint8(offset + 6), view.getUint8(offset + 7)
+    );
+
+    if (type === 'tEXt' || type === 'iTXt' || type === 'zTXt') {
+      const chunk = new Uint8Array(buffer, offset + 8, Math.min(length, 512));
+      const decoded = new TextDecoder('latin1').decode(chunk);
+      const nullIdx = decoded.indexOf('\0');
+      if (nullIdx > 0) {
+        const key = decoded.slice(0, nullIdx);
+        const val = decoded.slice(nullIdx + 1, nullIdx + 101).replace(/\0/g, '');
+        if (key && val) {
+          meta[key] = val.length > 80 ? val.slice(0, 80) + '...' : val;
+        }
+      }
+      textChunks.push({ offset, length: length + 12, type });
+    }
+
+    if (type === 'eXIf') {
+      meta['EXIF Chunk'] = 'Present';
+      textChunks.push({ offset, length: length + 12, type });
+    }
+
+    offset += 12 + length;
+    if (type === 'IEND') break;
+  }
+
+  meta._textChunks = textChunks;
+  return meta;
+}
+
+// ── Strip EXIF from JPEG ──
+function stripJpeg(buffer) {
+  const view = new DataView(buffer);
+  if (view.getUint16(0) !== 0xFFD8) return buffer;
+
+  const parts = [];
+  parts.push(new Uint8Array(buffer, 0, 2)); // SOI
+
+  let offset = 2;
+  while (offset < buffer.byteLength - 2) {
+    const marker = view.getUint16(offset);
+
+    if (marker === 0xFFDA) {
+      // Start of scan — keep everything from here
+      parts.push(new Uint8Array(buffer, offset));
+      break;
+    }
+
+    if ((marker & 0xFF00) === 0xFF00) {
+      const len = view.getUint16(offset + 2);
+      const segType = marker;
+
+      // Skip APP1 (EXIF), APP2 (ICC sometimes has PII), APP12, APP13 (IPTC), APP14
+      const strip = [0xFFE1, 0xFFE2, 0xFFEC, 0xFFED, 0xFFEE];
+      if (!strip.includes(segType)) {
+        parts.push(new Uint8Array(buffer, offset, 2 + len));
+      }
+
+      offset += 2 + len;
+    } else {
+      parts.push(new Uint8Array(buffer, offset));
+      break;
+    }
+  }
+
+  const total = parts.reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const p of parts) {
+    out.set(p, pos);
+    pos += p.length;
+  }
+  return out.buffer;
+}
+
+// ── Strip metadata from PNG ──
+function stripPng(buffer) {
+  const view = new DataView(buffer);
+  if (view.getUint32(0) !== 0x89504E47) return buffer;
+
+  const parts = [];
+  parts.push(new Uint8Array(buffer, 0, 8)); // PNG signature
+
+  let offset = 8;
+  const stripTypes = new Set(['tEXt', 'iTXt', 'zTXt', 'eXIf']);
+
+  while (offset < buffer.byteLength - 8) {
+    const length = view.getUint32(offset);
+    const type = String.fromCharCode(
+      view.getUint8(offset + 4), view.getUint8(offset + 5),
+      view.getUint8(offset + 6), view.getUint8(offset + 7)
+    );
+
+    const chunkSize = 12 + length;
+
+    if (!stripTypes.has(type)) {
+      parts.push(new Uint8Array(buffer, offset, chunkSize));
+    }
+
+    offset += chunkSize;
+    if (type === 'IEND') break;
+  }
+
+  const total = parts.reduce((a, b) => a + b.length, 0);
+  const out = new Uint8Array(total);
+  let pos = 0;
+  for (const p of parts) {
+    out.set(p, pos);
+    pos += p.length;
+  }
+  return out.buffer;
+}
+
+// ── Process a file ──
+async function processFile(file) {
+  const buffer = await file.arrayBuffer();
+  const isJpeg = file.type === 'image/jpeg';
+  const isPng = file.type === 'image/png';
+
+  let meta = {};
+  if (isJpeg) meta = readExif(buffer);
+  else if (isPng) meta = readPngMeta(buffer);
+
+  // Filter out internal keys
+  const displayMeta = {};
+  for (const [k, v] of Object.entries(meta)) {
+    if (!k.startsWith('_')) displayMeta[k] = v;
+  }
+
+  const metaCount = Object.keys(displayMeta).length;
+  const hasGPS = !!displayMeta['GPS Data'];
+  const isDirty = metaCount > 0;
+
+  const card = document.createElement('div');
+  card.className = 'file-card';
+
+  let metaHTML = '';
+  if (metaCount === 0) {
+    metaHTML = '<div style="font-size:13px;color:var(--green);padding:12px 0;">No metadata found. This file looks clean.</div>';
+  } else {
+    metaHTML = '<div class="meta-section">Metadata found</div>';
+    for (const [k, v] of Object.entries(displayMeta)) {
+      const isDanger = k === 'GPS Data' || k === 'Artist' || k === 'Copyright';
+      metaHTML += `<div class="meta-row">
+        <span class="meta-key">${k}</span>
+        <span class="meta-val ${isDanger ? 'danger' : ''}">${v}</span>
+      </div>`;
+    }
+  }
+
+  card.innerHTML = `
+    <div class="file-header">
+      <div>
+        <div class="file-name">${file.name}</div>
+        <div class="file-size">${formatSize(file.size)} · ${file.type.split('/')[1].toUpperCase()}</div>
+      </div>
+      <span class="status-badge ${isDirty ? 'dirty' : 'clean'}">${isDirty ? metaCount + ' fields found' : 'clean'}</span>
+    </div>
+    ${hasGPS ? '<div style="background:var(--red-dim);border:1px solid rgba(204,0,0,0.3);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--red);">&#9888; GPS location data detected. This image contains your coordinates.</div>' : ''}
+    <div class="meta-table">${metaHTML}</div>
+    ${isDirty ? '<button class="strip-btn" id="strip-' + file.name.replace(/\W/g, '') + '">Strip all metadata & download clean copy</button>' : '<button class="another-btn" onclick="document.getElementById(\'fileInput\').click()">Sanitize another file</button>'}
+  `;
+
+  results.appendChild(card);
+
+  // Wire up strip button
+  if (isDirty) {
+    const btn = card.querySelector('.strip-btn');
+    btn.addEventListener('click', () => {
+      let cleaned;
+      if (isJpeg) cleaned = stripJpeg(buffer);
+      else if (isPng) cleaned = stripPng(buffer);
+      else {
+        // WebP and others — we can't strip without re-encoding, so use canvas
+        reencodeAndDownload(file, btn);
+        return;
+      }
+
+      const blob = new Blob([cleaned], { type: file.type });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clean-' + file.name;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      btn.textContent = 'Downloaded clean copy';
+      btn.disabled = true;
+      btn.style.background = 'var(--green-dim)';
+      btn.style.color = 'var(--green)';
+
+      // Show savings
+      const saved = file.size - blob.size;
+      if (saved > 0) {
+        const note = document.createElement('div');
+        note.style.cssText = 'font-size:12px;color:var(--green);margin-top:8px;text-align:center;';
+        note.textContent = `Stripped ${formatSize(saved)} of metadata`;
+        btn.after(note);
+      }
+    });
+  }
+}
+
+// ── Fallback: re-encode via canvas (strips all metadata) ──
+function reencodeAndDownload(file, btn) {
+  const img = new Image();
+  img.onload = () => {
+    const c = document.createElement('canvas');
+    c.width = img.naturalWidth;
+    c.height = img.naturalHeight;
+    c.getContext('2d').drawImage(img, 0, 0);
+
+    c.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'clean-' + file.name;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      btn.textContent = 'Downloaded clean copy';
+      btn.disabled = true;
+    }, file.type, 0.95);
+  };
+  img.src = URL.createObjectURL(file);
+}
+</script>
+
+</body>
+</html>

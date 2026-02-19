@@ -186,13 +186,82 @@ body {
   letter-spacing: 3px;
   margin-bottom: 40px;
 }
-.home-pitch {
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.8;
-  margin-bottom: 40px;
+/* === DISCOVER FEED === */
+.discover {
+  text-align: left;
+  margin-top: 8px;
 }
-.home-pitch strong { color: var(--text-body); font-weight: 500; }
+.discover-label {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.discover-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.discover-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  text-decoration: none;
+  color: inherit;
+}
+.discover-card:hover {
+  border-color: var(--green-dim);
+  background: #0d0d0d;
+}
+.discover-card .dc-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--green-dim);
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  font-weight: 700;
+}
+.discover-card .dc-text {
+  flex: 1;
+  min-width: 0;
+}
+.discover-card .dc-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+.discover-card .dc-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.discover-card .dc-arrow {
+  color: var(--text-dim);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: color .2s;
+}
+.discover-card:hover .dc-arrow { color: var(--green); }
+.discover-hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
 
 /* === SEARCH STATE === */
 .search-wrap {
@@ -278,9 +347,9 @@ body.searching .main { justify-content: flex-start; }
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  transition: border-color .15s;
+  transition: border-color .2s, background .2s;
 }
-.card:hover { border-color: var(--border-hover); }
+.card:hover { border-color: var(--green-dim); background: #0d0d0d; }
 .card-title {
   display: block;
   color: var(--green);
@@ -419,18 +488,24 @@ body.searching .main { justify-content: flex-start; }
 <!-- MAIN -->
 <div class="main centered" id="main">
 
-  <!-- HOME: logo + search -->
+  <!-- HOME: logo + search + discovery -->
   <div class="home" id="home">
     <div class="home-logo">death2data</div>
-    <div class="home-tag">PRIVATE SEARCH</div>
+    <div class="home-tag">BROWSE THE WEB DIFFERENTLY</div>
     <div class="sbar">
       <input type="text" id="q" placeholder="search anything..." autocomplete="off"
              onkeydown="if(event.key==='Enter')doSearch()">
       <button onclick="doSearch()">Search</button>
     </div>
-    <div class="home-pitch">
-      <strong>No tracking. No ads. No data harvesting.</strong><br>
-      Sign in with your email to get started.
+
+    <!-- Discovery feed — featured stories -->
+    <div class="discover" id="discover">
+      <div class="discover-label">START BROWSING</div>
+      <div class="discover-grid" id="discover-grid"></div>
+      <div class="discover-hint">
+        No tracking. No ads. No data harvesting.<br>
+        <span style="color:var(--text-dim)">Every link opens in Story Mode — cards, not clutter.</span>
+      </div>
     </div>
   </div>
 
@@ -470,12 +545,23 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
   const urlQ = new URLSearchParams(location.search).get('q');
   if (urlQ) { setQuery(urlQ); doSearch(); }
 
-  // Verify token is still valid
+  // Detect return from Stripe payment — force reauth to pick up new tier
+  const urlParams = new URLSearchParams(location.search);
+  if (urlParams.has('paid') || document.referrer.includes('stripe.com') || document.referrer.includes('checkout.stripe.com')) {
+    if (S.email) {
+      reauth().then(() => {
+        // Clean URL
+        history.replaceState(null, '', '/');
+      });
+    }
+  }
+
+  // Verify token is still valid + sync tier from server
   if (S.token && S.email) {
     fetch(API+'/api/search?q=ping', {headers:{'Authorization':'Bearer '+S.token}})
       .then(r=>r.json()).then(d=>{
         if (d.authed === false) reauth();
-        // Store tier info
+        // Store tier info and update badge
         if (d.tier) { S.tier = d.tier; updateTierBadge(); }
       }).catch(()=>{});
   }
@@ -496,9 +582,9 @@ function showLoggedIn() {
 function showLoggedOut() {
   document.getElementById('hd-auth-area').innerHTML = `
     <div class="hd-auth">
-      <input type="email" id="email" placeholder="email"
+      <input type="email" id="email" placeholder="enter email to start"
         onkeydown="if(event.key==='Enter')login()">
-      <button class="go-btn" onclick="login()">Sign in</button>
+      <button class="go-btn" onclick="login()">&rarr;</button>
     </div>`;
 }
 
@@ -634,7 +720,6 @@ function renderResults(data, q) {
   const meta = document.getElementById('meta');
   const results = data.results || [];
   const source = data.source || '';
-  const webCount = data.web_results || 0;
 
   // Meta line
   if (results.length > 0) {
@@ -646,7 +731,6 @@ function renderResults(data, q) {
     meta.textContent = '';
   }
 
-  // Build cards
   let html = '';
 
   if (results.length === 0 && !data.web_locked) {
@@ -659,21 +743,28 @@ function renderResults(data, q) {
     const favicon = domain
       ? `<img src="https://www.google.com/s2/favicons?domain=${domain}&sz=32" onerror="this.style.display='none'">`
       : '';
+    const storyUrl = url !== '#' ? `/story.html?url=${encodeURIComponent(url)}&q=${encodeURIComponent(q)}` : '';
 
-    html += `<div class="card">
-      <a class="card-title" href="${url}" target="_blank" rel="noopener">${r.title || ''}</a>
-      ${domain ? `<div class="card-url">${favicon}<span>${domain}</span></div>` : ''}
-      <div class="card-snip">${r.snippet || r.content || ''}</div>
-      ${url !== '#' ? `<div style="margin-top:8px;"><a href="/story.html?url=${encodeURIComponent(url)}&q=${encodeURIComponent(q)}" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:5px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;color:var(--green);text-decoration:none;transition:all .2s;" onmouseover="this.style.borderColor='var(--green)';this.style.background='var(--green-dim)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='var(--surface)'">&#9654; Story Mode</a></div>` : ''}
+    html += `<div class="card" ${storyUrl ? `onclick="window.location.href='${storyUrl}'" style="cursor:pointer;"` : ''}>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+        <div style="flex:1;min-width:0;">
+          <a class="card-title" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">${r.title || ''}</a>
+          ${domain ? `<div class="card-url">${favicon}<span>${domain}</span></div>` : ''}
+          <div class="card-snip">${r.snippet || r.content || ''}</div>
+        </div>
+        ${storyUrl ? `<a href="${storyUrl}" onclick="event.stopPropagation()" style="flex-shrink:0;display:flex;align-items:center;justify-content:center;width:36px;height:36px;background:var(--green-dim);border-radius:8px;color:var(--green);font-size:12px;text-decoration:none;margin-top:2px;transition:background .2s;" title="Read as Story">&#9654;</a>` : ''}
+      </div>
     </div>`;
   });
 
-  // Soft paywall for non-members
+  // Soft paywall
   if (data.web_locked) {
+    let stripeUrl = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
+    if (S.email) stripeUrl += '?prefilled_email=' + encodeURIComponent(S.email);
     html += `<div class="paywall">
       <div class="paywall-title">Full web results require a membership</div>
       <div class="paywall-sub">Search the real web privately. No tracking. No ads.</div>
-      <a class="paywall-btn" href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" target="_blank">
+      <a class="paywall-btn" href="${stripeUrl}" target="_blank">
         Get full access — $1/mo
       </a>
     </div>`;
@@ -681,6 +772,44 @@ function renderResults(data, q) {
 
   el.innerHTML = html;
 }
+
+/* ── Discovery Feed ── */
+const FEATURED = [
+  {
+    icon: '&#9670;',
+    title: 'The Future of Privacy-First Search',
+    sub: 'Why $1/mo changes everything',
+    url: '/story.html?url=' + encodeURIComponent('https://death2data.com/about.html')
+  },
+  {
+    icon: '&#9632;',
+    title: 'How Much of Your Data is Already Leaked?',
+    sub: 'Check your exposure in seconds',
+    url: '/tools/leak-score.html'
+  },
+  {
+    icon: '&#9650;',
+    title: 'Your 28-Day Privacy Deep Dive',
+    sub: 'One question per day. Real answers.',
+    url: '/tools/notebook.html'
+  }
+];
+
+function renderDiscover() {
+  const grid = document.getElementById('discover-grid');
+  if (!grid) return;
+  grid.innerHTML = FEATURED.map(f => `
+    <a class="discover-card" href="${f.url}">
+      <div class="dc-icon">${f.icon}</div>
+      <div class="dc-text">
+        <div class="dc-title">${f.title}</div>
+        <div class="dc-sub">${f.sub}</div>
+      </div>
+      <span class="dc-arrow">&rsaquo;</span>
+    </a>
+  `).join('');
+}
+renderDiscover();
 </script>
 </body>
 </html>

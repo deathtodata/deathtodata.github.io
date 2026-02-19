@@ -4,111 +4,183 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Tools | Death2Data</title>
-<link rel="stylesheet" href="/css/style.css">
-<script src="/js/member-gate.js"></script>
-<style>body { visibility: hidden; }</style>
+<meta name="description" content="Death2Data privacy tools: data sanitizer, leak score, 28-day notebook, identity vault. All local-first.">
+<meta name="author" content="Death2Data">
+<link rel="canonical" href="https://death2data.com/tools.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Death2Data">
+<meta property="og:title" content="Tools | Death2Data">
+<meta property="og:description" content="Privacy tools that run on your device. No tracking. No ads.">
+<meta property="og:url" content="https://death2data.com/tools.html">
+<meta property="og:image" content="https://death2data.com/og-image.png">
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
 <style>
-/* Tools page header — matches index.html nav */
-.tools-nav {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --border-hover: #2a3a2a;
+  --green: #00cc44;
+  --green-dim: #004d1a;
+  --green-hover: #00e64d;
+  --white: #e0e0e0;
+  --gray: #b0b0b0;
+  --muted: #666666;
+  --dim: #444444;
+  --red: #cc0000;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── Header — matches index.html ── */
+.hd {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
+  padding: 0 16px;
+  height: 48px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 12px;
   background: var(--bg);
   position: sticky;
   top: 0;
   z-index: 100;
 }
-.tools-nav .logo {
+.hd-logo {
   font-family: var(--mono);
-  font-size: 15px;
   font-weight: 700;
+  font-size: 14px;
   color: var(--green);
   letter-spacing: 1px;
+  text-decoration: none;
   margin-right: auto;
 }
-.tools-nav a {
+.hd a:not(.hd-logo) { color: var(--muted); font-size: 13px; text-decoration: none; }
+.hd a:not(.hd-logo):hover { color: var(--white); }
+.hd a.active { color: var(--white); }
+.hd-auth {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hd-auth input {
+  height: 30px;
+  padding: 0 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--white);
+  font-family: var(--font);
+  font-size: 12px;
+  outline: none;
+  width: 170px;
+}
+.hd-auth input:focus { border-color: var(--green); }
+.hd-auth .go-btn {
+  height: 30px;
+  padding: 0 12px;
+  background: var(--green);
+  border: none;
+  border-radius: 4px;
+  color: #000;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.hd-auth .go-btn:hover { background: var(--green-hover); }
+.hd-user {
   font-size: 12px;
   color: var(--muted);
-  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.tools-nav a:hover { color: var(--white); }
-.tools-nav a.active { color: var(--white); }
-
-/* Status badge */
-.status-badge {
+.hd-user .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+}
+.hd-user button {
+  background: none;
+  border: none;
+  color: var(--dim);
+  font-family: var(--font);
   font-size: 11px;
-  padding: 3px 8px;
-  border-radius: 12px;
-  background: var(--green-dim);
-  color: var(--green);
+  cursor: pointer;
 }
-.status-badge.invalid {
-  background: rgba(204,0,0,0.15);
-  color: var(--red);
+.hd-user button:hover { color: var(--muted); }
+@media (max-width: 480px) {
+  .hd-auth input { width: 120px; }
 }
 
-/* Main content area */
+/* ── Main ── */
 .tools-main {
-  max-width: 640px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: 32px 16px 64px;
+  padding: 32px 16px 80px;
 }
-
 .tools-main h1 {
   font-size: 22px;
   font-weight: 600;
   margin-bottom: 6px;
 }
-
 .tools-subtitle {
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 28px;
 }
 
-/* Tool cards */
+/* ── Tool cards — checkmarks not emojis ── */
 .tools-grid {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .tool-card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 20px;
+  padding: 18px 20px;
   cursor: pointer;
   transition: border-color 0.2s;
   display: flex;
   align-items: flex-start;
   gap: 14px;
 }
-.tool-card:hover {
-  border-color: var(--border-hover);
-}
-
-.tool-icon {
-  font-size: 22px;
+.tool-card:hover { border-color: var(--border-hover); }
+.tool-ck {
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 700;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--green-dim);
-  border-radius: 8px;
+  width: 18px;
+  margin-top: 2px;
 }
-
 .tool-info h3 {
   font-size: 14px;
   font-weight: 600;
   color: var(--white);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
-
 .tool-info p {
   font-size: 13px;
   color: var(--gray);
@@ -116,29 +188,12 @@
   margin: 0;
 }
 
-.tool-card.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.tool-card.disabled:hover {
-  border-color: var(--border);
-}
-
-.coming-tag {
-  font-size: 10px;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-top: 4px;
-}
-
-/* Access denied */
+/* ── Access denied ── */
 .access-denied {
   text-align: center;
   padding: 80px 20px;
 }
 .access-denied h2 {
-  color: var(--red);
   font-size: 20px;
   margin-bottom: 12px;
 }
@@ -147,120 +202,150 @@
   font-size: 14px;
   margin-bottom: 24px;
 }
+.access-denied a {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--green);
+  color: var(--bg);
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.access-denied a:hover { background: var(--green-hover); }
 
-/* Footer bar — matches index.html */
-.tools-footer {
+/* ── Footer — matches index.html ── */
+.ft {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  font-size: 12px;
+  background: var(--bg);
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--muted);
-  z-index: 100;
 }
-.tools-footer a {
-  color: var(--muted);
-  text-decoration: none;
-}
-.tools-footer a:hover { color: var(--white); }
-.tools-footer .dot {
-  width: 6px; height: 6px;
-  background: var(--green);
-  border-radius: 50%;
-}
+.ft a { color: var(--muted); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
 </style>
-
-<!-- SEO -->
-<meta name="description" content="Access all Death2Data member tools: QR code generator, privacy-first search engine, 28-day digital notebook. No tracking. No ads.">
-<meta name="author" content="Death2Data">
-<link rel="canonical" href="https://death2data.com/tools.html">
-
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Death2Data">
-<meta property="og:title" content="Member Tools | Death2Data">
-<meta property="og:description" content="Privacy tools that don't track you.">
-<meta property="og:url" content="https://death2data.com/tools.html">
-<meta property="og:image" content="https://death2data.com/og-image.png">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "Death2Data Member Tools",
-  "description": "Privacy tools: QR identity, search, notebook. No tracking. No ads.",
-  "url": "https://death2data.com/tools.html",
-  "provider": {
-    "@type": "Organization",
-    "name": "Death2Data",
-    "url": "https://death2data.com"
-  }
-}
-</script>
-
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
 
-<!-- Nav — same structure as index.html -->
-<nav class="tools-nav">
-  <span class="logo">D2D</span>
+<!-- Header — same as index.html -->
+<div class="hd" id="hd">
+  <a href="/" class="hd-logo">D2D</a>
   <a href="/">Search</a>
   <a href="/about.html">About</a>
   <a href="/tools.html" class="active">Tools</a>
-  <span class="status-badge" id="status-badge">...</span>
-</nav>
+  <div id="hd-auth-area"></div>
+</div>
 
 <!-- Main -->
 <div class="tools-main" id="main-content">
   <!-- Filled by JS -->
 </div>
 
-<!-- Footer -->
-<div class="tools-footer" id="tools-footer">
-  <span class="dot"></span>
-  <span id="footer-user">loading...</span>
-  <span>&middot;</span>
-  <a href="/">search</a>
-  <span>&middot;</span>
-  <button onclick="logout()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:var(--font)">sign out</button>
+<!-- Footer — matches index.html -->
+<div class="ft">
+  <a href="/about.html">about</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
 </div>
 
 <script>
-// Auth — check localStorage (primary)
-function validateToken() {
-  const token = localStorage.getItem('d2d_token');
-  const email = localStorage.getItem('d2d_email');
+const API = location.hostname === 'localhost' ? '' : 'https://fortune0-com.onrender.com';
 
-  if (token && email) {
-    showTools(email);
-    return;
+// ── Auth — same as index.html ──
+const S = { token: null, email: null };
+
+(function init() {
+  const t = localStorage.getItem('d2d_token');
+  const e = localStorage.getItem('d2d_email');
+  if (t && e) { S.token = t; S.email = e; showLoggedIn(); showTools(e); }
+  else { showLoggedOut(); showAccessDenied('Enter your email in the header to get started.'); }
+})();
+
+function showLoggedIn() {
+  document.getElementById('hd-auth-area').innerHTML = `
+    <div class="hd-user">
+      <span class="dot"></span>
+      <span>${S.email}</span>
+      <button onclick="logout()">sign out</button>
+    </div>`;
+}
+
+function showLoggedOut() {
+  document.getElementById('hd-auth-area').innerHTML = `
+    <div class="hd-auth">
+      <input type="email" id="email" placeholder="enter email to start"
+        onkeydown="if(event.key==='Enter')doLogin()">
+      <button class="go-btn" onclick="doLogin()">&rarr;</button>
+    </div>`;
+}
+
+async function doLogin() {
+  const el = document.getElementById('email');
+  const email = el.value.trim().toLowerCase();
+  if (!email || !email.includes('@')) { el.placeholder = 'enter your email'; return; }
+  el.disabled = true;
+
+  try {
+    const r = await fetch(API + '/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source_domain: 'death2data.com' })
+    });
+    const d = await r.json();
+    if (d.token) {
+      localStorage.setItem('d2d_token', d.token);
+      localStorage.setItem('d2d_email', d.email || email);
+      location.reload();
+      return;
+    }
+    if (d.exists) {
+      const r2 = await fetch(API + '/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, key: '' })
+      });
+      const d2 = await r2.json();
+      if (d2.token) {
+        localStorage.setItem('d2d_token', d2.token);
+        localStorage.setItem('d2d_email', d2.email || email);
+        location.reload();
+        return;
+      }
+    }
+    localStorage.setItem('d2d_email', email);
+    location.reload();
+  } catch(e) {
+    el.disabled = false;
+    el.placeholder = 'try again';
   }
+}
 
-  showAccessDenied('Sign in on the search page first');
+function logout() {
+  localStorage.removeItem('d2d_token');
+  localStorage.removeItem('d2d_email');
+  location.reload();
 }
 
 function showTools(email) {
-  document.getElementById('status-badge').textContent = 'active';
-  document.getElementById('footer-user').textContent = email;
-
   document.getElementById('main-content').innerHTML = `
     <h1>Your Tools</h1>
-    <p class="tools-subtitle">All tools are local-first. Your data never leaves your device.</p>
+    <p class="tools-subtitle">All tools run locally. Your data never leaves your device.</p>
 
     <div class="tools-grid">
       <div class="tool-card" onclick="openTool('search')">
-        <div class="tool-icon">&#128269;</div>
+        <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
           <h3>Privacy Search</h3>
           <p>Search the web without tracking. No logs, no profiling.</p>
@@ -268,44 +353,42 @@ function showTools(email) {
       </div>
 
       <div class="tool-card" onclick="openTool('notebook')">
-        <div class="tool-icon">&#128211;</div>
+        <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
           <h3>28-Day Notebook</h3>
           <p>Deep-dive on any topic. One question per day for 28 days.</p>
         </div>
       </div>
 
-      <div class="tool-card" onclick="openTool('qr-generator')">
-        <div class="tool-icon">&#128241;</div>
+      <div class="tool-card" onclick="openTool('sanitizer')">
+        <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
-          <h3>QR Identity</h3>
-          <p>Your D2D identity card. Share at events, verify trust circles.</p>
+          <h3>Data Sanitizer</h3>
+          <p>Strip GPS, camera info, and hidden metadata from photos before sharing.</p>
+        </div>
+      </div>
+
+      <div class="tool-card" onclick="openTool('leak-score')">
+        <span class="tool-ck">&#10003;</span>
+        <div class="tool-info">
+          <h3>Leak Score</h3>
+          <p>Check how exposed your email and passwords are in data breaches.</p>
         </div>
       </div>
 
       <div class="tool-card" onclick="openTool('identity-vault')">
-        <div class="tool-icon">&#128272;</div>
+        <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
           <h3>Identity Vault</h3>
           <p>Manage cryptographic identities. Generate keys, sign messages.</p>
         </div>
       </div>
 
-      <div class="tool-card disabled">
-        <div class="tool-icon">&#128465;</div>
+      <div class="tool-card" onclick="openTool('qr-generator')">
+        <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
-          <h3>Data Sanitizer</h3>
-          <p>Strip metadata from photos, PDFs, documents before sharing.</p>
-          <div class="coming-tag">coming soon</div>
-        </div>
-      </div>
-
-      <div class="tool-card disabled">
-        <div class="tool-icon">&#128200;</div>
-        <div class="tool-info">
-          <h3>Leak Score</h3>
-          <p>Check how exposed you are. Emails, phones, passwords in breaches.</p>
-          <div class="coming-tag">coming soon</div>
+          <h3>QR Identity</h3>
+          <p>Your D2D identity card. Share at events, verify trust circles.</p>
         </div>
       </div>
     </div>
@@ -313,43 +396,26 @@ function showTools(email) {
 }
 
 function showAccessDenied(reason) {
-  const badge = document.getElementById('status-badge');
-  badge.textContent = 'not signed in';
-  badge.className = 'status-badge invalid';
-  document.getElementById('tools-footer').style.display = 'none';
-
   document.getElementById('main-content').innerHTML = `
     <div class="access-denied">
       <h2>Sign in to access tools</h2>
       <p>${reason}</p>
-      <a href="/" class="btn btn-primary" style="margin-top:8px">Go to Search &rarr;</a>
+      <a href="/">Go to Search &rarr;</a>
     </div>
   `;
 }
 
-function openTool(toolName) {
-  const toolUrls = {
+function openTool(name) {
+  const urls = {
     'search': '/',
     'identity-vault': '/tools/identity-vault.html',
     'qr-generator': '/tools/qr-generator.html',
     'notebook': '/tools/notebook.html',
+    'sanitizer': '/tools/sanitizer.html',
+    'leak-score': '/tools/leak-score.html',
   };
-
-  if (toolUrls[toolName]) {
-    window.location.href = toolUrls[toolName];
-  } else {
-    alert(toolName.replace(/-/g,' ').toUpperCase() + ' — coming soon');
-  }
+  if (urls[name]) window.location.href = urls[name];
 }
-
-function logout() {
-  localStorage.removeItem('d2d_token');
-  localStorage.removeItem('d2d_email');
-  window.location.href = '/';
-}
-
-// Run on load
-validateToken();
 </script>
 
 </body>

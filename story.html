@@ -269,6 +269,33 @@ body {
   color: var(--gray);
 }
 
+/* ══ IMAGE CARD ══ */
+.card-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.card-image img {
+  max-width: 100%;
+  max-height: 55vh;
+  object-fit: contain;
+  border-radius: 6px;
+  background: var(--surface);
+}
+.card-image .img-caption {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  max-width: 400px;
+  line-height: 1.5;
+}
+.card-image .img-source {
+  font-size: 10px;
+  color: var(--dim);
+}
+
 /* ══ LIST ══ */
 .card-list h3 {
   font-size: 9px;
@@ -572,12 +599,19 @@ function parseContentToCards(data) {
 
   // ── 1. HEADLINE ──
   const safeTitle = truncate(title, 90);
+  const isD2D = D2D_DOMAINS.some(d => domain.includes(d));
   result.push({
     type: 'headline',
     html: `<div class="card-inner card-headline">
       <div class="card-label">Story Mode</div>
       <h1>${esc(safeTitle)}</h1>
-      <div class="card-source">${sourceBadge(domain)}</div>
+      <div class="card-source">
+        ${sourceBadge(domain)}
+        <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);margin-left:4px;">
+          <span style="width:5px;height:5px;background:${isD2D ? 'var(--green)' : '#666'};border-radius:50%;"></span>
+          live source
+        </span>
+      </div>
     </div>`
   });
   markUsed(title);
@@ -685,6 +719,21 @@ function parseContentToCards(data) {
       });
     });
   }
+
+  // ── 6. IMAGE cards — up to 3 from the page, interleaved ──
+  const imgs = (data.images || []).slice(0, 3);
+  imgs.forEach((img, i) => {
+    // Spread images throughout the story
+    const insertAt = Math.min(result.length, 2 + (i * 2));
+    result.splice(insertAt, 0, {
+      type: 'image',
+      html: `<div class="card-inner card-image">
+        <img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" onerror="this.closest('.story-card').style.display='none'">
+        ${img.alt ? `<div class="img-caption">${esc(truncate(img.alt, 120))}</div>` : ''}
+        <div class="img-source">${sourceBadge(domain)}</div>
+      </div>`
+    });
+  });
 
   // ── END CARD ──
   result.push({
@@ -912,7 +961,26 @@ async function loadStory(url) {
       if (t.length > 25) textParts.push(t);
     });
 
-    return { title, url, headings, content: textParts.join('\n'), raw: main.textContent.trim() };
+    // Extract images — keep meaningful ones, skip icons/trackers
+    const baseUrl = new URL(url);
+    const images = [];
+    main.querySelectorAll('img').forEach(img => {
+      let src = img.getAttribute('src') || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '';
+      if (!src || src.startsWith('data:')) return;
+      // Resolve relative URLs
+      if (src.startsWith('//')) src = 'https:' + src;
+      else if (src.startsWith('/')) src = baseUrl.origin + src;
+      else if (!src.startsWith('http')) src = baseUrl.origin + '/' + src;
+      // Skip tiny icons, trackers, and common junk
+      const w = parseInt(img.getAttribute('width') || '999');
+      const h = parseInt(img.getAttribute('height') || '999');
+      if (w < 80 || h < 80) return;
+      if (/pixel|track|beacon|logo|icon|avatar|badge|button|spinner|loading|ad\b/i.test(src)) return;
+      const alt = (img.getAttribute('alt') || '').trim();
+      images.push({ src, alt, width: w, height: h });
+    });
+
+    return { title, url, headings, content: textParts.join('\n'), images, raw: main.textContent.trim() };
   } catch (e) {
     console.error('Story load error:', e);
     return null;
