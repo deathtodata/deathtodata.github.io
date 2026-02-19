@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Story Mode | Death2Data</title>
 <meta name="description" content="Read the web in story mode. Card-by-card. No distractions.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -10,10 +10,10 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&family=Newsreader:ital,wght@0,400;0,600;1,400&display=swap');
 
-/* === VARIABLES — matches D2D site === */
 :root {
   --bg: #0a0a0a;
   --surface: #111111;
+  --card-bg: #0f0f0f;
   --border: #1e1e1e;
   --border-hover: #2a3a2a;
   --green: #00cc44;
@@ -27,10 +27,12 @@
   --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'JetBrains Mono', monospace;
   --serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+  /* Dynamic card height — set by JS */
+  --card-h: 100vh;
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html, body { height:100%; overflow:hidden; }
+html, body { height:100%; overflow:hidden; touch-action: manipulation; }
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -38,7 +40,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* === STORY CONTAINER === */
+/* ══ STORY SHELL ══ */
 .story-container {
   position: fixed;
   inset: 0;
@@ -48,7 +50,7 @@ body {
   z-index: 1000;
 }
 
-/* === TOP BAR === */
+/* ══ TOP BAR ══ */
 .story-bar {
   display: flex;
   align-items: center;
@@ -66,26 +68,26 @@ body {
   letter-spacing: 1px;
 }
 .story-bar .mode-tag {
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 2.5px;
   color: var(--dim);
   text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
 }
 .story-bar .spacer { flex:1; }
 .story-bar .source-url {
   font-size: 11px;
   color: var(--muted);
-  max-width: 200px;
+  max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .story-close {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
   background: none;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -93,10 +95,11 @@ body {
   font-size: 16px;
   cursor: pointer;
   flex-shrink: 0;
+  transition: all 0.2s;
 }
 .story-close:hover { border-color: var(--muted); color: var(--white); }
 
-/* === PROGRESS BAR === */
+/* ══ PROGRESS BAR ══ */
 .progress-track {
   display: flex;
   gap: 3px;
@@ -105,16 +108,13 @@ body {
 }
 .progress-seg {
   flex: 1;
-  height: 3px;
+  height: 2px;
   background: var(--border);
   border-radius: 2px;
   overflow: hidden;
   transition: background 0.3s;
 }
 .progress-seg.done { background: var(--green); }
-.progress-seg.active {
-  background: var(--border);
-}
 .progress-seg.active .progress-fill {
   display: block;
   height: 100%;
@@ -124,19 +124,17 @@ body {
 }
 .progress-fill { display: none; }
 @keyframes fillSeg {
-  from { width: 0; }
-  to { width: 100%; }
+  from { width: 0; } to { width: 100%; }
 }
 
-/* === CARD VIEWPORT === */
+/* ══ CARD VIEWPORT — the stage ══ */
 .card-viewport {
   flex: 1;
   position: relative;
   overflow: hidden;
-  touch-action: pan-y;
 }
 
-/* === STORY CARD === */
+/* ══ STORY CARD — each card is a fixed frame, never scrolls ══ */
 .story-card {
   position: absolute;
   inset: 0;
@@ -144,53 +142,53 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 40px 24px;
+  padding: 24px;
+  overflow: hidden; /* NEVER scroll — content must fit */
   opacity: 0;
-  transform: translateX(100%);
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(60px);
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
   will-change: transform, opacity;
 }
 .story-card.active {
   opacity: 1;
-  transform: translateX(0) rotateY(0);
+  transform: translateX(0);
 }
 .story-card.prev {
   opacity: 0;
-  transform: translateX(-100%);
+  transform: translateX(-60px);
 }
 .story-card.entering-right {
-  transform: translateX(100%);
+  transform: translateX(60px);
   opacity: 0;
 }
 .story-card.entering-left {
-  transform: translateX(-100%);
+  transform: translateX(-60px);
   opacity: 0;
 }
 
-/* Card inner container */
+/* ══ Card inner — max width container ══ */
 .card-inner {
-  max-width: 520px;
+  max-width: 500px;
   width: 100%;
   text-align: left;
 }
 
-/* === CARD TYPES === */
-
-/* -- HEADLINE card -- */
+/* ══ HEADLINE ══ */
 .card-headline .card-label {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 3px;
   color: var(--green);
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 .card-headline h1 {
   font-family: var(--serif);
-  font-size: clamp(28px, 6vw, 42px);
+  font-size: clamp(26px, 5.5vw, 38px);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--white);
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 .card-headline .card-source {
   font-size: 12px;
@@ -199,137 +197,125 @@ body {
   align-items: center;
   gap: 8px;
 }
-.card-headline .card-source img {
-  width: 16px; height: 16px; border-radius: 2px;
-}
 
-/* -- KEYPOINT card -- */
+/* ══ KEYPOINT ══ */
 .card-keypoint .kp-number {
   font-family: var(--mono);
-  font-size: 48px;
+  font-size: 40px;
   font-weight: 700;
   color: var(--green-dim);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  line-height: 1;
 }
 .card-keypoint h2 {
   font-family: var(--serif);
-  font-size: clamp(22px, 5vw, 32px);
+  font-size: clamp(20px, 4.5vw, 28px);
   font-weight: 600;
   line-height: 1.3;
   color: var(--white);
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 .card-keypoint p {
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--gray);
 }
 
-/* -- QUOTE card -- */
-.card-quote {
-  text-align: center;
-}
+/* ══ QUOTE ══ */
+.card-quote { text-align: center; }
 .card-quote .quote-mark {
   font-family: var(--serif);
-  font-size: 64px;
+  font-size: 56px;
   color: var(--green-dim);
   line-height: 1;
-  margin-bottom: -8px;
+  margin-bottom: -4px;
 }
 .card-quote blockquote {
   font-family: var(--serif);
-  font-size: clamp(20px, 5vw, 28px);
+  font-size: clamp(18px, 4.5vw, 26px);
   font-style: italic;
   line-height: 1.5;
   color: var(--white);
   margin-bottom: 16px;
 }
 .card-quote .quote-attr {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
 }
 
-/* -- STAT card -- */
-.card-stat {
-  text-align: center;
-}
+/* ══ STAT ══ */
+.card-stat { text-align: center; }
 .card-stat .stat-value {
   font-family: var(--mono);
-  font-size: clamp(48px, 12vw, 80px);
+  font-size: clamp(44px, 11vw, 72px);
   font-weight: 700;
   color: var(--green);
   line-height: 1;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 .card-stat .stat-label {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--gray);
-  margin-bottom: 16px;
-}
-.card-stat .stat-context {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.6;
+  line-height: 1.5;
+  max-width: 360px;
+  margin: 0 auto;
 }
 
-/* -- BODY card (paragraph content) -- */
+/* ══ BODY ══ */
 .card-body p {
   font-family: var(--serif);
-  font-size: clamp(17px, 4vw, 20px);
-  line-height: 1.8;
+  font-size: clamp(16px, 3.8vw, 19px);
+  line-height: 1.75;
   color: var(--gray);
 }
-.card-body p strong {
-  color: var(--white);
-  font-weight: 600;
-}
 
-/* -- LIST card -- */
+/* ══ LIST ══ */
 .card-list h3 {
-  font-size: 11px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 2.5px;
   color: var(--green);
   text-transform: uppercase;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 .card-list .list-item {
   display: flex;
   gap: 12px;
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
 }
 .card-list .list-item:last-child { border-bottom: none; }
 .card-list .list-num {
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 12px;
   color: var(--green-dim);
   flex-shrink: 0;
   padding-top: 2px;
 }
 .card-list .list-text {
-  font-size: 15px;
+  font-size: 14px;
   color: var(--gray);
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
-/* -- END card -- */
-.card-end {
-  text-align: center;
-}
-.card-end .end-icon {
-  font-size: 32px;
-  margin-bottom: 16px;
-  opacity: 0.5;
+/* ══ END CARD ══ */
+.card-end { text-align: center; }
+.card-end .end-line {
+  width: 32px;
+  height: 2px;
+  background: var(--green);
+  margin: 0 auto 20px;
+  border-radius: 1px;
 }
 .card-end h2 {
-  font-size: 20px;
+  font-size: 18px;
   color: var(--white);
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  font-weight: 600;
 }
 .card-end .end-source {
   font-size: 13px;
   color: var(--muted);
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 .card-end .end-actions {
   display: flex;
@@ -338,14 +324,15 @@ body {
   flex-wrap: wrap;
 }
 .card-end .end-btn {
-  padding: 12px 24px;
+  padding: 12px 28px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   border: none;
   font-family: var(--font);
   text-decoration: none;
+  transition: all 0.2s;
 }
 .card-end .end-btn.primary {
   background: var(--green);
@@ -359,18 +346,17 @@ body {
 }
 .card-end .end-btn.secondary:hover { border-color: var(--muted); color: var(--white); }
 
-/* === NAVIGATION HINTS === */
+/* ══ NAV ARROWS (desktop only) ══ */
 .nav-hint {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 40px;
-  height: 80px;
+  width: 36px; height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--dim);
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   z-index: 10;
   opacity: 0;
@@ -378,10 +364,10 @@ body {
 }
 .card-viewport:hover .nav-hint { opacity: 1; }
 .nav-hint:hover { color: var(--muted); }
-.nav-hint.left { left: 8px; }
-.nav-hint.right { right: 8px; }
+.nav-hint.left { left: 4px; }
+.nav-hint.right { right: 4px; }
 
-/* === BOTTOM BAR === */
+/* ══ FOOTER ══ */
 .story-footer {
   display: flex;
   align-items: center;
@@ -390,19 +376,17 @@ body {
   border-top: 1px solid var(--border);
   flex-shrink: 0;
   gap: 16px;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--dim);
 }
 .story-footer .counter {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--muted);
-}
-.story-footer .tip {
-  color: var(--dim);
+  letter-spacing: 1px;
 }
 
-/* === LOADING STATE === */
+/* ══ LOADING ══ */
 .story-loading {
   position: fixed;
   inset: 0;
@@ -414,8 +398,7 @@ body {
   z-index: 1001;
 }
 .story-loading .spinner {
-  width: 24px;
-  height: 24px;
+  width: 20px; height: 20px;
   border: 2px solid var(--border);
   border-top-color: var(--green);
   border-radius: 50%;
@@ -423,25 +406,39 @@ body {
   margin-bottom: 16px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
-.story-loading p {
-  font-size: 13px;
-  color: var(--muted);
-}
+.story-loading p { font-size: 12px; color: var(--muted); }
 
-/* === RESPONSIVE === */
+/* ══ RESPONSIVE ══ */
+@media (max-width: 768px) {
+  .story-bar .source-url { max-width: 100px; font-size: 10px; }
+  .card-inner { max-width: 100%; }
+  .card-keypoint .kp-number { font-size: 32px; }
+  .end-actions { flex-direction: column; width: 100%; }
+  .end-btn { width: 100%; text-align: center; }
+  .story-footer .tip { display: none; }
+}
 @media (max-width: 480px) {
-  .story-card { padding: 32px 20px; }
+  .story-card { padding: 20px 16px; }
   .story-bar .source-url { display: none; }
   .nav-hint { display: none; }
+  .story-bar { height: 42px; padding: 0 12px; }
+  .progress-track { padding: 6px 12px; }
+  .card-headline h1 { font-size: clamp(22px, 5.5vw, 32px); }
+  .card-keypoint h2 { font-size: clamp(18px, 4.5vw, 24px); }
+  .card-keypoint .kp-number { font-size: 28px; }
+  .card-body p { font-size: 15px; }
+  .card-quote blockquote { font-size: clamp(16px, 4vw, 22px); }
+  .card-stat .stat-value { font-size: clamp(36px, 10vw, 56px); }
+  .card-list .list-text { font-size: 13px; }
 }
 
-/* === ENTRY ANIMATION === */
+/* ══ CARD ENTRANCE ══ */
 @keyframes cardIn {
-  from { opacity: 0; transform: scale(0.96) translateY(12px); }
+  from { opacity: 0; transform: scale(0.97) translateY(8px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
 .story-card.active .card-inner {
-  animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: cardIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 </style>
 </head>
@@ -451,55 +448,45 @@ body {
 <div class="story-loading" id="story-loading">
   <div class="spinner"></div>
   <p id="loading-text">Loading story...</p>
-  <button onclick="window.location.href='/'" style="margin-top:20px;padding:8px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:12px;cursor:pointer;">Cancel &times;</button>
+  <button onclick="window.location.href='/'" style="margin-top:24px;padding:8px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:var(--font);font-size:11px;cursor:pointer;transition:border-color 0.2s;">Cancel</button>
 </div>
 
 <!-- ERROR STATE -->
-<div id="story-error" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:1002;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;">
-  <div style="font-size:48px;margin-bottom:16px;opacity:0.3;">&#9888;</div>
-  <h2 style="font-size:18px;color:var(--white);margin-bottom:8px;" id="error-title">Could not load story</h2>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:24px;max-width:400px;" id="error-detail">The page could not be fetched. The server might be waking up or the site may block external access.</p>
+<div id="story-error" style="display:none;">
+  <div style="font-size:40px;margin-bottom:16px;opacity:0.2;">&#9888;</div>
+  <h2 style="font-size:17px;color:var(--white);margin-bottom:8px;font-weight:600;" id="error-title">Could not load story</h2>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:28px;max-width:380px;line-height:1.6;" id="error-detail">The page could not be fetched. The server might be waking up or the site may block external access.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-    <a id="error-retry" href="#" style="padding:10px 20px;background:var(--green);color:#000;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;">Try again</a>
-    <a id="error-original" href="#" target="_blank" style="padding:10px 20px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:6px;text-decoration:none;font-size:13px;">View original page</a>
-    <a href="/" style="padding:10px 20px;background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);text-decoration:none;font-size:13px;">Back to search</a>
+    <button id="error-retry" onclick="retryStory()" style="padding:12px 28px;background:var(--green);color:#000;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">Try again</button>
+    <a id="error-original" href="#" target="_blank" style="padding:12px 28px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:8px;text-decoration:none;font-size:13px;font-family:var(--font);">View original</a>
+    <a href="/" style="padding:12px 28px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-family:var(--font);">Back to search</a>
   </div>
 </div>
 
 <!-- STORY CONTAINER -->
 <div class="story-container" id="story-container" style="display:none;">
-
-  <!-- Top bar -->
   <div class="story-bar">
     <span class="logo">D2D</span>
-    <span class="mode-tag">STORY MODE</span>
+    <span class="mode-tag">STORY</span>
     <span class="spacer"></span>
     <span class="source-url" id="source-url"></span>
     <button class="story-close" onclick="exitStory()" title="Close">&times;</button>
   </div>
-
-  <!-- Progress -->
   <div class="progress-track" id="progress-track"></div>
-
-  <!-- Card viewport -->
   <div class="card-viewport" id="card-viewport">
     <div class="nav-hint left" onclick="prevCard()">&#8249;</div>
     <div class="nav-hint right" onclick="nextCard()">&#8250;</div>
   </div>
-
-  <!-- Bottom -->
   <div class="story-footer">
     <span class="counter" id="counter">1 / 1</span>
-    <span class="tip">tap or swipe to navigate</span>
+    <span class="tip">swipe or tap to navigate</span>
   </div>
-
 </div>
 
 <script>
 // ═══════════════════════════════════════
-// STORY MODE ENGINE v2
-// Deterministic structure: headline → overview → sections → end
-// No duplicate content. Each paragraph used once.
+// STORY MODE ENGINE v3
+// Every card fits the viewport. No scroll. Premium.
 // ═══════════════════════════════════════
 
 const API = location.hostname === 'localhost' ? '' : 'https://fortune0-com.onrender.com';
@@ -507,163 +494,24 @@ let cards = [];
 let currentIndex = 0;
 let touchStartX = 0;
 let touchStartY = 0;
+let storyUrl = '';
 
-// ── Source badge helper ──
-// Shows D2D green dot for our domains, neutral for external
+// ── D2D domain check ──
 const D2D_DOMAINS = [
   'death2data.com','fortune0.com','soulfra.ai','deathtodata.github.io',
   'vibe-browser.com','installkernel.com','brandaidkit.com'
 ];
+
 function sourceBadge(domain) {
   const isOurs = D2D_DOMAINS.some(d => domain.includes(d));
   if (isOurs) {
-    return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 8px;background:var(--green-dim);border:1px solid #0c3;border-radius:12px;color:var(--green);">
-      <span style="width:6px;height:6px;background:var(--green);border-radius:50%;"></span>D2D verified
+    return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 8px;background:var(--green-dim);border:1px solid #0c3;border-radius:12px;color:var(--green);">
+      <span style="width:5px;height:5px;background:var(--green);border-radius:50%;"></span>D2D verified
     </span>`;
   }
-  return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);">
+  return `<span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);">
     <img src="https://www.google.com/s2/favicons?domain=${esc(domain)}&sz=32" style="width:12px;height:12px;border-radius:2px;" onerror="this.style.display='none'">${esc(domain)}
   </span>`;
-}
-
-// ── Parse content into story cards (no duplication) ──
-function parseContentToCards(data) {
-  const { title, url, content, headings } = data;
-  const domain = url ? url.replace(/^https?:\/\//, '').split('/')[0] : '';
-  const cards = [];
-  const usedText = new Set(); // track used content to prevent dupes
-
-  function isUsed(text) {
-    const key = text.trim().slice(0, 60).toLowerCase();
-    if (usedText.has(key)) return true;
-    usedText.add(key);
-    return false;
-  }
-
-  // ── Card 1: HEADLINE (always) ──
-  cards.push({
-    type: 'headline',
-    html: `<div class="card-inner card-headline">
-      <div class="card-label">Story Mode</div>
-      <h1>${esc(title)}</h1>
-      <div class="card-source" style="display:flex;align-items:center;gap:10px;">
-        ${sourceBadge(domain)}
-      </div>
-    </div>`
-  });
-  isUsed(title);
-
-  // ── Card 2: KEY POINTS overview (if we have 3+ headings) ──
-  const validHeadings = (headings || []).filter(h => h.text && h.text.length > 3 && h.snippet && h.snippet.length > 20);
-
-  if (validHeadings.length >= 3) {
-    const listHtml = validHeadings.slice(0, 6).map((h, i) =>
-      `<div class="list-item">
-        <span class="list-num">${String(i+1).padStart(2,'0')}</span>
-        <span class="list-text">${esc(h.text)}</span>
-      </div>`
-    ).join('');
-    cards.push({
-      type: 'list',
-      html: `<div class="card-inner card-list">
-        <h3>What&rsquo;s in this story</h3>
-        ${listHtml}
-      </div>`
-    });
-  }
-
-  // ── Section cards: one per heading with snippet ──
-  // These are the ONLY place heading content appears (no duplication with body)
-  validHeadings.forEach((h, i) => {
-    isUsed(h.text);
-    isUsed(h.snippet);
-    cards.push({
-      type: 'keypoint',
-      html: `<div class="card-inner card-keypoint">
-        <div class="kp-number">${String(i+1).padStart(2,'0')}</div>
-        <h2>${esc(h.text)}</h2>
-        <p>${esc(h.snippet)}</p>
-      </div>`
-    });
-  });
-
-  // ── Parse remaining paragraphs that weren't used in headings ──
-  if (content && content.length > 0) {
-    const allParas = content.split('\n').filter(p => p.trim().length > 40);
-    const unusedParas = allParas.filter(p => !isUsed(p));
-
-    // Find ONE stat (first number-heavy paragraph)
-    const statIdx = unusedParas.findIndex(p => /\b\d{1,3}%|\$[\d,.]+[BMK]?\b/.test(p));
-    if (statIdx !== -1) {
-      const statPara = unusedParas.splice(statIdx, 1)[0];
-      const statMatch = statPara.match(/(\$[\d,.]+[BMK]?|\d{1,3}%)/);
-      if (statMatch) {
-        cards.push({
-          type: 'stat',
-          html: `<div class="card-inner card-stat">
-            <div class="stat-value">${esc(statMatch[1])}</div>
-            <div class="stat-label">${esc(statPara.slice(0, 100))}</div>
-          </div>`
-        });
-      }
-    }
-
-    // Find ONE quote
-    const quoteIdx = unusedParas.findIndex(p =>
-      (/^[""\u201C]/.test(p.trim()) || /\bsaid\b|\bsays\b/.test(p)) && p.length < 280
-    );
-    if (quoteIdx !== -1) {
-      const quotePara = unusedParas.splice(quoteIdx, 1)[0];
-      const clean = quotePara.replace(/^[""\u201C]+|[""\u201D]+$/g, '').trim();
-      // Split quote from attribution if "says X" pattern
-      const saidSplit = clean.match(/^(.+?)[,"]?\s+says?\s+(.+)$/i);
-      cards.push({
-        type: 'quote',
-        html: `<div class="card-inner card-quote">
-          <div class="quote-mark">&ldquo;</div>
-          <blockquote>${esc(saidSplit ? saidSplit[1] : clean)}</blockquote>
-          ${saidSplit ? `<div class="quote-attr">&mdash; ${esc(saidSplit[2])}</div>` : ''}
-        </div>`
-      });
-    }
-
-    // Remaining body paragraphs — max 3 cards, 1-2 paragraphs each
-    const bodyParas = unusedParas.filter(p => p.length > 50 && p.length < 500).slice(0, 4);
-    for (let i = 0; i < bodyParas.length; i += 2) {
-      const chunk = bodyParas.slice(i, i + 2);
-      cards.push({
-        type: 'body',
-        html: `<div class="card-inner card-body">
-          ${chunk.map(p => `<p>${esc(p)}</p>`).join('')}
-        </div>`
-      });
-    }
-  }
-
-  // ── END card (always) ──
-  cards.push({
-    type: 'end',
-    html: `<div class="card-inner card-end">
-      <div class="end-icon">&#9679;</div>
-      <h2>End of story</h2>
-      <div class="end-source">${sourceBadge(domain)}</div>
-      <div class="end-actions">
-        <a class="end-btn secondary" href="${esc(url)}" target="_blank" rel="noopener">View original</a>
-        <button class="end-btn primary" onclick="exitStory()">Back to search</button>
-      </div>
-    </div>`
-  });
-
-  // Guarantee at least 3 cards (headline + something + end)
-  if (cards.length < 3 && data.raw) {
-    const fallback = data.raw.slice(0, 600).trim();
-    cards.splice(cards.length - 1, 0, {
-      type: 'body',
-      html: `<div class="card-inner card-body"><p>${esc(fallback)}</p></div>`
-    });
-  }
-
-  return cards;
 }
 
 function esc(s) {
@@ -673,7 +521,198 @@ function esc(s) {
   return d.innerHTML;
 }
 
-// ── Render cards into viewport ──
+// ── Clean text helper ──
+function clean(text) {
+  return text
+    .replace(/^[\d]+[.)]\s*/,'')
+    .replace(/^[-•·]\s*/,'')
+    .replace(/,{2,}/g, ',')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/\s,/g, ',')
+    .trim();
+}
+
+// ── Truncate to char limit at sentence boundary ──
+function truncate(text, max) {
+  if (text.length <= max) return text;
+  const cut = text.lastIndexOf('. ', max);
+  return cut > max * 0.4 ? text.slice(0, cut + 1) : text.slice(0, max).replace(/\s+\S*$/, '') + '...';
+}
+
+// ═══ PARSE CONTENT INTO CARDS ═══
+// Rule: every card's content must fit one screen. Ruthless truncation.
+function parseContentToCards(data) {
+  const { title, url, content, headings } = data;
+  const domain = url ? url.replace(/^https?:\/\//, '').split('/')[0] : '';
+  const result = [];
+  const usedText = new Set();
+
+  // Dedup with fuzzy matching
+  function normalize(t) {
+    return t.trim().toLowerCase().replace(/[''"""\u201C\u201D.,!?;:]/g, '').replace(/\s+/g, ' ').slice(0, 80);
+  }
+  function markUsed(t) {
+    if (!t || t.trim().length < 10) return;
+    usedText.add(normalize(t));
+  }
+  function isUsed(t) {
+    if (!t || t.trim().length < 10) return true;
+    const key = normalize(t);
+    if (usedText.has(key)) return true;
+    for (const existing of usedText) {
+      const w1 = key.split(' ').filter(w => w.length > 3);
+      const w2 = existing.split(' ').filter(w => w.length > 3);
+      if (w1.length < 2 || w2.length < 2) continue;
+      const overlap = w1.filter(w => w2.includes(w)).length;
+      if (overlap >= Math.min(w1.length, w2.length) * 0.65) return true;
+    }
+    usedText.add(key);
+    return false;
+  }
+
+  // ── 1. HEADLINE ──
+  const safeTitle = truncate(title, 90);
+  result.push({
+    type: 'headline',
+    html: `<div class="card-inner card-headline">
+      <div class="card-label">Story Mode</div>
+      <h1>${esc(safeTitle)}</h1>
+      <div class="card-source">${sourceBadge(domain)}</div>
+    </div>`
+  });
+  markUsed(title);
+
+  // ── 2. Filter headings ──
+  const validHeadings = (headings || []).filter(h =>
+    h.text && h.text.length > 3 && h.text.length < 100 &&
+    h.snippet && h.snippet.length > 20
+  );
+
+  // ── 3. TABLE OF CONTENTS (if 3+ headings) — max 5 items ──
+  if (validHeadings.length >= 3) {
+    const items = validHeadings.slice(0, 5);
+    const listHtml = items.map((h, i) =>
+      `<div class="list-item">
+        <span class="list-num">${String(i+1).padStart(2,'0')}</span>
+        <span class="list-text">${esc(truncate(h.text, 60))}</span>
+      </div>`
+    ).join('');
+    result.push({
+      type: 'list',
+      html: `<div class="card-inner card-list">
+        <h3>In this story</h3>
+        ${listHtml}
+      </div>`
+    });
+  }
+
+  // ── 4. KEYPOINT cards — heading + short snippet, max 5 ──
+  validHeadings.slice(0, 5).forEach((h, i) => {
+    markUsed(h.text);
+    markUsed(h.snippet);
+    const snippet = truncate(clean(h.snippet), 160);
+    result.push({
+      type: 'keypoint',
+      html: `<div class="card-inner card-keypoint">
+        <div class="kp-number">${String(i+1).padStart(2,'0')}</div>
+        <h2>${esc(truncate(h.text, 70))}</h2>
+        <p>${esc(snippet)}</p>
+      </div>`
+    });
+  });
+
+  // ── 5. Parse remaining unused paragraphs ──
+  if (content && content.length > 0) {
+    const allParas = content.split('\n')
+      .map(p => clean(p))
+      .filter(p => p.length > 50 && p.length < 600)
+      .filter(p => p.split(/\s+/).length >= 8) // real sentences
+      .filter(p => {
+        // Skip data-heavy lines (table rows, nav junk)
+        const nums = (p.match(/\d+/g) || []).length;
+        const words = p.split(/\s+/).length;
+        return nums / words < 0.5;
+      });
+
+    const unused = allParas.filter(p => !isUsed(p));
+
+    // ONE stat card
+    const statIdx = unused.findIndex(p => {
+      return /\b\d{1,3}%|\$[\d,.]+\s*[BMKbmk]?/i.test(p) && p.split(/\s+/).length >= 8;
+    });
+    if (statIdx !== -1) {
+      const para = unused.splice(statIdx, 1)[0];
+      const match = para.match(/(\$[\d,.]+\s*[BMKbmk]?(illion)?|\d{1,3}%)/i);
+      if (match) {
+        const label = truncate(para.replace(match[0], '').replace(/\s{2,}/g,' ').trim(), 90);
+        result.push({
+          type: 'stat',
+          html: `<div class="card-inner card-stat">
+            <div class="stat-value">${esc(match[1].trim())}</div>
+            <div class="stat-label">${esc(label)}</div>
+          </div>`
+        });
+      }
+    }
+
+    // ONE quote card
+    const quoteIdx = unused.findIndex(p => {
+      const quoted = /^[""\u201C]/.test(p.trim()) && /[""\u201D]/.test(p);
+      const said = /\bsaid\b|\bsays\b|\baccording to\b/i.test(p);
+      return (quoted || said) && p.length > 40 && p.length < 250;
+    });
+    if (quoteIdx !== -1) {
+      const para = unused.splice(quoteIdx, 1)[0];
+      const q = para.replace(/^[""\u201C]+|[""\u201D]+$/g, '').trim();
+      const saidMatch = q.match(/^(.+?)[,"]?\s+(?:said|says)\s+(.+)$/i);
+      result.push({
+        type: 'quote',
+        html: `<div class="card-inner card-quote">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>${esc(truncate(saidMatch ? saidMatch[1] : q, 180))}</blockquote>
+          ${saidMatch ? `<div class="quote-attr">&mdash; ${esc(truncate(saidMatch[2], 60))}</div>` : ''}
+        </div>`
+      });
+    }
+
+    // Up to 2 body cards — one paragraph each, capped hard
+    unused.filter(p => p.length > 60).slice(0, 2).forEach(p => {
+      result.push({
+        type: 'body',
+        html: `<div class="card-inner card-body">
+          <p>${esc(truncate(p, 220))}</p>
+        </div>`
+      });
+    });
+  }
+
+  // ── END CARD ──
+  result.push({
+    type: 'end',
+    html: `<div class="card-inner card-end">
+      <div class="end-line"></div>
+      <h2>End of story</h2>
+      <div class="end-source">${sourceBadge(domain)}</div>
+      <div class="end-actions">
+        <a class="end-btn secondary" href="${esc(url)}" target="_blank" rel="noopener">View original</a>
+        <button class="end-btn primary" onclick="exitStory()">Back to search</button>
+      </div>
+    </div>`
+  });
+
+  // Minimum 3 cards
+  if (result.length < 3 && data.raw) {
+    const fallback = truncate(clean(data.raw), 200);
+    result.splice(result.length - 1, 0, {
+      type: 'body',
+      html: `<div class="card-inner card-body"><p>${esc(fallback)}</p></div>`
+    });
+  }
+
+  return result;
+}
+
+// ═══ RENDER ═══
 function renderCards() {
   const viewport = document.getElementById('card-viewport');
   const track = document.getElementById('progress-track');
@@ -705,23 +744,22 @@ function updateProgress() {
 }
 
 function updateCounter() {
-  document.getElementById('counter').textContent =
-    `${currentIndex + 1} / ${cards.length}`;
+  document.getElementById('counter').textContent = `${currentIndex + 1} / ${cards.length}`;
 }
 
-// ── Navigate ──
+// ═══ NAVIGATION ═══
 function goToCard(index) {
   if (index < 0 || index >= cards.length) return;
   const oldCard = document.getElementById('card-' + currentIndex);
   const newCard = document.getElementById('card-' + index);
   if (!oldCard || !newCard) return;
 
-  const goingForward = index > currentIndex;
+  const fwd = index > currentIndex;
   oldCard.className = 'story-card';
   newCard.className = 'story-card';
-  newCard.classList.add(goingForward ? 'entering-right' : 'entering-left');
+  newCard.classList.add(fwd ? 'entering-right' : 'entering-left');
   newCard.offsetWidth; // force reflow
-  oldCard.classList.add(goingForward ? 'prev' : 'entering-right');
+  oldCard.classList.add(fwd ? 'prev' : 'entering-right');
   newCard.classList.remove('entering-right', 'entering-left');
   newCard.classList.add('active');
 
@@ -733,7 +771,7 @@ function goToCard(index) {
 function nextCard() { if (currentIndex < cards.length - 1) goToCard(currentIndex + 1); }
 function prevCard() { if (currentIndex > 0) goToCard(currentIndex - 1); }
 
-// ── Touch + click ──
+// ═══ TOUCH + TAP ═══
 function setupTouch() {
   const vp = document.getElementById('card-viewport');
 
@@ -745,45 +783,78 @@ function setupTouch() {
   vp.addEventListener('touchend', e => {
     const dx = e.changedTouches[0].screenX - touchStartX;
     const dy = e.changedTouches[0].screenY - touchStartY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+    if (Math.abs(dx) > Math.abs(dy) * 1.3 && Math.abs(dx) > 40) {
       dx < 0 ? nextCard() : prevCard();
     }
   }, { passive: true });
 
+  // Tap: left third = back, right two-thirds = forward
+  let tapTime = 0;
+  vp.addEventListener('pointerdown', () => { tapTime = Date.now(); });
   vp.addEventListener('click', e => {
     if (e.target.closest('.nav-hint,.end-btn,a,button')) return;
+    if (Date.now() - tapTime > 250) return; // was a drag, not a tap
     const rect = vp.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    x < rect.width * 0.35 ? prevCard() : nextCard();
+    const x = (e.clientX - rect.left) / rect.width;
+    x < 0.33 ? prevCard() : nextCard();
   });
 }
 
-// ── Keyboard ──
+// ═══ KEYBOARD ═══
 document.addEventListener('keydown', e => {
   if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextCard(); }
   if (e.key === 'ArrowLeft') { e.preventDefault(); prevCard(); }
   if (e.key === 'Escape') exitStory();
 });
 
-// ── Exit — always reliable, never black screen ──
+// ═══ EXIT ═══
 function exitStory() {
   window.location.href = '/';
 }
 
-// ── Error state ──
+// ═══ ERROR ═══
 function showError(msg, url) {
   document.getElementById('story-loading').style.display = 'none';
   document.getElementById('story-container').style.display = 'none';
-  const errEl = document.getElementById('story-error');
-  errEl.style.display = 'flex';
+  const el = document.getElementById('story-error');
+  el.style.cssText = 'display:flex;position:fixed;inset:0;background:var(--bg);z-index:1002;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;';
   if (msg) document.getElementById('error-detail').textContent = msg;
   if (url) {
+    storyUrl = url;
     document.getElementById('error-original').href = url;
-    document.getElementById('error-retry').href = '/story.html?url=' + encodeURIComponent(url);
   }
 }
 
-// ── Fetch content through D2D privacy layer ──
+function retryStory() {
+  if (!storyUrl) { window.location.reload(); return; }
+  document.getElementById('story-error').style.display = 'none';
+  const loader = document.getElementById('story-loading');
+  loader.style.display = 'flex';
+  document.getElementById('loading-text').textContent = 'Retrying...';
+
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    showError('Still taking too long. The server might need a minute to warm up.', storyUrl);
+  }, 20000);
+
+  loadStory(storyUrl).then(data => {
+    clearTimeout(timeout);
+    if (timedOut) return;
+    if (data) {
+      cards = parseContentToCards(data);
+      currentIndex = 0;
+      renderCards();
+      setupTouch();
+      document.getElementById('story-loading').style.display = 'none';
+      document.getElementById('story-container').style.display = 'flex';
+    } else {
+      showError('Could not load this page. The site may block external access.', storyUrl);
+    }
+  });
+}
+
+// ═══ FETCH ═══
 async function loadStory(url) {
   try {
     const token = localStorage.getItem('d2d_token');
@@ -796,34 +867,37 @@ async function loadStory(url) {
 
     const parser = new DOMParser();
     const doc = parser.parseFromString(data.content, 'text/html');
-    doc.querySelectorAll('script,style,nav,footer,header,iframe,noscript,.ad,.ads,.sidebar,.menu,.nav,aside').forEach(el => el.remove());
+    doc.querySelectorAll('script,style,nav,footer,header,iframe,noscript,.ad,.ads,.sidebar,.menu,.nav,aside,[role="navigation"],[role="banner"]').forEach(el => el.remove());
 
     const title = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || url;
 
-    // Headings with snippets
+    // Extract headings with their first following paragraph
     const headings = [];
     doc.querySelectorAll('h1,h2,h3').forEach(h => {
       const text = h.textContent.trim();
-      if (!text || text.length < 3 || text.length > 120) return;
+      if (!text || text.length < 4 || text.length > 100) return;
       let snippet = '';
       let next = h.nextElementSibling;
       let tries = 0;
-      while (next && tries < 5) {
-        if (['H1','H2','H3'].includes(next.tagName)) break;
+      while (next && tries < 4) {
+        if (/^H[1-3]$/.test(next.tagName)) break;
         const p = next.tagName === 'P' ? next : next.querySelector?.('p');
-        if (p && p.textContent.trim().length > 20) { snippet = p.textContent.trim(); break; }
+        if (p && p.textContent.trim().length > 20) {
+          snippet = p.textContent.trim();
+          break;
+        }
         next = next.nextElementSibling;
         tries++;
       }
       headings.push({ text, snippet });
     });
 
-    // Paragraphs
-    const main = doc.querySelector('article') || doc.querySelector('main') || doc.querySelector('.content') || doc.body;
+    // Extract paragraphs from article/main content
+    const main = doc.querySelector('article') || doc.querySelector('main') || doc.querySelector('.content,.post-content,.entry-content') || doc.body;
     const textParts = [];
     main.querySelectorAll('p,li,blockquote').forEach(el => {
       const t = el.textContent.trim();
-      if (t.length > 20) textParts.push(t);
+      if (t.length > 25) textParts.push(t);
     });
 
     return { title, url, headings, content: textParts.join('\n'), raw: main.textContent.trim() };
@@ -833,19 +907,19 @@ async function loadStory(url) {
   }
 }
 
-// ── DEMO ──
+// ═══ DEMO ═══
 function loadDemo() {
   const demoData = {
     title: 'The Future of Privacy-First Search',
     url: 'https://death2data.com/about',
     headings: [
-      { text: 'The Surveillance Economy is Crumbling', snippet: 'Major browsers are blocking third-party cookies by default. Users are demanding alternatives to the ad-funded search model that has dominated for two decades.' },
-      { text: 'Privacy Search Goes Mainstream', snippet: 'DuckDuckGo crossed 100 million daily searches. Brave Search, Startpage, and newer privacy-first entrants are growing 40% year over year.' },
-      { text: 'The Dollar Model', snippet: 'When you pay $1 for search, the incentive to track you disappears entirely. You are the customer, not the product. The economics actually work.' },
-      { text: 'Local-First Architecture', snippet: 'Next-generation privacy tools keep everything on your device. No cloud storage. No server-side logs. No attack surface for breaches.' },
-      { text: 'What Comes Next', snippet: 'Local AI models, encrypted search indexes, and wallet-based identity will converge into a new kind of web — one where you own your data by default.' }
+      { text: 'The Surveillance Economy is Crumbling', snippet: 'Major browsers are blocking third-party cookies by default. Users are demanding alternatives to the ad-funded search model.' },
+      { text: 'Privacy Search Goes Mainstream', snippet: 'DuckDuckGo crossed 100 million daily searches. Brave Search and newer privacy-first entrants are growing 40% year over year.' },
+      { text: 'The Dollar Model', snippet: 'When you pay $1 for search, the incentive to track you disappears entirely. You are the customer, not the product.' },
+      { text: 'Local-First Architecture', snippet: 'Next-generation privacy tools keep everything on your device. No cloud storage. No server-side logs.' },
+      { text: 'What Comes Next', snippet: 'Local AI models, encrypted search indexes, and wallet-based identity will converge into a new kind of web.' }
     ],
-    content: '"The idea that search must be funded by surveillance is a myth we created to justify the business model," says one privacy researcher at the Electronic Frontier Foundation.\n\n$47B was spent on search advertising in the US alone last year. Even capturing a fraction of that market through direct subscriptions represents a massive opportunity for privacy-first alternatives.\n\nThe tools exist today. What was missing was the economic model. At one dollar per month, with no tracking and no ads, the math works for both users and the builders creating these alternatives.'
+    content: '"The idea that search must be funded by surveillance is a myth we created to justify the business model," says one privacy researcher at the EFF.\n\n$47B was spent on search advertising in the US alone last year. Even capturing a fraction of that market through direct subscriptions represents a massive opportunity.\n\nThe tools exist today. What was missing was the economic model. At one dollar per month, with no tracking and no ads, the math works for both users and builders.'
   };
 
   cards = parseContentToCards(demoData);
@@ -856,27 +930,26 @@ function loadDemo() {
   document.getElementById('story-container').style.display = 'flex';
 }
 
-// ── INIT ──
+// ═══ INIT ═══
 (async function init() {
   const params = new URLSearchParams(location.search);
   const url = params.get('url');
 
   if (url) {
+    storyUrl = url;
     const domain = url.replace(/^https?:\/\//, '').split('/')[0];
     document.getElementById('source-url').textContent = domain;
     document.getElementById('loading-text').textContent = 'Fetching ' + domain + '...';
 
-    // Timeout: if API takes > 15s, show error (Render cold starts can be slow)
     let timedOut = false;
     const timeout = setTimeout(() => {
       timedOut = true;
-      showError('The server is taking too long to respond. It might be waking up — try again in 30 seconds.', url);
+      showError('The server is taking too long. It might be waking up — try again in 30 seconds.', url);
     }, 15000);
 
     const data = await loadStory(url);
     clearTimeout(timeout);
-
-    if (timedOut) return; // error already shown
+    if (timedOut) return;
 
     if (data) {
       cards = parseContentToCards(data);
@@ -885,7 +958,7 @@ function loadDemo() {
       document.getElementById('story-loading').style.display = 'none';
       document.getElementById('story-container').style.display = 'flex';
     } else {
-      showError('Could not extract content from this page. The site may block external access or returned an error.', url);
+      showError('Could not extract content from this page. The site may block external access.', url);
     }
   } else {
     loadDemo();
