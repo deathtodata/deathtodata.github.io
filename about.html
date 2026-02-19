@@ -38,10 +38,41 @@
 }
 </script>
 
-<link rel="stylesheet" href="/css/style.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+
 <style>
-/* About page layout */
-.about-nav {
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111111;
+  --border: #1e1e1e;
+  --green: #00cc44;
+  --green-dim: #004d1a;
+  --green-hover: #00e64d;
+  --white: #e0e0e0;
+  --gray: #b0b0b0;
+  --muted: #666666;
+  --dim: #444444;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── Nav ── */
+.nav {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -52,121 +83,140 @@
   top: 0;
   z-index: 100;
 }
-.about-nav .logo {
+.nav .logo {
   font-family: var(--mono);
   font-size: 15px;
   font-weight: 700;
   color: var(--green);
   letter-spacing: 1px;
+  text-decoration: none;
   margin-right: auto;
 }
-.about-nav a {
+.nav a {
   font-size: 12px;
   color: var(--muted);
   text-decoration: none;
+  transition: color 0.2s;
 }
-.about-nav a:hover { color: var(--white); }
-.about-nav a.active { color: var(--white); }
+.nav a:hover { color: var(--white); }
+.nav a.active { color: var(--white); }
 
-.about-main {
-  max-width: 540px;
+/* ── Main ── */
+.main {
+  max-width: 500px;
   margin: 0 auto;
-  padding: 40px 16px 80px;
+  padding: 48px 16px 100px;
 }
 
-/* Hero */
-.about-hero {
+/* ── Hero — single clear message ── */
+.hero {
   text-align: center;
   margin-bottom: 40px;
 }
-.about-hero h1 {
-  font-size: 28px;
+.hero h1 {
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 8px;
   letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: 16px;
 }
-.about-hero .price-tag {
-  font-size: 36px;
+.hero .price {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.hero .price .amount {
+  font-size: 40px;
   font-weight: 700;
   color: var(--green);
-  margin-bottom: 4px;
 }
-.about-hero .price-sub {
+.hero .price .period {
   font-size: 14px;
   color: var(--muted);
 }
-.about-hero .tagline {
-  font-size: 15px;
+.hero .tagline {
+  font-size: 14px;
   color: var(--gray);
-  margin-top: 16px;
   line-height: 1.6;
+  max-width: 380px;
+  margin: 0 auto;
 }
 
-/* Stats row */
-.stats-row {
+/* ── Live stats — compact row ── */
+.stats {
   display: flex;
   gap: 1px;
   background: var(--border);
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
-.stat-box {
+.stat {
   flex: 1;
   background: var(--surface);
-  padding: 16px;
+  padding: 14px 12px;
   text-align: center;
 }
-.stat-box .num {
-  font-size: 20px;
+.stat .num {
+  font-family: var(--mono);
+  font-size: 18px;
   font-weight: 700;
   color: var(--green);
 }
-.stat-box .label {
-  font-size: 11px;
+.stat .label {
+  font-size: 10px;
   color: var(--muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
-/* Features */
-.feature-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 20px;
-  margin-bottom: 12px;
+/* ── What you get — clean list, not cards ── */
+.features {
+  margin-bottom: 36px;
+}
+.features h2 {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.feature {
   display: flex;
-  gap: 14px;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
   align-items: flex-start;
 }
-.feature-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+.feature:last-child { border-bottom: none; }
+.feature .icon {
+  font-size: 16px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--green-dim);
-  border-radius: 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
-.feature-text h3 {
+.feature h3 {
   font-size: 14px;
   font-weight: 600;
   color: var(--white);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
-.feature-text p {
+.feature p {
   font-size: 13px;
   color: var(--gray);
   line-height: 1.5;
   margin: 0;
 }
 
-/* CTA */
-.join-cta {
+/* ── CTA ── */
+.cta {
   display: block;
   width: 100%;
   padding: 16px;
@@ -179,79 +229,66 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  margin: 32px 0 12px;
+  margin-bottom: 8px;
   transition: background 0.2s;
 }
-.join-cta:hover {
-  background: var(--green-hover);
-  text-decoration: none;
-  color: var(--bg);
-}
-.billing-note {
+.cta:hover { background: var(--green-hover); color: var(--bg); text-decoration: none; }
+.billing {
   text-align: center;
-  font-size: 12px;
+  font-size: 11px;
   color: var(--muted);
-  margin-bottom: 32px;
+  margin-bottom: 36px;
 }
 
-/* Privacy section */
-.privacy-section {
+/* ── Privacy + Revenue — combined footer section ── */
+.bottom-section {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 32px;
+  padding: 20px;
 }
-.privacy-section h3 {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--white);
-  margin-bottom: 12px;
+.bottom-section h3 {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--dim);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  margin-bottom: 12px;
 }
-.privacy-item {
+.promise-item {
   font-size: 13px;
   color: var(--gray);
-  padding: 6px 0;
+  padding: 4px 0;
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.privacy-check {
+.promise-item .check {
   color: var(--green);
-  font-weight: 600;
+  font-size: 12px;
 }
-
-/* Open revenue */
-.revenue-bar {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px 20px;
+.revenue-row {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 32px;
 }
-.revenue-bar .label {
-  font-size: 12px;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.revenue-bar .amount {
-  font-size: 18px;
+.revenue-row .mrr {
+  font-family: var(--mono);
+  font-size: 16px;
   font-weight: 700;
   color: var(--green);
 }
-.revenue-bar a {
-  font-size: 12px;
+.revenue-row a {
+  font-size: 11px;
   color: var(--muted);
+  text-decoration: none;
 }
+.revenue-row a:hover { color: var(--white); }
 
-/* Footer bar */
-.about-footer {
+/* ── Footer ── */
+.footer {
   position: fixed;
   bottom: 0;
   left: 0;
@@ -263,126 +300,109 @@
   align-items: center;
   justify-content: center;
   gap: 12px;
-  font-size: 12px;
-  color: var(--muted);
+  font-size: 11px;
 }
-.about-footer a {
+.footer a {
   color: var(--muted);
   text-decoration: none;
 }
-.about-footer a:hover { color: var(--white); }
+.footer a:hover { color: var(--white); }
+.footer .dot { color: var(--dim); }
 </style>
-
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#0a0a0a">
 </head>
 <body>
 
-<!-- Nav -->
-<nav class="about-nav">
-  <span class="logo">D2D</span>
+<nav class="nav">
+  <a href="/" class="logo">D2D</a>
   <a href="/">Search</a>
   <a href="/about.html" class="active">About</a>
   <a href="/tools.html">Tools</a>
 </nav>
 
-<!-- Main -->
-<div class="about-main">
+<div class="main">
 
-  <!-- Hero -->
-  <div class="about-hero">
+  <div class="hero">
     <h1>Private search.<br>No tracking. No ads.</h1>
-    <div class="price-tag">$1</div>
-    <div class="price-sub">per month</div>
-    <p class="tagline">Search the web without being watched. Get privacy tools that actually work. Your data stays on your device.</p>
+    <div class="price">
+      <span class="amount">$1</span>
+      <span class="period">/month</span>
+    </div>
+    <p class="tagline">Search the web without being watched. Your data stays on your device.</p>
   </div>
 
-  <!-- Live stats -->
-  <div class="stats-row">
-    <div class="stat-box">
+  <div class="stats">
+    <div class="stat">
       <div class="num" id="member-count">--</div>
       <div class="label">Members</div>
     </div>
-    <div class="stat-box">
+    <div class="stat">
       <div class="num" id="search-count">--</div>
       <div class="label">Searches</div>
     </div>
-    <div class="stat-box">
+    <div class="stat">
       <div class="num" id="mrr-display">$--</div>
       <div class="label">MRR</div>
     </div>
   </div>
 
-  <!-- What you get -->
-  <div class="feature-card">
-    <div class="feature-icon">&#128269;</div>
-    <div class="feature-text">
-      <h3>Privacy Search</h3>
-      <p>Real web results without tracking. We don't log your queries, profile you, or sell your data.</p>
+  <div class="features">
+    <h2>What you get</h2>
+    <div class="feature">
+      <div class="icon">&#128269;</div>
+      <div>
+        <h3>Privacy Search</h3>
+        <p>Real web results. No query logging, no profiling, no data sales.</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="icon">&#9654;</div>
+      <div>
+        <h3>Story Mode</h3>
+        <p>Read any page as a card-by-card story. Clean, focused, no clutter.</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="icon">&#128211;</div>
+      <div>
+        <h3>28-Day Notebook</h3>
+        <p>Pick a topic, explore it for 28 days. Notes stay in your browser.</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="icon">&#128272;</div>
+      <div>
+        <h3>Privacy Tools</h3>
+        <p>Identity vault, data sanitizer, leak scoring. All local-first.</p>
+      </div>
     </div>
   </div>
 
-  <div class="feature-card">
-    <div class="feature-icon">&#128211;</div>
-    <div class="feature-text">
-      <h3>28-Day Notebook</h3>
-      <p>Pick a topic, explore it for 28 days. Your notes stay in your browser — we never see them.</p>
-    </div>
-  </div>
-
-  <div class="feature-card">
-    <div class="feature-icon">&#128241;</div>
-    <div class="feature-text">
-      <h3>QR Identity</h3>
-      <p>Your digital identity card. Share at events, verify trust circles, own your identity.</p>
-    </div>
-  </div>
-
-  <div class="feature-card">
-    <div class="feature-icon">&#128272;</div>
-    <div class="feature-text">
-      <h3>More Tools</h3>
-      <p>Identity vault, data sanitizer, leak scoring — all local-first, all included.</p>
-    </div>
-  </div>
-
-  <!-- CTA -->
-  <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="join-cta">
+  <a href="https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00" class="cta">
     Join for $1/month &rarr;
   </a>
-  <p class="billing-note">
-    Billed every 28 days. Cancel anytime via Stripe. No contracts.
-  </p>
+  <p class="billing">Every 28 days. Cancel anytime. No contracts.</p>
 
-  <!-- Open revenue -->
-  <div class="revenue-bar">
-    <span class="label">Building in public</span>
-    <span class="amount" id="mrr-display2">$--</span>
-    <a href="/revenue.html">see all stats &rarr;</a>
-  </div>
-
-  <!-- Privacy promise -->
-  <div class="privacy-section">
-    <h3>Privacy Promise</h3>
-    <div class="privacy-item"><span class="privacy-check">&#10003;</span> We don't track you</div>
-    <div class="privacy-item"><span class="privacy-check">&#10003;</span> We don't sell your data</div>
-    <div class="privacy-item"><span class="privacy-check">&#10003;</span> Stripe handles payments — we never see your card</div>
-    <div class="privacy-item"><span class="privacy-check">&#10003;</span> Notebook content stays in your browser</div>
-    <div class="privacy-item"><span class="privacy-check">&#10003;</span> Download your data as markdown anytime</div>
+  <div class="bottom-section">
+    <h3>Privacy promise</h3>
+    <div class="promise-item"><span class="check">&#10003;</span> We don't track you</div>
+    <div class="promise-item"><span class="check">&#10003;</span> We don't sell your data</div>
+    <div class="promise-item"><span class="check">&#10003;</span> Stripe handles payments — we never see your card</div>
+    <div class="promise-item"><span class="check">&#10003;</span> All content stays in your browser</div>
+    <div class="revenue-row">
+      <span style="font-size:11px;color:var(--muted);">Building in public</span>
+      <span class="mrr" id="mrr-display2">$--</span>
+      <a href="/revenue.html">see stats &rarr;</a>
+    </div>
   </div>
 
 </div>
 
-<!-- Footer -->
-<div class="about-footer">
+<div class="footer">
   <a href="/">Search</a>
-  <span>&middot;</span>
+  <span class="dot">&middot;</span>
   <a href="/tools.html">Tools</a>
-  <span>&middot;</span>
-  <a href="mailto:matt@death2data.com">matt@death2data.com</a>
+  <span class="dot">&middot;</span>
+  <a href="mailto:matt@death2data.com">Contact</a>
 </div>
 
 <script>
@@ -398,8 +418,6 @@ async function loadStats() {
     document.getElementById('mrr-display').textContent = '$12';
     document.getElementById('mrr-display2').textContent = '$12';
   }
-
-  // Try live data
   try {
     const res = await fetch('https://fortune0-com.onrender.com/api/public/stats',
                             { signal: AbortSignal.timeout(4000) });
