@@ -37,6 +37,34 @@ Do NOT use: death-2-data, death_2_data, d-2-d, Death2data, DEATH2DATA (except in
 
 These can't easily change (deploy URLs depend on them). Live with it.
 
+## Brand Tokens (Single Source of Truth)
+
+**Every page must import:**
+```html
+<link rel="stylesheet" href="/css/brand.css">
+```
+
+This file defines ALL colors, fonts, layout vars, reset, and base body styles. Never hardcode `#00cc44`, `#0a0a0a`, or font stacks inline — use the CSS variables.
+
+| Token | Value | Use |
+|-------|-------|-----|
+| `--green` | `#00cc44` | Primary brand color, links, CTAs |
+| `--green-hover` | `#00e64d` | Hover states |
+| `--green-dim` | `#004d1a` | Subtle backgrounds |
+| `--green-alpha` | `rgba(0,204,68,0.1)` | Transparent overlays |
+| `--bg` | `#0a0a0a` | Page background |
+| `--surface` | `#111111` | Card/section background |
+| `--border` | `#1e1e1e` | Borders |
+| `--white` | `#e0e0e0` | Primary text |
+| `--gray` | `#b0b0b0` | Secondary text |
+| `--muted` | `#666666` | Tertiary text, labels |
+| `--dim` | `#444444` | Disabled/faint text |
+| `--font` | Inter stack | Body text |
+| `--mono` | JetBrains Mono | Logo, code, monospace |
+| `--serif` | Georgia stack | Story Mode reading |
+
+**Do NOT use:** `#0f0`, `#00ff00`, `system-ui` alone, `SF Mono`, `Courier New`, `monospace` alone.
+
 ## Backend URLs
 
 **Use only ONE backend URL:**

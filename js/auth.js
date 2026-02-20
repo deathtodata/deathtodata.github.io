@@ -65,14 +65,14 @@
           #d2d-member-bar .dot {
             width: 8px;
             height: 8px;
-            background: #00ff00;
+            background: #00cc44;
             border-radius: 50%;
           }
           #d2d-member-bar .status {
             color: #888;
           }
           #d2d-member-bar .days {
-            color: #00ff00;
+            color: #00cc44;
           }
           #d2d-member-bar a {
             color: #666;

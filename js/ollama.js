@@ -246,7 +246,7 @@ async function showOllamaStatus(containerId) {
   
   if (available) {
     container.innerHTML = `
-      <div style="color: #00ff00; font-size: 12px;">
+      <div style="color: #00cc44; font-size: 12px;">
         ● Ollama connected (${ollama.models.length} models)
       </div>
     `;

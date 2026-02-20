@@ -1,0 +1,71 @@
+/* ================================================
+   DEATH2DATA — Brand Tokens
+   Single source of truth. Every page imports this.
+   <link rel="stylesheet" href="/css/brand.css">
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+
+:root {
+  /* ---- Colors ---- */
+  --bg:           #0a0a0a;
+  --surface:      #111111;
+  --surface-hover:#1a1a1a;
+  --border:       #1e1e1e;
+  --border-hover: #2a3a2a;
+
+  --green:        #00cc44;
+  --green-dim:    #004d1a;
+  --green-hover:  #00e64d;
+  --green-alpha:  rgba(0, 204, 68, 0.1);
+
+  --red:          #cc0000;
+  --yellow:       #ffaa00;
+
+  --white:        #e0e0e0;
+  --gray:         #b0b0b0;
+  --muted:        #666666;
+  --dim:          #444444;
+
+  /* ---- Fonts ---- */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Georgia', 'Times New Roman', serif;
+
+  /* ---- Layout ---- */
+  --max-width:     1200px;
+  --content-width: 700px;
+}
+
+/* ---- Reset ---- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ---- Base ---- */
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a {
+  color: var(--green);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--green-hover);
+}
+
+/* ---- Brand mark ---- */
+.d2d-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-decoration: none;
+}
