@@ -254,23 +254,32 @@ body.searching .results-page { display: block; }
 <!-- HOME PAGE -->
 <div class="page home-page">
 
+  <!-- BRAND -->
+  <div style="text-align:center;margin-bottom:24px;">
+    <img src="/assets/d2d-mark.svg" alt="D2D" style="width:48px;height:48px;margin-bottom:12px;">
+    <div style="font-family:var(--mono);font-size:20px;font-weight:700;color:var(--green);letter-spacing:2px;">DEATH2DATA</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-top:6px;">Search without being watched. $1/mo.</div>
+    <div id="pulse" style="font-size:11px;color:var(--text-dim);margin-top:8px;"></div>
+  </div>
+
   <div class="sbar">
-    <input type="text" id="q" placeholder="search anything privately..." autocomplete="off"
+    <input type="text" id="q" placeholder="search anything..." autocomplete="off"
            onkeydown="if(event.key==='Enter')doSearch()">
     <button onclick="doSearch()">Search</button>
   </div>
 
   <!-- THE CTA -->
-  <div id="join-box" style="margin-bottom:32px;padding:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+  <div id="join-box" style="margin-bottom:24px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
     <div id="join-cta"></div>
   </div>
 
-  <!-- secondary stuff below the fold -->
+  <!-- TOOLS -->
   <div style="font-size:12px;color:var(--text-muted);line-height:2;">
-    <a href="/tools/leak-score.html" style="color:var(--text-body);">check your leak score</a> ·
-    <a href="/tools/notebook.html" style="color:var(--text-body);">28-day notebook</a> ·
-    <a href="/tools/sanitizer.html" style="color:var(--text-body);">data sanitizer</a> ·
-    <a href="/tools/qr-generator.html" style="color:var(--text-body);">QR generator</a>
+    <a href="/tools/leak-score.html" style="color:var(--text-body);">leak score</a> ·
+    <a href="/tools/notebook.html" style="color:var(--text-body);">notebook</a> ·
+    <a href="/tools/sanitizer.html" style="color:var(--text-body);">sanitizer</a> ·
+    <a href="/tools/qr-generator.html" style="color:var(--text-body);">QR</a> ·
+    <a href="/k/" style="color:var(--text-body);">word of the day</a>
   </div>
 
 </div>
@@ -325,9 +334,20 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
     fetch(API+'/api/search?q=ping', {headers:{'Authorization':'Bearer '+S.token}})
       .then(r=>r.json()).then(d=>{
         if (d.authed === false) reauth();
-        if (d.tier) { S.tier = d.tier; }
+        if (d.tier) { S.tier = d.tier; showUser(); }
       }).catch(()=>{});
   }
+
+  // Community pulse
+  fetch(API+'/api/public/stats').then(r=>r.json()).then(d=>{
+    const el = document.getElementById('pulse');
+    if (!el) return;
+    const parts = [];
+    if (d.total_users) parts.push(d.total_users + ' members');
+    if (d.searches_total) parts.push(d.searches_total + ' searches');
+    parts.push('230 domains');
+    if (parts.length) el.textContent = parts.join(' · ');
+  }).catch(()=>{});
 })();
 
 function showUser() {
