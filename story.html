@@ -480,13 +480,14 @@ body {
 
 <!-- ERROR STATE -->
 <div id="story-error" style="display:none;">
+  <div style="margin-bottom:32px;"><a href="/" style="font-family:var(--mono,monospace);font-size:14px;color:var(--green,#00cc44);text-decoration:none;letter-spacing:1px;">D2D</a></div>
   <div style="font-size:40px;margin-bottom:16px;opacity:0.2;">&#9888;</div>
   <h2 style="font-size:17px;color:var(--white);margin-bottom:8px;font-weight:600;" id="error-title">Could not load story</h2>
   <p style="font-size:13px;color:var(--muted);margin-bottom:28px;max-width:380px;line-height:1.6;" id="error-detail">The page could not be fetched. The server might be waking up or the site may block external access.</p>
   <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
     <button id="error-retry" onclick="retryStory()" style="padding:12px 28px;background:var(--green);color:#000;border-radius:8px;border:none;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);">Try again</button>
     <a id="error-original" href="#" target="_blank" style="padding:12px 28px;background:var(--surface);color:var(--gray);border:1px solid var(--border);border-radius:8px;text-decoration:none;font-size:13px;font-family:var(--font);">View original</a>
-    <a href="#" onclick="exitStory();return false;" style="padding:12px 28px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-family:var(--font);">Back to search</a>
+    <a href="/" style="padding:12px 28px;background:none;border:1px solid var(--border);border-radius:8px;color:var(--muted);text-decoration:none;font-size:13px;font-family:var(--font);">Back to D2D</a>
   </div>
 </div>
 

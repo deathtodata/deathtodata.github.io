@@ -691,8 +691,7 @@ function renderNotebook() {
   document.getElementById('nbTopic').textContent = topic;
   const searchQ = topic.split(':')[0].trim(); // use domain name or first part as query
   document.getElementById('nbLinks').innerHTML = `
-    <a href="/?q=${encodeURIComponent(searchQ)}" style="font-size:12px;color:var(--green);text-decoration:none;padding:4px 10px;border:1px solid var(--green-dim);border-radius:4px;">Search D2D for this</a>
-    <a href="/story.html?url=${encodeURIComponent('https://'+searchQ)}" style="font-size:12px;color:var(--text-muted);text-decoration:none;padding:4px 10px;border:1px solid var(--border);border-radius:4px;">Read ${searchQ} in Story Mode</a>
+    <a href="/?q=${encodeURIComponent(searchQ)}" style="font-size:12px;color:var(--green);text-decoration:none;padding:4px 10px;border:1px solid var(--green-dim);border-radius:4px;">Search D2D for "${searchQ}"</a>
   `;
   document.getElementById('progressText').textContent = `${completed} / 28`;
   document.getElementById('progressFill').style.width = `${(completed/28)*100}%`;
