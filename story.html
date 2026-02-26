@@ -917,21 +917,36 @@ function retryStory() {
   });
 }
 
-// ═══ FETCH ═══
+// ═══ FETCH — tries /api/story (server-side analysis + cache), falls back to /fetch ═══
 async function loadStory(url) {
+  // Try the smart endpoint first (cached, analyzed)
+  try {
+    const token = localStorage.getItem('d2d_token');
+    const headers = {};
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+    const r = await fetch(`${API}/api/story?url=${encodeURIComponent(url)}`, { headers, signal: AbortSignal.timeout(20000) });
+    if (r.ok) {
+      const data = await r.json();
+      if (data.cards && data.cards.length > 0) {
+        return { serverCards: data.cards, title: data.title, url: data.url, domain: data.domain, cached: data.cached, analyzed: data.analyzed };
+      }
+    }
+  } catch (e) {
+    console.log('Smart story endpoint unavailable, falling back to client-side:', e.message);
+  }
+
+  // Fallback: client-side parsing via /fetch proxy
   try {
     let rawHtml;
     const parsedUrl = new URL(url);
     const isLocal = parsedUrl.hostname === 'death2data.com' || parsedUrl.hostname === 'deathtodata.github.io' || parsedUrl.hostname === location.hostname;
 
     if (isLocal) {
-      // Same-origin pages — fetch directly, no server needed
       const localPath = parsedUrl.pathname;
       const r = await fetch(localPath);
       if (!r.ok) throw new Error('Page not found');
       rawHtml = await r.text();
     } else {
-      // External pages — use the proxy server
       const token = localStorage.getItem('d2d_token');
       const headers = {};
       if (token) headers['Authorization'] = 'Bearer ' + token;
@@ -946,8 +961,6 @@ async function loadStory(url) {
     doc.querySelectorAll('script,style,nav,footer,header,iframe,noscript,.ad,.ads,.sidebar,.menu,.nav,aside,[role="navigation"],[role="banner"]').forEach(el => el.remove());
 
     const title = doc.querySelector('title')?.textContent || doc.querySelector('h1')?.textContent || url;
-
-    // Extract headings with their first following paragraph
     const headings = [];
     doc.querySelectorAll('h1,h2,h3').forEach(h => {
       const text = h.textContent.trim();
@@ -958,41 +971,28 @@ async function loadStory(url) {
       while (next && tries < 4) {
         if (/^H[1-3]$/.test(next.tagName)) break;
         const p = next.tagName === 'P' ? next : next.querySelector?.('p');
-        if (p && p.textContent.trim().length > 20) {
-          snippet = p.textContent.trim();
-          break;
-        }
-        next = next.nextElementSibling;
-        tries++;
+        if (p && p.textContent.trim().length > 20) { snippet = p.textContent.trim(); break; }
+        next = next.nextElementSibling; tries++;
       }
       headings.push({ text, snippet });
     });
 
-    // Extract paragraphs from article/main content
     const main = doc.querySelector('article') || doc.querySelector('main') || doc.querySelector('.content,.post-content,.entry-content') || doc.body;
     const textParts = [];
-    main.querySelectorAll('p,li,blockquote').forEach(el => {
-      const t = el.textContent.trim();
-      if (t.length > 25) textParts.push(t);
-    });
-
-    // Extract images — keep meaningful ones, skip icons/trackers
+    main.querySelectorAll('p,li,blockquote').forEach(el => { const t = el.textContent.trim(); if (t.length > 25) textParts.push(t); });
     const baseUrl = new URL(url);
     const images = [];
     main.querySelectorAll('img').forEach(img => {
-      let src = img.getAttribute('src') || img.getAttribute('data-src') || img.getAttribute('data-lazy-src') || '';
+      let src = img.getAttribute('src') || img.getAttribute('data-src') || '';
       if (!src || src.startsWith('data:')) return;
-      // Resolve relative URLs
       if (src.startsWith('//')) src = 'https:' + src;
       else if (src.startsWith('/')) src = baseUrl.origin + src;
       else if (!src.startsWith('http')) src = baseUrl.origin + '/' + src;
-      // Skip tiny icons, trackers, and common junk
       const w = parseInt(img.getAttribute('width') || '999');
       const h = parseInt(img.getAttribute('height') || '999');
       if (w < 80 || h < 80) return;
       if (/pixel|track|beacon|logo|icon|avatar|badge|button|spinner|loading|ad\b/i.test(src)) return;
-      const alt = (img.getAttribute('alt') || '').trim();
-      images.push({ src, alt, width: w, height: h });
+      images.push({ src, alt: (img.getAttribute('alt') || '').trim(), width: w, height: h });
     });
 
     return { title, url, headings, content: textParts.join('\n'), images, raw: main.textContent.trim() };
@@ -1052,7 +1052,13 @@ function loadDemo() {
     if (timedOut) return;
 
     if (data) {
-      cards = parseContentToCards(data);
+      if (data.serverCards) {
+        // Server returned pre-built cards (cached + possibly analyzed)
+        cards = serverCardsToHtml(data);
+      } else {
+        // Client-side parsing fallback
+        cards = parseContentToCards(data);
+      }
       renderCards();
       setupTouch();
       document.getElementById('story-loading').style.display = 'none';
@@ -1064,6 +1070,123 @@ function loadDemo() {
     loadDemo();
   }
 })();
+
+// ═══ SERVER CARDS → HTML ═══
+// Converts the JSON cards from /api/story into renderable HTML cards
+function serverCardsToHtml(data) {
+  const { serverCards, title, url, domain, analyzed } = data;
+  const result = [];
+  const isD2D = D2D_DOMAINS.some(d => domain.includes(d));
+
+  // Headline card
+  result.push({
+    type: 'headline',
+    html: `<div class="card-inner card-headline">
+      <div class="card-label">Story Mode${analyzed ? ' · AI Analyzed' : ''}</div>
+      <h1>${esc(truncate(title, 90))}</h1>
+      <div class="card-source">
+        ${sourceBadge(domain)}
+        <span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:3px 8px;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--muted);margin-left:4px;">
+          <span style="width:5px;height:5px;background:${isD2D ? 'var(--green)' : '#666'};border-radius:50%;"></span>
+          ${data.cached ? 'cached' : 'live source'}
+        </span>
+      </div>
+    </div>`
+  });
+
+  // Convert each server card to HTML
+  serverCards.forEach((card, i) => {
+    if (card.type === 'analysis') {
+      // Privacy analysis card — the D2D value-add
+      const barWidth = (card.privacy_score / 10) * 100;
+      result.push({
+        type: 'analysis',
+        html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:520px;margin:0 auto;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Privacy Analysis</div>
+          <div style="display:flex;align-items:baseline;gap:12px;">
+            <span style="font-family:var(--mono);font-size:56px;font-weight:700;color:${esc(card.score_color)};">${card.privacy_score}</span>
+            <span style="font-size:14px;color:${esc(card.score_color)};">/10 — ${esc(card.score_label)}</span>
+          </div>
+          <div style="width:100%;height:6px;background:var(--border);border-radius:3px;overflow:hidden;">
+            <div style="width:${barWidth}%;height:100%;background:${esc(card.score_color)};border-radius:3px;transition:width 1s ease;"></div>
+          </div>
+          <div style="font-size:15px;line-height:1.6;color:var(--gray);">${esc(card.verdict)}</div>
+          <div style="font-size:13px;line-height:1.7;color:var(--muted);">${esc(card.summary)}</div>
+        </div>`
+      });
+
+      // Data collection card
+      if (card.data_collection || card.trackers) {
+        result.push({
+          type: 'analysis-detail',
+          html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:520px;margin:0 auto;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">What They Collect</div>
+            ${card.data_collection ? `<div style="font-size:15px;line-height:1.7;color:var(--gray);">${esc(card.data_collection)}</div>` : ''}
+            ${card.trackers ? `<div style="font-size:13px;line-height:1.6;color:var(--muted);padding-top:8px;border-top:1px solid var(--border);">Trackers: ${esc(card.trackers)}</div>` : ''}
+            ${card.key_finding ? `<div style="font-size:14px;line-height:1.6;color:var(--green);padding:12px;background:var(--green-dim);border:1px solid #0c3;border-radius:8px;margin-top:8px;">${esc(card.key_finding)}</div>` : ''}
+          </div>`
+        });
+      }
+    } else if (card.type === 'keypoint') {
+      result.push({
+        type: 'keypoint',
+        html: `<div class="card-inner card-keypoint">
+          <div class="kp-number">${String(card.index + 1).padStart(2, '0')}</div>
+          <h2>${esc(truncate(card.heading, 70))}</h2>
+          <p>${esc(truncate(card.snippet, 180))}</p>
+        </div>`
+      });
+    } else if (card.type === 'stat') {
+      result.push({
+        type: 'stat',
+        html: `<div class="card-inner card-stat">
+          <div class="stat-value">${esc(card.value)}</div>
+          <div class="stat-label">${esc(card.context)}</div>
+        </div>`
+      });
+    } else if (card.type === 'quote') {
+      result.push({
+        type: 'quote',
+        html: `<div class="card-inner card-quote">
+          <div class="quote-mark">&ldquo;</div>
+          <blockquote>${esc(truncate(card.text, 200))}</blockquote>
+        </div>`
+      });
+    } else if (card.type === 'body') {
+      result.push({
+        type: 'body',
+        html: `<div class="card-inner card-body">
+          <p>${esc(truncate(card.text, 240))}</p>
+        </div>`
+      });
+    } else if (card.type === 'image') {
+      result.push({
+        type: 'image',
+        html: `<div class="card-inner card-image">
+          <img src="${esc(card.src)}" alt="${esc(card.alt)}" loading="lazy" onerror="this.closest('.story-card').style.display='none'">
+          ${card.alt ? `<div class="img-caption">${esc(truncate(card.alt, 120))}</div>` : ''}
+        </div>`
+      });
+    }
+  });
+
+  // End card
+  result.push({
+    type: 'end',
+    html: `<div class="card-inner card-end">
+      <div class="end-line"></div>
+      <h2>End of story</h2>
+      <div class="end-source">${sourceBadge(domain)}</div>
+      <div class="end-actions">
+        <a class="end-btn primary" href="/tools/notebook.html?topic=${encodeURIComponent(title)}" style="text-decoration:none;">Start a notebook on this</a>
+        <a class="end-btn secondary" href="${esc(url)}" target="_blank" rel="noopener">View original</a>
+        <button class="end-btn secondary" onclick="exitStory()">Back to search</button>
+      </div>
+    </div>`
+  });
+
+  return result;
+}
 </script>
 
 </body>
