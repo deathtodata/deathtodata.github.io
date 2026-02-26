@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>28-Day Notebook | Death2Data</title>
-<meta name="description" content="Pick any topic. Answer one question per day for 28 days. Everything stored locally on your device.">
+<meta name="description" content="Interactive notebook: questions, search, tools. Everything stays on your device.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
 :root {
   --bg: #0a0a0a;
@@ -23,6 +23,10 @@
   --green: #00cc44;
   --green-dim: #004d1a;
   --green-hover: #00e64d;
+  --blue: #3388ff;
+  --blue-dim: #1a2a44;
+  --orange: #cc8800;
+  --orange-dim: #332200;
   --red: #cc0000;
   --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --mono: 'JetBrains Mono', monospace;
@@ -51,6 +55,10 @@ body {
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   gap: 12px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 .hd-logo {
   font-family: var(--mono);
@@ -66,7 +74,7 @@ body {
 /* === MAIN === */
 .main {
   flex: 1;
-  max-width: 600px;
+  max-width: 640px;
   margin: 0 auto;
   width: 100%;
   padding: 32px var(--pad) 80px;
@@ -77,18 +85,9 @@ body {
 .page.active { display: block; }
 
 /* === LANDING === */
-.landing-title {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
+.landing-title { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
 .landing-title .accent { color: var(--green); }
-.landing-sub {
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.6;
-  margin-bottom: 32px;
-}
+.landing-sub { color: var(--text-muted); font-size: 14px; line-height: 1.6; margin-bottom: 32px; }
 
 .topic-box {
   background: var(--surface);
@@ -134,36 +133,13 @@ body {
 }
 .start-btn:hover { background: var(--green-hover); }
 .start-btn:disabled { background: var(--border); color: var(--text-dim); cursor: not-allowed; }
-
-.landing-note {
-  text-align: center;
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-top: 12px;
-}
+.landing-note { text-align: center; font-size: 12px; color: var(--text-dim); margin-top: 12px; }
 
 /* Domain picker */
-.domain-picker {
-  margin-top: 32px;
-  margin-bottom: 8px;
-}
-.domain-picker h3 {
-  font-size: 11px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  margin-bottom: 6px;
-}
-.domain-picker-sub {
-  font-size: 12px;
-  color: var(--text-dim);
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
-#domainGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
+.domain-picker { margin-top: 32px; margin-bottom: 8px; }
+.domain-picker h3 { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 6px; }
+.domain-picker-sub { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; line-height: 1.5; }
+#domainGrid { display: flex; flex-wrap: wrap; gap: 6px; }
 .domain-chip {
   padding: 7px 12px;
   background: var(--surface);
@@ -174,14 +150,8 @@ body {
   cursor: pointer;
   transition: border-color .2s, color .2s;
 }
-.domain-chip:hover {
-  border-color: var(--green-dim);
-  color: var(--green);
-}
-.domain-chip .chip-name {
-  font-weight: 500;
-  color: var(--text);
-}
+.domain-chip:hover { border-color: var(--green-dim); color: var(--green); }
+.domain-chip .chip-name { font-weight: 500; color: var(--text); }
 .domain-chip:hover .chip-name { color: var(--green); }
 
 .how-it-works {
@@ -191,29 +161,10 @@ body {
   border-radius: var(--radius);
   padding: 20px;
 }
-.how-it-works h3 {
-  font-size: 11px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  margin-bottom: 14px;
-}
-.how-step {
-  display: flex;
-  gap: 12px;
-  padding: 8px 0;
-}
-.how-step .step-num {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--green-dim);
-  flex-shrink: 0;
-  padding-top: 1px;
-}
-.how-step .step-text {
-  font-size: 13px;
-  color: var(--text-body);
-  line-height: 1.5;
-}
+.how-it-works h3 { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 14px; }
+.how-step { display: flex; gap: 12px; padding: 8px 0; }
+.how-step .step-num { font-family: var(--mono); font-size: 12px; color: var(--green-dim); flex-shrink: 0; padding-top: 1px; }
+.how-step .step-text { font-size: 13px; color: var(--text-body); line-height: 1.5; }
 
 /* === NOTEBOOK === */
 .agent-bar {
@@ -227,17 +178,8 @@ body {
   margin-bottom: 24px;
   font-size: 12px;
 }
-.agent-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.agent-dot {
-  width: 8px; height: 8px;
-  background: var(--green);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
+.agent-status { display: flex; align-items: center; gap: 8px; }
+.agent-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .agent-dot.done { background: var(--text-dim); animation: none; }
 .agent-label { color: var(--green); font-weight: 500; }
@@ -251,50 +193,59 @@ body {
 .nb-header p { font-size: 13px; color: var(--text-muted); }
 
 .progress-wrap { margin-bottom: 24px; }
-.progress-meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-bottom: 6px;
-}
-.progress-bar {
-  height: 3px;
-  background: var(--border);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.progress-fill {
-  height: 100%;
-  background: var(--green);
-  border-radius: 2px;
-  transition: width .3s;
-}
+.progress-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+.progress-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--green); border-radius: 2px; transition: width .3s; }
 
-/* Today's cell */
+/* === CELL TYPES === */
 .cell {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-left: 3px solid var(--green);
   border-radius: var(--radius);
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  position: relative;
 }
-.cell.locked { opacity: 0.4; pointer-events: none; border-left-color: var(--border); }
-.cell-day {
+.cell.locked { opacity: 0.4; pointer-events: none; }
+
+/* Cell type indicators — colored left border */
+.cell[data-type="question"] { border-left: 3px solid var(--green); }
+.cell[data-type="search"] { border-left: 3px solid var(--blue); }
+.cell[data-type="action"] { border-left: 3px solid var(--orange); }
+.cell[data-type="reflect"] { border-left: 3px solid #8844cc; }
+
+.cell-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10px;
-  letter-spacing: 2px;
-  color: var(--green);
+  letter-spacing: 1.5px;
+  font-weight: 600;
   margin-bottom: 12px;
+  padding: 3px 8px;
+  border-radius: 4px;
 }
-.cell-q {
+.cell-badge.q { color: var(--green); background: var(--green-dim); }
+.cell-badge.s { color: var(--blue); background: var(--blue-dim); }
+.cell-badge.a { color: var(--orange); background: var(--orange-dim); }
+.cell-badge.r { color: #8844cc; background: #1a0033; }
+
+.cell-prompt {
   font-size: 15px;
   line-height: 1.5;
   margin-bottom: 16px;
 }
+.cell-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
 .cell textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 100px;
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -307,26 +258,101 @@ body {
   margin-bottom: 10px;
 }
 .cell textarea:focus { border-color: var(--green); }
+
 .cell-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
-.cell-footer .hint { font-size: 11px; color: var(--text-dim); }
-.cell-footer button {
-  padding: 10px 20px;
-  background: var(--green);
-  color: #000;
-  border: none;
+.cell-footer .status { font-size: 11px; color: var(--text-dim); }
+
+/* Buttons inside cells */
+.cell-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.cell-btn {
+  padding: 8px 14px;
   border-radius: 6px;
   font-family: var(--font);
-  font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
   cursor: pointer;
+  border: 1px solid;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
-.cell-footer button:hover { background: var(--green-hover); }
+.cell-btn.primary {
+  background: var(--green);
+  color: #000;
+  border-color: var(--green);
+}
+.cell-btn.primary:hover { background: var(--green-hover); }
+.cell-btn.secondary {
+  background: transparent;
+  color: var(--text-body);
+  border-color: var(--border);
+}
+.cell-btn.secondary:hover { border-color: var(--border-hover); color: var(--text); }
+.cell-btn.search-btn {
+  background: transparent;
+  color: var(--blue);
+  border-color: var(--blue-dim);
+}
+.cell-btn.search-btn:hover { background: var(--blue-dim); }
+.cell-btn.tool-btn {
+  background: transparent;
+  color: var(--orange);
+  border-color: var(--orange-dim);
+}
+.cell-btn.tool-btn:hover { background: var(--orange-dim); }
 
-/* Paywall (after day 1) */
+/* Search results inside cell */
+.search-results {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.search-results .sr-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.search-results .sr-item:last-child { border-bottom: none; }
+.search-results .sr-title { font-size: 13px; color: var(--blue); cursor: pointer; }
+.search-results .sr-title:hover { text-decoration: underline; }
+.search-results .sr-snippet { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+/* Ollama status */
+.ollama-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 6px 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+.ollama-bar .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+}
+.ollama-bar .dot.on { background: var(--green); }
+.ollama-bar .dot.off { background: var(--text-dim); }
+
+/* Paywall */
 .nb-paywall {
   background: var(--surface);
   border: 1px dashed var(--green-dim);
@@ -335,15 +361,8 @@ body {
   text-align: center;
   margin-bottom: 20px;
 }
-.nb-paywall h3 {
-  font-size: 15px;
-  margin-bottom: 6px;
-}
-.nb-paywall p {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 16px;
-}
+.nb-paywall h3 { font-size: 15px; margin-bottom: 6px; }
+.nb-paywall p { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; }
 .nb-paywall a {
   display: inline-block;
   padding: 12px 28px;
@@ -356,12 +375,7 @@ body {
 
 /* Past entries */
 .past { margin-top: 32px; }
-.past h3 {
-  font-size: 11px;
-  color: var(--text-muted);
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-}
+.past h3 { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; margin-bottom: 12px; }
 .past-entry {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -369,16 +383,31 @@ body {
   padding: 14px;
   margin-bottom: 8px;
 }
-.past-head {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  margin-bottom: 6px;
-}
+.past-head { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 6px; }
 .past-day { color: var(--green); }
 .past-date { color: var(--text-dim); }
 .past-q { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
 .past-a { font-size: 14px; line-height: 1.5; }
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Export */
+.export-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
 
 /* === FOOTER === */
 .ft {
@@ -391,6 +420,10 @@ body {
   gap: 10px;
   font-size: 12px;
   background: var(--bg);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 .ft a { color: var(--text-muted); }
 .ft a:hover { color: var(--green); }
@@ -413,7 +446,7 @@ body {
   <!-- PAGE: LANDING -->
   <div class="page" id="pageLanding">
     <div class="landing-title">28-day <span class="accent">notebook</span></div>
-    <p class="landing-sub">Pick any topic. Get one question per day. Write your answer. Everything stays on your device.</p>
+    <p class="landing-sub">Pick any topic. Each day gives you a different type of cell — questions, searches, tools, reflections. Learn by doing, not just reading. Everything stays on your device.</p>
 
     <div class="topic-box">
       <label>WHAT DO YOU WANT TO EXPLORE?</label>
@@ -437,11 +470,15 @@ body {
       </div>
       <div class="how-step">
         <span class="step-num">02</span>
-        <span class="step-text">Answer one question per day — stored locally, never sent anywhere</span>
+        <span class="step-text">Each day unlocks a new cell: questions, research, tools, reflection</span>
       </div>
       <div class="how-step">
         <span class="step-num">03</span>
-        <span class="step-text">After 28 days, download your notebook as a file</span>
+        <span class="step-text">Use built-in search, sanitizer, and converter right inside the notebook</span>
+      </div>
+      <div class="how-step">
+        <span class="step-num">04</span>
+        <span class="step-text">If you have Ollama running locally, questions adapt to your answers</span>
       </div>
     </div>
   </div>
@@ -458,9 +495,10 @@ body {
 
     <div class="nb-header">
       <h2>Exploring <span class="topic" id="nbTopic">--</span></h2>
-      <p>One question per day for 28 days</p>
-      <div id="nbLinks" style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;"></div>
+      <p id="nbSubtitle">One cell per day for 28 days</p>
     </div>
+
+    <div id="ollamaStatus"></div>
 
     <div class="progress-wrap">
       <div class="progress-meta">
@@ -473,20 +511,16 @@ body {
     </div>
 
     <div id="paywallSlot"></div>
+    <div id="cellContainer"></div>
 
-    <div class="cell" id="todayCell">
-      <div class="cell-day" id="cellDay">DAY 1</div>
-      <div class="cell-q" id="cellQ">Loading...</div>
-      <textarea id="cellInput" placeholder="Write your thoughts..."></textarea>
-      <div class="cell-footer">
-        <span class="hint" id="saveHint"></span>
-        <button onclick="saveEntry()">Save</button>
-      </div>
-    </div>
-
-    <div class="past">
+    <div class="past" id="pastSection">
       <h3>PREVIOUS ENTRIES</h3>
       <div id="pastEntries"></div>
+    </div>
+
+    <div class="export-bar" id="exportBar" style="display:none;">
+      <button class="cell-btn secondary" onclick="exportNotebook()">Export as text</button>
+      <button class="cell-btn secondary" onclick="resetNotebook()">Start over</button>
     </div>
   </div>
 
@@ -498,45 +532,210 @@ body {
   <span class="ft-sep">&middot;</span>
   <a href="/privacy.html">privacy</a>
   <span class="ft-sep">&middot;</span>
+  <a href="/tools.html">tools</a>
+  <span class="ft-sep">&middot;</span>
   <a href="mailto:matt@death2data.com">support</a>
 </div>
 
+<!-- Ollama (optional, for adaptive questions) -->
+<script src="/js/ollama.js"></script>
+
 <script>
+const API = location.hostname === 'localhost' ? '' : 'https://fortune0-com.onrender.com';
 const STRIPE_LINK = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
 const STORAGE_KEY = 'd2d_notebook';
 
-const QUESTIONS = [
-  "What do you already know about {topic}?",
-  "Why does {topic} interest you?",
-  "What's your earliest memory related to {topic}?",
-  "Explain {topic} like you're talking to a curious kid.",
-  "What confuses you most about {topic}?",
-  "How did you first learn about {topic}?",
-  "What would be different if {topic} didn't exist?",
-  "How does {topic} show up in your daily life?",
-  "What's a common misconception about {topic}?",
-  "Who do you know that's good at {topic}? What makes them good?",
-  "What's surprising about {topic}?",
-  "How has {topic} changed over the last 50 years?",
-  "What's the connection between {topic} and money?",
-  "What emotions come up when you think about {topic}?",
-  "What's the dark side of {topic}?",
-  "Who benefits from {topic}? Who doesn't?",
-  "What would an expert say you're missing?",
-  "How would mastering {topic} change your life?",
-  "What's one thing you could do TODAY related to {topic}?",
-  "How does {topic} connect to your values?",
-  "What have you learned about yourself through {topic}?",
-  "What questions still remain?",
-  "If you could change one thing about {topic}, what?",
-  "Where will {topic} be in 10 years?",
-  "What will you remember most from this?",
-  "Who would you share your {topic} knowledge with?",
-  "What's your final take on {topic}?",
-  "Write a letter to past-you about {topic}."
+// ═══════════════════════════════════════════════════════════════
+// CELL DEFINITIONS — 28 days, 4 cell types
+// Each cell has: type, prompt, hint, actions[]
+// Types: question, search, action, reflect
+//
+// The progression teaches questioning:
+//  Week 1 (1-7):  Explore — what do you know, what don't you know
+//  Week 2 (8-14): Research — search, compare, dig deeper
+//  Week 3 (15-21): Apply — use tools, create, test
+//  Week 4 (22-28): Reflect — synthesize, teach, decide
+// ═══════════════════════════════════════════════════════════════
+
+const CELLS = [
+  // ── WEEK 1: EXPLORE ──
+  {
+    day: 1, type: 'question',
+    prompt: 'What do you already know about {topic}? Write everything — facts, guesses, feelings, half-remembered things.',
+    hint: 'Don\'t filter. The point is to see where you\'re starting from.',
+    actions: []
+  },
+  {
+    day: 2, type: 'question',
+    prompt: 'What specific question about {topic} would you pay $100 to have answered right now?',
+    hint: 'Good questions have stakes. If the answer wouldn\'t change what you do, it\'s not the right question yet.',
+    actions: ['search']
+  },
+  {
+    day: 3, type: 'search',
+    prompt: 'Search for "{topic}" and write down three things you didn\'t know before.',
+    hint: 'Use the search button below. Notice what surprises you — that\'s where the interesting stuff lives.',
+    actions: ['search']
+  },
+  {
+    day: 4, type: 'question',
+    prompt: 'Who is the most credible person talking about {topic}? What makes them credible?',
+    hint: 'Credibility = skin in the game + track record. Not followers, not credentials.',
+    actions: ['search']
+  },
+  {
+    day: 5, type: 'question',
+    prompt: 'What\'s the common advice about {topic} that you suspect is wrong?',
+    hint: 'Conventional wisdom is often just the first thing that got repeated enough. Question the defaults.',
+    actions: []
+  },
+  {
+    day: 6, type: 'action',
+    prompt: 'Find an image, document, or file related to {topic}. Strip its metadata using the sanitizer. What did you find hidden in it?',
+    hint: 'Everything digital carries invisible data. See what\'s hiding in the files you encounter.',
+    actions: ['sanitizer', 'converter']
+  },
+  {
+    day: 7, type: 'reflect',
+    prompt: 'Re-read your Day 1 entry. What do you know now that you didn\'t then? What questions have changed?',
+    hint: 'Growth isn\'t knowing more — it\'s asking better questions.',
+    actions: []
+  },
+
+  // ── WEEK 2: RESEARCH ──
+  {
+    day: 8, type: 'search',
+    prompt: 'Search for "{topic} problems" or "{topic} failures". What goes wrong in this space?',
+    hint: 'Understanding failure modes is more useful than studying successes. Search below.',
+    actions: ['search']
+  },
+  {
+    day: 9, type: 'question',
+    prompt: 'If {topic} disappeared tomorrow, who would notice first? Who would be hurt most?',
+    hint: 'This reveals who actually depends on it vs. who just talks about it.',
+    actions: []
+  },
+  {
+    day: 10, type: 'question',
+    prompt: 'What\'s the connection between {topic} and money? Who profits? Who pays?',
+    hint: 'Follow the money. Always.',
+    actions: ['search']
+  },
+  {
+    day: 11, type: 'search',
+    prompt: 'Search for the history of {topic}. How has it changed in the last 10 years? What caused the changes?',
+    hint: 'Things that seem permanent are often recent. Things that seem new are often old.',
+    actions: ['search']
+  },
+  {
+    day: 12, type: 'question',
+    prompt: 'Explain {topic} to someone who has never heard of it. Use only words a 12-year-old would know.',
+    hint: 'If you can\'t explain it simply, you don\'t understand it deeply enough.',
+    actions: []
+  },
+  {
+    day: 13, type: 'action',
+    prompt: 'Take a screenshot or photo related to {topic}. Convert it to a different format using the converter. Why did you choose that image?',
+    hint: 'Connecting abstract topics to concrete visuals forces clarity.',
+    actions: ['converter', 'sanitizer']
+  },
+  {
+    day: 14, type: 'reflect',
+    prompt: 'You\'re halfway. Write down your top 3 unanswered questions about {topic}. Rank them by importance.',
+    hint: 'Prioritizing questions is a skill. The best question is the one whose answer unlocks other answers.',
+    actions: ['search']
+  },
+
+  // ── WEEK 3: APPLY ──
+  {
+    day: 15, type: 'question',
+    prompt: 'If you had to build something related to {topic} in one weekend, what would it be?',
+    hint: 'Constraints breed creativity. Don\'t think about what\'s perfect — think about what\'s possible.',
+    actions: []
+  },
+  {
+    day: 16, type: 'search',
+    prompt: 'Search for tools, software, or resources people use for {topic}. List the top 5 and note which ones are free.',
+    hint: 'The tools people use reveal what matters to them.',
+    actions: ['search']
+  },
+  {
+    day: 17, type: 'action',
+    prompt: 'Create something tangible related to {topic} today. A list, a diagram, a file, a plan. Use D2D tools if it helps.',
+    hint: 'Thinking is invisible. Making is proof. Create something you can point to.',
+    actions: ['converter', 'sanitizer', 'search']
+  },
+  {
+    day: 18, type: 'question',
+    prompt: 'What would an expert in {topic} say you\'re still missing? What blind spots might you have?',
+    hint: 'The things you don\'t know you don\'t know are the most dangerous.',
+    actions: ['search']
+  },
+  {
+    day: 19, type: 'question',
+    prompt: 'What\'s one thing you could do TODAY that would move you forward with {topic}?',
+    hint: 'Not someday. Today. What\'s the smallest useful action?',
+    actions: []
+  },
+  {
+    day: 20, type: 'action',
+    prompt: 'Check your leak score. How exposed is your digital identity? How does this connect to what you\'re learning about {topic}?',
+    hint: 'Privacy isn\'t separate from your topic — it\'s the foundation everything else sits on.',
+    actions: ['leak-score']
+  },
+  {
+    day: 21, type: 'reflect',
+    prompt: 'Week 3 done. Compare your Day 1 answer to today. How has your understanding of {topic} changed shape (not just grown)?',
+    hint: 'Growth changes the shape of your thinking, not just the size.',
+    actions: []
+  },
+
+  // ── WEEK 4: SYNTHESIZE ──
+  {
+    day: 22, type: 'question',
+    prompt: 'If you had to teach {topic} to someone in 5 minutes, what would you cover? What would you skip?',
+    hint: 'Teaching is the highest form of understanding. What you choose to skip reveals what you think matters.',
+    actions: []
+  },
+  {
+    day: 23, type: 'search',
+    prompt: 'Search for the latest news or developments in {topic}. Is the field moving toward or away from what you expected?',
+    hint: 'The direction matters more than the current position.',
+    actions: ['search']
+  },
+  {
+    day: 24, type: 'question',
+    prompt: 'What\'s the most contrarian thing you now believe about {topic}? Something most people would disagree with?',
+    hint: 'If you agree with everyone, you haven\'t thought deeply enough.',
+    actions: []
+  },
+  {
+    day: 25, type: 'question',
+    prompt: 'Where will {topic} be in 5 years? What are you betting on?',
+    hint: 'Predictions force commitment. You have to take a position.',
+    actions: []
+  },
+  {
+    day: 26, type: 'action',
+    prompt: 'Create a one-page document about {topic} that you could hand to someone. Use the tools to build it — search for facts, sanitize any files, format it clean.',
+    hint: 'If you can\'t fit it on one page, you haven\'t distilled it enough.',
+    actions: ['search', 'converter', 'sanitizer']
+  },
+  {
+    day: 27, type: 'question',
+    prompt: 'What question about {topic} do you wish someone had asked you on Day 1?',
+    hint: 'The best question is the one you couldn\'t have asked at the beginning — because you didn\'t know enough to ask it.',
+    actions: []
+  },
+  {
+    day: 28, type: 'reflect',
+    prompt: 'Write a letter to Day-1 you about {topic}. What would you tell yourself? What surprised you? What are you going to do now?',
+    hint: 'This is your notebook. 28 days of thinking, searching, making, and reflecting. Export it and keep going.',
+    actions: ['export']
+  }
 ];
 
-// Top domains from the 230-domain portfolio
+// Domain chips from the 230-domain portfolio
 const DOMAINS = [
   {d:'sellthismvp.com', c:'AI pitch deck generator'},
   {d:'toneswitch.com', c:'AI writing tone adjuster'},
@@ -555,59 +754,59 @@ const DOMAINS = [
 ];
 
 let data = null;
+let ollama = null;
+let ollamaAvailable = false;
 
-// Check D2D membership
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+
 function isMember() {
-  const token = localStorage.getItem('d2d_token');
-  return !!token;
+  return !!localStorage.getItem('d2d_token');
 }
 
-function init() {
-  // Check if returning from Stripe
+async function init() {
+  // Check Ollama in background
+  checkOllama();
+
+  // Check Stripe return
   const params = new URLSearchParams(location.search);
   if (params.get('paid') === '1') {
     const topic = localStorage.getItem('d2d_pending_topic') || 'your topic';
     localStorage.removeItem('d2d_pending_topic');
-    data = {
-      topic,
-      startDate: Date.now(),
-      paid: true,
-      entries: {}
-    };
+    data = { topic, startDate: Date.now(), paid: true, entries: {} };
     save();
     history.replaceState({}, '', location.pathname);
   } else {
     data = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
   }
 
-  // Support ?topic= param for direct links
+  // Support ?topic= param
   const topicParam = params.get('topic');
   if (topicParam && !data) {
-    // Pre-fill the input but don't auto-start
     render();
     const input = document.getElementById('topicInput');
-    if (input) {
-      input.value = topicParam;
-      input.dispatchEvent(new Event('input'));
-    }
+    if (input) { input.value = topicParam; input.dispatchEvent(new Event('input')); }
     return;
   }
 
   render();
 }
 
-function save() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+async function checkOllama() {
+  try {
+    ollama = new D2DOllama();
+    ollamaAvailable = await ollama.check();
+  } catch (e) {
+    ollamaAvailable = false;
+  }
 }
 
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
 function render() {
-  if (!data) {
-    showPage('pageLanding');
-    setupLanding();
-    return;
-  }
-  showPage('pageNotebook');
-  renderNotebook();
+  if (!data) { showPage('pageLanding'); setupLanding(); }
+  else { showPage('pageNotebook'); renderNotebook(); }
 }
 
 function showPage(id) {
@@ -615,18 +814,17 @@ function showPage(id) {
   document.getElementById(id).classList.add('active');
 }
 
+// ═══════════════════════════════════════════════════════════════
+// LANDING
+// ═══════════════════════════════════════════════════════════════
+
 function setupLanding() {
   const input = document.getElementById('topicInput');
   const btn = document.getElementById('startBtn');
 
   input.addEventListener('input', () => {
-    if (input.value.trim()) {
-      btn.disabled = false;
-      btn.textContent = 'Start day 1 — free';
-    } else {
-      btn.disabled = true;
-      btn.textContent = 'Type a topic to start';
-    }
+    if (input.value.trim()) { btn.disabled = false; btn.textContent = 'Start day 1 — free'; }
+    else { btn.disabled = true; btn.textContent = 'Type a topic to start'; }
   });
 
   btn.addEventListener('click', () => {
@@ -635,18 +833,14 @@ function setupLanding() {
     startNotebook(topic);
   });
 
-  // Render domain chips
+  // Domain chips
   const grid = document.getElementById('domainGrid');
   grid.innerHTML = DOMAINS.map(d =>
-    `<div class="domain-chip" data-topic="${d.d}: ${d.c}">
-      <span class="chip-name">${d.d}</span>
-    </div>`
+    `<div class="domain-chip" data-topic="${d.d}: ${d.c}"><span class="chip-name">${d.d}</span></div>`
   ).join('');
-
   grid.querySelectorAll('.domain-chip').forEach(chip => {
     chip.addEventListener('click', () => {
-      const topic = chip.dataset.topic;
-      input.value = topic;
+      input.value = chip.dataset.topic;
       input.dispatchEvent(new Event('input'));
       input.scrollIntoView({ behavior: 'smooth', block: 'center' });
     });
@@ -654,49 +848,57 @@ function setupLanding() {
 }
 
 function startNotebook(topic) {
-  data = {
-    topic,
-    startDate: Date.now(),
-    paid: isMember(),
-    entries: {}
-  };
+  data = { topic, startDate: Date.now(), paid: isMember(), entries: {} };
   save();
   render();
 }
 
-function renderNotebook() {
+// ═══════════════════════════════════════════════════════════════
+// NOTEBOOK RENDER
+// ═══════════════════════════════════════════════════════════════
+
+async function renderNotebook() {
   const topic = data.topic;
   const entries = data.entries || {};
   const completed = Object.keys(entries).length;
   const daysSinceStart = Math.floor((Date.now() - data.startDate) / (24*60*60*1000)) + 1;
   const currentDay = Math.min(Math.max(1, daysSinceStart), 28);
   const canAccess = currentDay === 1 || data.paid || isMember();
+  const daysLeft = Math.max(0, 28 - daysSinceStart + 1);
 
   // Agent bar
   const dot = document.getElementById('agentDot');
   const label = document.getElementById('agentLabel');
   const timer = document.getElementById('agentTimer');
-  const daysLeft = Math.max(0, 28 - daysSinceStart + 1);
-
   if (daysLeft <= 0) {
-    dot.classList.add('done');
-    label.classList.add('done');
+    dot.classList.add('done'); label.classList.add('done');
     label.textContent = 'COMPLETE';
     timer.innerHTML = '<strong>0</strong> days left';
   } else {
+    dot.classList.remove('done'); label.classList.remove('done');
+    label.textContent = 'ACTIVE';
     timer.innerHTML = `<strong>${daysLeft}</strong> days left`;
   }
 
-  // Header + progress + links back to search/story
+  // Header
   document.getElementById('nbTopic').textContent = topic;
-  const searchQ = topic.split(':')[0].trim(); // use domain name or first part as query
-  document.getElementById('nbLinks').innerHTML = `
-    <a href="/?q=${encodeURIComponent(searchQ)}" style="font-size:12px;color:var(--green);text-decoration:none;padding:4px 10px;border:1px solid var(--green-dim);border-radius:4px;">Search D2D for "${searchQ}"</a>
-  `;
+  const weekNum = Math.ceil(currentDay / 7);
+  const weekLabels = ['Explore', 'Research', 'Apply', 'Synthesize'];
+  document.getElementById('nbSubtitle').textContent = `Week ${weekNum}: ${weekLabels[weekNum-1] || 'Complete'} — Day ${currentDay} of 28`;
+
+  // Ollama status
+  const ollamaEl = document.getElementById('ollamaStatus');
+  if (ollamaAvailable) {
+    ollamaEl.innerHTML = `<div class="ollama-bar"><span class="dot on"></span> Ollama connected — adaptive questions enabled</div>`;
+  } else {
+    ollamaEl.innerHTML = `<div class="ollama-bar"><span class="dot off"></span> Ollama not running — using standard questions <a href="https://ollama.ai" target="_blank" style="color:var(--blue);margin-left:6px;">Install</a></div>`;
+  }
+
+  // Progress
   document.getElementById('progressText').textContent = `${completed} / 28`;
   document.getElementById('progressFill').style.width = `${(completed/28)*100}%`;
 
-  // Paywall check — show after day 1 if not paid
+  // Paywall
   const paywallSlot = document.getElementById('paywallSlot');
   if (!canAccess) {
     let stripeUrl = STRIPE_LINK;
@@ -705,46 +907,146 @@ function renderNotebook() {
     paywallSlot.innerHTML = `
       <div class="nb-paywall">
         <h3>Day 1 complete</h3>
-        <p>Unlock all 28 days with a $1/month D2D membership.</p>
+        <p>Unlock all 28 days — questions, search, tools, reflection — for $1/month.</p>
         <a href="${stripeUrl}">Continue for $1/mo</a>
       </div>`;
-
-    // Lock the cell
-    document.getElementById('todayCell').classList.add('locked');
-    document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
-    document.getElementById('cellQ').textContent = QUESTIONS[currentDay - 1].replace(/{topic}/g, topic);
-    document.getElementById('cellInput').disabled = true;
   } else {
     paywallSlot.innerHTML = '';
-    const cell = document.getElementById('todayCell');
-    cell.classList.remove('locked');
-    document.getElementById('cellDay').textContent = `DAY ${currentDay} OF 28`;
-    document.getElementById('cellQ').textContent = QUESTIONS[currentDay - 1].replace(/{topic}/g, topic);
-    document.getElementById('cellInput').value = entries[currentDay]?.answer || '';
-    document.getElementById('cellInput').disabled = daysLeft <= 0;
-    if (daysLeft <= 0) cell.classList.add('locked');
+  }
+
+  // Render today's cell
+  const container = document.getElementById('cellContainer');
+  const cellDef = CELLS[currentDay - 1];
+
+  if (!canAccess && currentDay > 1) {
+    container.innerHTML = renderLockedCell(cellDef, topic);
+  } else if (daysLeft <= 0) {
+    container.innerHTML = renderCompletedState(topic);
+  } else {
+    // Check if we should generate an adaptive question
+    let prompt = cellDef.prompt.replace(/{topic}/g, topic);
+    let hint = cellDef.hint;
+
+    if (ollamaAvailable && cellDef.type === 'question' && completed > 0) {
+      // Try adaptive question based on previous answers
+      const adaptiveQ = await generateAdaptiveQuestion(topic, currentDay, entries);
+      if (adaptiveQ) {
+        prompt = adaptiveQ;
+        hint = 'This question was generated based on your previous answers.';
+      }
+    }
+
+    container.innerHTML = renderCell(cellDef, topic, currentDay, entries[currentDay], prompt, hint);
   }
 
   // Past entries
+  renderPastEntries(entries, topic, currentDay);
+
+  // Export bar
+  document.getElementById('exportBar').style.display = completed > 0 ? 'flex' : 'none';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// CELL RENDERERS
+// ═══════════════════════════════════════════════════════════════
+
+function renderCell(cellDef, topic, day, existingEntry, prompt, hint) {
+  const typeLabels = { question: 'QUESTION', search: 'RESEARCH', action: 'ACTION', reflect: 'REFLECTION' };
+  const typeBadge = { question: 'q', search: 's', action: 'a', reflect: 'r' };
+  const savedAnswer = existingEntry?.answer || '';
+
+  let actionsHtml = '';
+  if (cellDef.actions && cellDef.actions.length > 0) {
+    actionsHtml = '<div class="cell-actions">' + cellDef.actions.map(a => {
+      switch(a) {
+        case 'search':
+          return `<button class="cell-btn search-btn" onclick="doSearch('${topic.replace(/'/g, "\\'")}')">Search D2D</button>`;
+        case 'sanitizer':
+          return `<a href="/tools/sanitizer.html" class="cell-btn tool-btn" target="_blank">Open Sanitizer</a>`;
+        case 'converter':
+          return `<a href="/tools/converter.html" class="cell-btn tool-btn" target="_blank">Open Converter</a>`;
+        case 'leak-score':
+          return `<a href="/tools/leak-score.html" class="cell-btn tool-btn" target="_blank">Check Leak Score</a>`;
+        case 'export':
+          return `<button class="cell-btn secondary" onclick="exportNotebook()">Export Notebook</button>`;
+        default: return '';
+      }
+    }).join('') + '</div>';
+  }
+
+  return `
+    <div class="cell" data-type="${cellDef.type}" id="todayCell">
+      <div class="cell-badge ${typeBadge[cellDef.type]}">${typeLabels[cellDef.type]} &mdash; DAY ${day}</div>
+      <div class="cell-prompt">${prompt}</div>
+      <div class="cell-hint">${hint}</div>
+      ${actionsHtml}
+      <div id="searchResults"></div>
+      <textarea id="cellInput" placeholder="Write your response...">${savedAnswer}</textarea>
+      <div class="cell-footer">
+        <span class="status" id="saveHint">${savedAnswer ? 'Saved' : ''}</span>
+        <button class="cell-btn primary" onclick="saveEntry()">Save</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderLockedCell(cellDef, topic) {
+  const typeLabels = { question: 'QUESTION', search: 'RESEARCH', action: 'ACTION', reflect: 'REFLECTION' };
+  const typeBadge = { question: 'q', search: 's', action: 'a', reflect: 'r' };
+  const prompt = cellDef.prompt.replace(/{topic}/g, topic);
+
+  return `
+    <div class="cell locked" data-type="${cellDef.type}">
+      <div class="cell-badge ${typeBadge[cellDef.type]}">${typeLabels[cellDef.type]} &mdash; DAY ${cellDef.day}</div>
+      <div class="cell-prompt">${prompt}</div>
+      <textarea disabled placeholder="Unlock with membership"></textarea>
+    </div>
+  `;
+}
+
+function renderCompletedState(topic) {
+  return `
+    <div class="cell" data-type="reflect">
+      <div class="cell-badge r">COMPLETE</div>
+      <div class="cell-prompt">You've completed 28 days exploring "${topic}".</div>
+      <div class="cell-hint">Export your notebook to keep your work. Start a new topic whenever you're ready.</div>
+      <div class="cell-actions">
+        <button class="cell-btn primary" onclick="exportNotebook()">Export Notebook</button>
+        <button class="cell-btn secondary" onclick="resetNotebook()">New Topic</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderPastEntries(entries, topic, currentDay) {
   const past = document.getElementById('pastEntries');
   const days = Object.keys(entries).filter(d => d != currentDay).sort((a,b) => b - a);
+
   if (days.length === 0) {
     past.innerHTML = '<p style="color:var(--text-dim);font-size:13px;">No previous entries yet</p>';
-  } else {
-    past.innerHTML = days.map(day => {
-      const e = entries[day];
-      const q = QUESTIONS[day-1] || QUESTIONS[0];
-      return `<div class="past-entry">
-        <div class="past-head">
-          <span class="past-day">DAY ${day}</span>
-          <span class="past-date">${new Date(e.date).toLocaleDateString()}</span>
-        </div>
-        <div class="past-q">${q.replace(/{topic}/g, topic)}</div>
-        <div class="past-a">${e.answer}</div>
-      </div>`;
-    }).join('');
+    return;
   }
+
+  past.innerHTML = days.map(day => {
+    const e = entries[day];
+    const cellDef = CELLS[day - 1];
+    const typeLabels = { question: 'Q', search: 'R', action: 'A', reflect: 'RF' };
+    const q = cellDef ? cellDef.prompt.replace(/{topic}/g, topic) : 'Question';
+
+    return `<div class="past-entry">
+      <div class="past-head">
+        <span class="past-day">DAY ${day} [${typeLabels[cellDef?.type] || '?'}]</span>
+        <span class="past-date">${new Date(e.date).toLocaleDateString()}</span>
+      </div>
+      <div class="past-q">${q}</div>
+      <div class="past-a">${escapeHtml(e.answer)}</div>
+    </div>`;
+  }).join('');
 }
+
+// ═══════════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════════
 
 function saveEntry() {
   const input = document.getElementById('cellInput');
@@ -759,7 +1061,151 @@ function saveEntry() {
   save();
 
   document.getElementById('saveHint').textContent = 'Saved';
-  renderNotebook();
+  renderPastEntries(data.entries, data.topic, currentDay);
+}
+
+async function doSearch(topic) {
+  const resultsEl = document.getElementById('searchResults');
+  if (!resultsEl) return;
+
+  // Let user modify the search query
+  const query = prompt('Search for:', topic) || topic;
+
+  resultsEl.innerHTML = '<div style="padding:12px;font-size:12px;color:var(--text-muted);"><span class="spinner"></span> Searching...</div>';
+
+  try {
+    const r = await fetch(API + '/api/search?q=' + encodeURIComponent(query) + '&source=duckduckgo');
+    const d = await r.json();
+    const results = d.results || [];
+
+    if (results.length === 0) {
+      resultsEl.innerHTML = '<div class="search-results"><p style="font-size:12px;color:var(--text-dim);">No results found. Try different terms.</p></div>';
+      return;
+    }
+
+    resultsEl.innerHTML = `
+      <div class="search-results">
+        ${results.slice(0, 5).map(r => `
+          <div class="sr-item">
+            <div class="sr-title" onclick="window.open('${r.url}','_blank')">${escapeHtml(r.title || r.url)}</div>
+            <div class="sr-snippet">${escapeHtml((r.snippet || r.body || '').slice(0, 150))}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (e) {
+    resultsEl.innerHTML = '<div class="search-results"><p style="font-size:12px;color:var(--red);">Search failed. Server may be waking up — try again in 30 seconds.</p></div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// OLLAMA ADAPTIVE QUESTIONS
+// ═══════════════════════════════════════════════════════════════
+
+async function generateAdaptiveQuestion(topic, currentDay, entries) {
+  if (!ollamaAvailable || !ollama) return null;
+
+  // Build context from previous answers
+  const prevDays = Object.keys(entries).sort((a,b) => a - b).slice(-3); // last 3 entries
+  if (prevDays.length === 0) return null;
+
+  let context = prevDays.map(d => {
+    const cellDef = CELLS[d - 1];
+    return `Day ${d} (${cellDef?.type || 'question'}): ${entries[d].answer.slice(0, 300)}`;
+  }).join('\n\n');
+
+  const weekNum = Math.ceil(currentDay / 7);
+  const weekFocus = ['exploration and discovery', 'research and investigation', 'application and creation', 'synthesis and reflection'][weekNum - 1] || 'reflection';
+  const cellDef = CELLS[currentDay - 1];
+  const typeInstruction = {
+    question: 'Ask a probing question that pushes deeper',
+    search: 'Ask a question that requires research to answer',
+    action: 'Give a hands-on task or challenge',
+    reflect: 'Ask for reflection and synthesis'
+  }[cellDef.type] || 'Ask a probing question';
+
+  const prompt = `You are a Socratic mentor guiding someone through a 28-day deep-dive on "${topic}".
+
+This is Day ${currentDay}. The focus this week is ${weekFocus}.
+${typeInstruction}.
+
+Here's what they've written recently:
+${context}
+
+Based on their thinking so far, generate ONE follow-up question or prompt (2 sentences max) that:
+- Builds on what they've said
+- Pushes them to think deeper or differently
+- Is specific to their situation, not generic
+
+Respond with ONLY the question/prompt. No explanation.`;
+
+  try {
+    const response = await ollama.generate(prompt, {
+      temperature: 0.7,
+      maxTokens: 150,
+      system: 'You are a Socratic questioning mentor. Be specific, be challenging, be brief.'
+    });
+    const cleaned = response.trim();
+    if (cleaned.length > 10 && cleaned.length < 500) return cleaned;
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════════════════════
+
+function exportNotebook() {
+  if (!data) return;
+  const entries = data.entries || {};
+  const days = Object.keys(entries).sort((a,b) => a - b);
+
+  let text = `28-DAY NOTEBOOK: ${data.topic}\n`;
+  text += `Started: ${new Date(data.startDate).toLocaleDateString()}\n`;
+  text += `Entries: ${days.length} / 28\n`;
+  text += '═'.repeat(50) + '\n\n';
+
+  days.forEach(day => {
+    const e = entries[day];
+    const cellDef = CELLS[day - 1];
+    const typeLabels = { question: 'QUESTION', search: 'RESEARCH', action: 'ACTION', reflect: 'REFLECTION' };
+    const q = cellDef ? cellDef.prompt.replace(/{topic}/g, data.topic) : '';
+
+    text += `── DAY ${day} [${typeLabels[cellDef?.type] || '?'}] ──\n`;
+    text += `${q}\n\n`;
+    text += `${e.answer}\n\n`;
+    text += `(${new Date(e.date).toLocaleDateString()})\n\n`;
+  });
+
+  text += '═'.repeat(50) + '\n';
+  text += 'Exported from Death2Data — death2data.com\n';
+
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `d2d-notebook-${data.topic.replace(/[^a-z0-9]/gi, '-').slice(0, 30)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetNotebook() {
+  if (!confirm('Start a new notebook? Your current entries will be deleted.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  data = null;
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 init();

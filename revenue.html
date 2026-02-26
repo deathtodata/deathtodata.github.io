@@ -307,7 +307,7 @@ h1 {
     </div>
     <div class="metric">
       <div class="metric-value" id="customers">--</div>
-      <div class="metric-label">PAYING MEMBERS</div>
+      <div class="metric-label">SUBSCRIBERS</div>
     </div>
     <div class="metric" id="searches-metric" style="display:none">
       <div class="metric-value" id="searches">--</div>
@@ -317,14 +317,14 @@ h1 {
 
   <div class="goal">
     <div class="goal-header">
-      <div class="goal-title">GOAL: 4,200 MEMBERS (RAMEN PROFITABLE)</div>
+      <div class="goal-title">GOAL: 4,200 SUBSCRIBERS (RAMEN PROFITABLE)</div>
       <div class="goal-numbers"><span id="goal-current">0</span> / 4,200</div>
     </div>
     <div class="goal-bar">
       <div class="goal-fill" id="goal-fill"></div>
     </div>
     <div class="goal-detail">
-      At $1/member × 4,200 = $4,200 MRR → ~$3,800 after Stripe fees → sustainable
+      At $1/subscriber × 4,200 = $4,200 MRR → ~$3,800 after Stripe fees → sustainable
     </div>
   </div>
 
@@ -398,7 +398,7 @@ async function loadStats() {
     updateUI(s.mrr, s.customers, s.updated_at, 'cached');
   } catch {
     // Absolute fallback if stats.json missing
-    updateUI(6.48, 7, null, 'cached');
+    updateUI(12, 12, null, 'cached');
     document.getElementById('updated').textContent = 'Using cached data';
   }
 

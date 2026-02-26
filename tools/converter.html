@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>File Converter | Death2Data</title>
+<meta name="description" content="Convert HEIC, WebP, WebM, and more — all locally. Nothing leaves your device.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #0a0a0a;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+:root {
+  --green: #00cc44;
+  --green-dim: rgba(0,204,68,0.1);
+  --surface: #111;
+  --border: #222;
+  --muted: #666;
+  --gray: #999;
+  --red: #cc0000;
+  --red-dim: rgba(204,0,0,0.1);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #0a0a0a;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.nav .logo { font-weight: 700; color: var(--green); letter-spacing: 1px; font-size: 15px; margin-right: auto; }
+.nav a { font-size: 12px; color: var(--muted); text-decoration: none; }
+.nav a:hover { color: #e0e0e0; }
+
+.main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+
+h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+
+/* Format info */
+.format-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+.format-tag {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.format-tag .ext { color: var(--green); font-weight: 600; }
+.format-tag .desc { color: var(--gray); margin-top: 2px; font-size: 11px; }
+
+/* Drop zone */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 24px;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--green);
+  background: var(--green-dim);
+}
+.drop-zone .icon { font-size: 32px; margin-bottom: 12px; }
+.drop-zone .label { font-size: 14px; color: var(--gray); margin-bottom: 4px; }
+.drop-zone .hint { font-size: 11px; color: var(--muted); }
+.drop-zone input { display: none; }
+
+/* Conversion card */
+.conv-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.conv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.conv-name {
+  font-size: 14px;
+  font-weight: 600;
+  word-break: break-all;
+}
+.conv-meta { font-size: 11px; color: var(--muted); }
+.conv-arrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.conv-from { color: var(--red); font-weight: 600; text-transform: uppercase; }
+.conv-to { color: var(--green); font-weight: 600; text-transform: uppercase; }
+.conv-arrow span { color: var(--muted); }
+
+/* Preview */
+.conv-preview {
+  margin-bottom: 16px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  text-align: center;
+  max-height: 300px;
+}
+.conv-preview img, .conv-preview video {
+  max-width: 100%;
+  max-height: 300px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Output format picker */
+.output-picker {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.out-btn {
+  padding: 8px 14px;
+  background: #1a1a1a;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--gray);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.out-btn:hover { border-color: var(--muted); color: #e0e0e0; }
+.out-btn.active { border-color: var(--green); color: var(--green); background: var(--green-dim); }
+
+/* Quality slider */
+.quality-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.quality-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--green);
+}
+.quality-row .q-val { color: var(--green); font-weight: 600; min-width: 32px; }
+
+/* Convert button */
+.convert-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+.convert-btn:hover { background: #00e64d; }
+.convert-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+.status-msg {
+  font-size: 12px;
+  color: var(--green);
+  margin-top: 8px;
+  line-height: 1.5;
+}
+.status-msg.error { color: var(--red); }
+
+.another-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  margin-top: 8px;
+}
+.another-btn:hover { border-color: var(--green); color: var(--green); }
+
+.privacy-note {
+  text-align: center;
+  font-size: 11px;
+  color: #333;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid #1a1a1a;
+}
+
+@media (max-width: 480px) {
+  .format-grid { grid-template-columns: 1fr; }
+}
+
+/* Footer */
+.ft {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  font-size: 12px;
+  background: var(--bg, #0a0a0a);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.ft a { color: var(--text-muted, #666); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <span class="logo">D2D</span>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html">Tools</a>
+</nav>
+
+<div class="main">
+  <h1>File Converter</h1>
+  <p class="subtitle">Convert images between formats — HEIC from your iPhone, WebP from the web, or anything else. 100% local. Nothing leaves your device.</p>
+
+  <div class="format-grid">
+    <div class="format-tag">
+      <div class="ext">HEIC / HEIF</div>
+      <div class="desc">iPhone &amp; Mac default photos</div>
+    </div>
+    <div class="format-tag">
+      <div class="ext">WebP</div>
+      <div class="desc">Google's web image format</div>
+    </div>
+    <div class="format-tag">
+      <div class="ext">PNG</div>
+      <div class="desc">Lossless, transparent backgrounds</div>
+    </div>
+    <div class="format-tag">
+      <div class="ext">JPEG</div>
+      <div class="desc">Universal, smaller file size</div>
+    </div>
+  </div>
+
+  <div class="drop-zone" id="dropZone">
+    <div class="icon">&#128260;</div>
+    <div class="label">Drop a file here or click to select</div>
+    <div class="hint">HEIC, HEIF, WebP, PNG, JPEG, BMP, TIFF, AVIF, SVG</div>
+    <input type="file" id="fileInput" accept=".heic,.heif,.webp,.png,.jpg,.jpeg,.bmp,.tiff,.tif,.avif,.svg,image/*" multiple>
+  </div>
+
+  <div id="results"></div>
+
+  <div class="privacy-note">All conversion happens in your browser. Zero files uploaded. Zero tracking.</div>
+</div>
+
+<div class="ft">
+  <a href="/about.html">about</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/tools.html">tools</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
+</div>
+
+<!-- HEIC decoder library — handles Apple's HEIC/HEIF format client-side -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js"></script>
+
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const results = document.getElementById('results');
+
+// Drop zone
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);
+});
+fileInput.addEventListener('change', () => { handleFiles(fileInput.files); fileInput.value = ''; });
+
+function handleFiles(files) {
+  Array.from(files).forEach(f => processFile(f));
+}
+
+function formatSize(bytes) {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+function getExt(name) {
+  return (name.split('.').pop() || '').toLowerCase();
+}
+
+function isHEIC(file) {
+  const ext = getExt(file.name);
+  return ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif';
+}
+
+// Determine what output formats make sense given the input
+function getOutputOptions(file) {
+  const ext = getExt(file.name);
+  const opts = [];
+
+  // Always offer these core formats
+  if (ext !== 'jpeg' && ext !== 'jpg') opts.push({ ext: 'jpeg', mime: 'image/jpeg', label: 'JPEG' });
+  if (ext !== 'png') opts.push({ ext: 'png', mime: 'image/png', label: 'PNG' });
+  if (ext !== 'webp') opts.push({ ext: 'webp', mime: 'image/webp', label: 'WebP' });
+
+  return opts;
+}
+
+async function processFile(file) {
+  const card = document.createElement('div');
+  card.className = 'conv-card';
+
+  const ext = getExt(file.name);
+  const outputOpts = getOutputOptions(file);
+  const defaultOut = outputOpts.find(o => o.ext === 'jpeg') || outputOpts[0];
+  let selectedOut = defaultOut;
+  let quality = 0.92;
+
+  // Header
+  card.innerHTML = `
+    <div class="conv-header">
+      <div>
+        <div class="conv-name">${esc(file.name)}</div>
+        <div class="conv-meta">${formatSize(file.size)} &middot; ${ext.toUpperCase()}</div>
+      </div>
+    </div>
+    <div class="conv-arrow">
+      <span class="conv-from">${ext.toUpperCase()}</span>
+      <span>&rarr;</span>
+      <span class="conv-to" id="to-${uid()}">${defaultOut.label}</span>
+    </div>
+    <div class="conv-preview" id="preview-${uid()}"></div>
+    <div class="output-picker" id="picker-${uid()}"></div>
+    <div class="quality-row" id="qrow-${uid()}">
+      <span>Quality</span>
+      <input type="range" min="10" max="100" value="92" id="qslider-${uid()}">
+      <span class="q-val" id="qval-${uid()}">92%</span>
+    </div>
+    <button class="convert-btn" id="btn-${uid()}">Convert to ${defaultOut.label}</button>
+    <div class="status-msg" id="status-${uid()}" style="display:none;"></div>
+  `;
+
+  results.prepend(card);
+
+  // Get unique IDs (we set them after inserting)
+  const id = Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+  const toLabel = card.querySelector('.conv-to');
+  const previewEl = card.querySelector('.conv-preview');
+  const pickerEl = card.querySelector('.output-picker');
+  const qRow = card.querySelector('.quality-row');
+  const qSlider = qRow.querySelector('input[type="range"]');
+  const qVal = qRow.querySelector('.q-val');
+  const btn = card.querySelector('.convert-btn');
+  const statusEl = card.querySelector('.status-msg');
+
+  // Render format picker buttons
+  pickerEl.innerHTML = outputOpts.map((o, i) =>
+    `<button class="out-btn ${o.ext === selectedOut.ext ? 'active' : ''}" data-idx="${i}">${o.label}</button>`
+  ).join('');
+
+  pickerEl.addEventListener('click', e => {
+    const b = e.target.closest('.out-btn');
+    if (!b) return;
+    selectedOut = outputOpts[parseInt(b.dataset.idx)];
+    pickerEl.querySelectorAll('.out-btn').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    toLabel.textContent = selectedOut.label;
+    btn.textContent = 'Convert to ' + selectedOut.label;
+    // Show/hide quality for lossy formats
+    qRow.style.display = (selectedOut.ext === 'png') ? 'none' : 'flex';
+  });
+
+  // Quality slider
+  qSlider.addEventListener('input', () => {
+    quality = parseInt(qSlider.value) / 100;
+    qVal.textContent = qSlider.value + '%';
+  });
+  qRow.style.display = (selectedOut.ext === 'png') ? 'none' : 'flex';
+
+  // Load preview
+  let imageBitmap = null;
+  try {
+    if (isHEIC(file)) {
+      statusEl.style.display = 'block';
+      statusEl.textContent = 'Decoding HEIC...';
+      statusEl.className = 'status-msg';
+
+      const blob = await heic2any({ blob: file, toType: 'image/png', quality: 1 });
+      const resultBlob = Array.isArray(blob) ? blob[0] : blob;
+      const objUrl = URL.createObjectURL(resultBlob);
+      previewEl.innerHTML = `<img src="${objUrl}" alt="preview">`;
+      imageBitmap = resultBlob; // Store converted blob for later use
+      statusEl.textContent = 'HEIC decoded successfully.';
+    } else {
+      const objUrl = URL.createObjectURL(file);
+      previewEl.innerHTML = `<img src="${objUrl}" alt="preview">`;
+    }
+  } catch (err) {
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Could not preview: ' + (err.message || err);
+    statusEl.className = 'status-msg error';
+  }
+
+  // Convert button
+  btn.addEventListener('click', async () => {
+    btn.disabled = true;
+    btn.textContent = 'Converting...';
+    statusEl.style.display = 'block';
+    statusEl.className = 'status-msg';
+    statusEl.textContent = 'Processing...';
+
+    try {
+      let sourceBlob;
+
+      if (isHEIC(file)) {
+        // For HEIC, decode to PNG first if we haven't already
+        if (imageBitmap) {
+          sourceBlob = imageBitmap;
+        } else {
+          statusEl.textContent = 'Decoding HEIC...';
+          const decoded = await heic2any({ blob: file, toType: 'image/png', quality: 1 });
+          sourceBlob = Array.isArray(decoded) ? decoded[0] : decoded;
+        }
+      } else {
+        sourceBlob = file;
+      }
+
+      // Use canvas to convert to target format
+      const img = new Image();
+      const loadPromise = new Promise((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+      });
+      img.src = URL.createObjectURL(sourceBlob);
+      await loadPromise;
+
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+
+      // White background for JPEG (no alpha channel)
+      if (selectedOut.ext === 'jpeg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      ctx.drawImage(img, 0, 0);
+      URL.revokeObjectURL(img.src);
+
+      // Export
+      const outputBlob = await new Promise(resolve => {
+        if (selectedOut.ext === 'png') {
+          canvas.toBlob(resolve, 'image/png');
+        } else {
+          canvas.toBlob(resolve, selectedOut.mime, quality);
+        }
+      });
+
+      // Download
+      const outName = file.name.replace(/\.[^.]+$/, '') + '.' + selectedOut.ext;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(outputBlob);
+      a.download = outName;
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      const savings = file.size - outputBlob.size;
+      const pct = Math.round((savings / file.size) * 100);
+
+      btn.textContent = 'Downloaded ' + outName;
+      btn.style.background = 'var(--green-dim)';
+      btn.style.color = 'var(--green)';
+
+      statusEl.innerHTML = `<strong>Done.</strong> ${formatSize(outputBlob.size)} (${savings > 0 ? pct + '% smaller' : 'same size'}).` +
+        `<br>Dimensions: ${img.naturalWidth} &times; ${img.naturalHeight}px. Zero metadata in output.`;
+
+      // Add "convert another" button
+      const another = document.createElement('button');
+      another.className = 'another-btn';
+      another.textContent = 'Convert another file';
+      another.onclick = () => fileInput.click();
+      statusEl.after(another);
+
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Convert to ' + selectedOut.label;
+      statusEl.className = 'status-msg error';
+      statusEl.textContent = 'Conversion failed: ' + (err.message || err);
+
+      // If HEIC failed, suggest the issue
+      if (isHEIC(file)) {
+        statusEl.textContent += ' — HEIC decoding requires the heic2any library to load. Check your connection.';
+      }
+    }
+  });
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// Simple unique ID helper (just uses timestamp, fine for DOM)
+let _uid = 0;
+function uid() { return _uid++; }
+// Fix: the uid was called multiple times per card but they all return different values
+// Rewrite to use card-scoped querySelector instead
+</script>
+
+</body>
+</html>

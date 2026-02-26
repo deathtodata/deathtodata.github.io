@@ -360,6 +360,14 @@ function showTools(email) {
         </div>
       </div>
 
+      <div class="tool-card" onclick="openTool('converter')">
+        <span class="tool-ck">&#10003;</span>
+        <div class="tool-info">
+          <h3>File Converter</h3>
+          <p>Convert HEIC, WebP, PNG, JPEG — any direction. All local, nothing uploaded.</p>
+        </div>
+      </div>
+
       <div class="tool-card" onclick="openTool('sanitizer')">
         <span class="tool-ck">&#10003;</span>
         <div class="tool-info">
@@ -411,6 +419,7 @@ function openTool(name) {
     'identity-vault': '/tools/identity-vault.html',
     'qr-generator': '/tools/qr-generator.html',
     'notebook': '/tools/notebook.html',
+    'converter': '/tools/converter.html',
     'sanitizer': '/tools/sanitizer.html',
     'leak-score': '/tools/leak-score.html',
   };

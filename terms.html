@@ -2,166 +2,260 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms of Service - Death2Data</title>
-<link rel="stylesheet" href="/css/style.css">
-
-<!-- Favicon -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Terms of Service — Death2Data</title>
+<meta name="description" content="Death2Data terms of service. $1/month, cancel anytime, your data is yours.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- PWA -->
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --green: #00cc44;
+  --green-dim: #004d1a;
+  --white: #e0e0e0;
+  --gray: #b0b0b0;
+  --muted: #666;
+  --dim: #444;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: var(--green); }
+a:hover { color: #00e64d; }
 
+.hd {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hd-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 1px;
+  text-decoration: none;
+  margin-right: auto;
+}
+.hd a:not(.hd-logo) { color: var(--muted); font-size: 13px; text-decoration: none; }
+.hd a:not(.hd-logo):hover { color: var(--white); }
+
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.updated {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.tldr {
+  font-size: 14px;
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid rgba(0,204,68,0.2);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+  margin: 32px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+h2:first-of-type { border-top: none; padding-top: 0; }
+p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray);
+  margin-bottom: 10px;
+}
+ul {
+  margin: 0 0 12px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray);
+}
+li { margin-bottom: 4px; }
+strong { color: var(--white); }
+
+.ft {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+  font-size: 12px;
+}
+.ft a { color: var(--muted); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
+</style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="header-inner">
-    <a href="/" class="logo">DEATH2DATA</a>
-    <nav class="nav">
-      <a href="/">Search</a>
-      <a href="/about.html">About</a>
-      <a href="/tools.html">Tools</a>
-      <a href="/docs/index.html">Docs</a>
-      <a href="/admin/manage.html">Account</a>
-    </nav>
-  </div>
-</header>
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html">Tools</a>
+</div>
 
-<main class="page-content">
-  <div class="container">
-    
-    <h1>Terms of Service</h1>
-    <p class="subtitle">Last updated: January 29, 2026</p>
-    
-    <p><strong>TL;DR: Pay $1 every 28 days. Use the tools. Don't be evil. Cancel anytime.</strong></p>
-    
-    <h2>The Agreement</h2>
-    <p>By using Death2Data, you agree to these terms. If you don't agree, don't use the service.</p>
-    
-    <h2>The Service</h2>
-    <p>Death2Data provides privacy-focused tools including:</p>
-    <ul>
-      <li>28-Day Notebook</li>
-      <li>Privacy Search</li>
-      <li>QR Code Generator</li>
-      <li>And other tools as we add them</li>
-    </ul>
-    <p>We may add, remove, or modify tools at any time.</p>
-    
-    <h2>Pricing</h2>
-    <ul>
-      <li><strong>Cost:</strong> $1 USD every 28 days</li>
-      <li><strong>Billing:</strong> Automatic via Stripe</li>
-      <li><strong>Price changes:</strong> We won't raise prices for existing subscribers without 30 days notice</li>
-    </ul>
-    
-    <h2>Cancellation</h2>
-    <ul>
-      <li>Cancel anytime through the <a href="/admin/manage.html">billing portal</a></li>
-      <li>Access continues until the end of your paid period</li>
-      <li>No refunds for partial periods</li>
-      <li>No questions asked</li>
-    </ul>
-    
-    <h2>Your Data</h2>
-    <ul>
-      <li>Your data is stored on your device, not our servers</li>
-      <li>You are responsible for backing up your data</li>
-      <li>If you clear your browser storage, your data is gone</li>
-      <li>We cannot recover your data because we don't have it</li>
-    </ul>
-    
-    <h2>Acceptable Use</h2>
-    <p>You agree not to:</p>
-    <ul>
-      <li>Use our tools for illegal purposes</li>
-      <li>Attempt to hack, exploit, or damage our systems</li>
-      <li>Share your account access with others</li>
-      <li>Resell access to our tools</li>
-      <li>Use automated systems to abuse our services</li>
-    </ul>
-    
-    <h2>We May Terminate</h2>
-    <p>We can terminate your access if:</p>
-    <ul>
-      <li>You violate these terms</li>
-      <li>Your payment fails repeatedly</li>
-      <li>We reasonably believe you're abusing the service</li>
-    </ul>
-    <p>If we terminate you for cause, no refund. If we terminate for no reason, we'll refund your current period.</p>
-    
-    <h2>Service Availability</h2>
-    <ul>
-      <li>We aim for 99% uptime but don't guarantee it</li>
-      <li>We may have maintenance windows</li>
-      <li>Tools that run locally (most of them) don't depend on our servers</li>
-    </ul>
-    
-    <h2>Liability</h2>
-    <p>To the maximum extent permitted by law:</p>
-    <ul>
-      <li>We provide the service "as is"</li>
-      <li>We're not liable for data loss (your data is on your device)</li>
-      <li>We're not liable for indirect damages</li>
-      <li>Our total liability is limited to what you paid us ($1-13 per year)</li>
-    </ul>
-    
-    <h2>Intellectual Property</h2>
-    <ul>
-      <li>Our code, design, and brand are ours</li>
-      <li>Your data and content are yours</li>
-      <li>Some tools may be open source (MIT license)</li>
-    </ul>
-    
-    <h2>Changes to Terms</h2>
-    <p>We may update these terms. If we make significant changes:</p>
-    <ul>
-      <li>We'll update the date at the top</li>
-      <li>We'll email you about major changes</li>
-      <li>Continued use means you accept the new terms</li>
-    </ul>
-    
-    <h2>Governing Law</h2>
-    <p>These terms are governed by the laws of Florida, USA. Any disputes will be resolved in Florida courts.</p>
-    
-    <h2>Contact</h2>
-    <p>Questions? Email <a href="mailto:matt@death2data.com">matt@death2data.com</a></p>
-    
-  </div>
-</main>
+<div class="main">
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="logo">DEATH2DATA</span>
-      <p>Privacy tools that don't track you.</p>
-    </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Service</a>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="/docs/index.html">Docs</a>
-        <a href="/docs/faq.html">FAQ</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="/admin/manage.html">Manage Subscription</a>
-        <a href="mailto:matt@death2data.com">Support</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 Death2Data. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
+<h1>Terms of Service</h1>
+<p class="updated">Last updated: February 21, 2026</p>
+
+<div class="tldr">
+  <strong>TL;DR:</strong> Pay $1 every 28 days. Use the tools. Your data is yours. Cancel anytime. Don't abuse the service.
+</div>
+
+<h2>The Agreement</h2>
+<p>By using Death2Data ("D2D," "we," "us"), you agree to these terms. If you don't agree, don't use the service. These terms apply to all users of death2data.com and its associated tools and APIs.</p>
+
+<h2>The Service</h2>
+<p>Death2Data provides privacy-focused tools including:</p>
+<ul>
+  <li><strong>Privacy Search</strong> — web search without tracking</li>
+  <li><strong>Story Mode</strong> — read web pages as clean cards</li>
+  <li><strong>28-Day Notebook</strong> — topic exploration, stored locally</li>
+  <li><strong>Data Sanitizer</strong> — strip metadata from images</li>
+  <li><strong>File Converter</strong> — convert between image formats (HEIC, WebP, PNG, JPEG)</li>
+  <li><strong>Leak Score</strong> — check breach exposure</li>
+  <li><strong>Identity Vault</strong> — cryptographic key management</li>
+  <li><strong>QR Identity</strong> — identity cards and verification</li>
+</ul>
+<p>We may add, remove, or modify tools at any time. Most tools run entirely in your browser — we'll always tell you when something touches our server.</p>
+
+<h2>Pricing &amp; Billing</h2>
+<ul>
+  <li><strong>Cost:</strong> $1 USD every 28 days, billed automatically via Stripe.</li>
+  <li><strong>Free tier:</strong> Limited search results and Day 1 of notebooks are free. No payment required to try.</li>
+  <li><strong>Price guarantee:</strong> We won't raise prices for existing subscribers without 30 days email notice.</li>
+  <li><strong>Stripe fees:</strong> Stripe charges us ~$0.33 per transaction. We eat that cost.</li>
+</ul>
+
+<h2>Cancellation &amp; Refunds</h2>
+<ul>
+  <li>Cancel anytime. No questions asked.</li>
+  <li>Access continues until the end of your current paid period.</li>
+  <li>No refunds for partial periods (it's $1 — we keep it simple).</li>
+  <li>To cancel: email <a href="mailto:matt@death2data.com">matt@death2data.com</a> or manage through Stripe's billing portal.</li>
+  <li>After cancellation, your local data (notebooks, tool outputs) remains on your device. We delete your server-side account data within 30 days.</li>
+</ul>
+
+<h2>Your Account</h2>
+<ul>
+  <li>Accounts are identified by email address.</li>
+  <li>One account per person. Don't share your login.</li>
+  <li>We authenticate via email — no passwords stored.</li>
+  <li>Your JWT token is stored in your browser's localStorage. If you clear it, you'll need to re-authenticate.</li>
+</ul>
+
+<h2>Your Data</h2>
+<ul>
+  <li>Most of your data is stored on your device, not our servers.</li>
+  <li>You are responsible for backing up your local data (notebooks, keys, etc.).</li>
+  <li>If you clear your browser storage, your local data is gone. We cannot recover it.</li>
+  <li>We store only your email and subscription status on our server. See our <a href="/privacy.html">Privacy Policy</a> for full details.</li>
+  <li>Your data belongs to you. We claim no rights to anything you create or store.</li>
+</ul>
+
+<h2>Acceptable Use</h2>
+<p>You agree not to:</p>
+<ul>
+  <li>Use our tools for illegal purposes.</li>
+  <li>Attempt to hack, exploit, or damage our systems.</li>
+  <li>Use automated bots or scripts to abuse search or API endpoints.</li>
+  <li>Share your account credentials.</li>
+  <li>Resell access to our tools.</li>
+  <li>Use the service to harm, harass, or stalk others.</li>
+</ul>
+
+<h2>Termination</h2>
+<p>We may terminate your access if you violate these terms, your payment fails repeatedly, or we reasonably believe you're abusing the service. If we terminate for cause, no refund. If we shut down the service entirely, we'll refund your current period and give 30 days notice.</p>
+
+<h2>Service Availability</h2>
+<ul>
+  <li>We aim for high uptime but don't guarantee it.</li>
+  <li>Our API server (Render free tier) may have cold starts — the first request after inactivity can take 30-60 seconds.</li>
+  <li>Tools that run locally (sanitizer, converter, notebook, leak score) don't depend on our server and work offline.</li>
+  <li>Search and Story Mode require our API server to be running.</li>
+</ul>
+
+<h2>Limitation of Liability</h2>
+<p>To the maximum extent permitted by law:</p>
+<ul>
+  <li>The service is provided "as is" without warranties of any kind.</li>
+  <li>We are not liable for data loss (most data is on your device — back it up).</li>
+  <li>We are not liable for indirect, incidental, or consequential damages.</li>
+  <li>Our total liability is limited to the amount you paid us in the 12 months preceding the claim.</li>
+</ul>
+
+<h2>Intellectual Property</h2>
+<ul>
+  <li>The D2D brand, design, and proprietary code are ours.</li>
+  <li>Your data and content are yours. We claim no ownership.</li>
+  <li>Some D2D tools may be released as open source (MIT license). Open source components are governed by their respective licenses.</li>
+</ul>
+
+<h2>Dispute Resolution</h2>
+<p>We'd rather talk it out. Email <a href="mailto:matt@death2data.com">matt@death2data.com</a> first. If we can't resolve it, these terms are governed by the laws of the State of Florida, USA. Any disputes will be resolved in the state or federal courts located in Florida.</p>
+
+<h2>EU/EEA Users</h2>
+<p>If you are in the EU/EEA, nothing in these terms limits your rights under the GDPR or applicable consumer protection laws. See our <a href="/privacy.html">Privacy Policy</a> for your data rights, including the right to access, rectify, delete, and port your data. If mandatory local law provides you with stronger protections, those protections apply.</p>
+
+<h2>Changes to Terms</h2>
+<p>We may update these terms. For material changes, we'll update the date at the top and email subscribers. Continued use after changes means you accept the new terms. If you disagree with changes, cancel your subscription.</p>
+
+<h2>Severability</h2>
+<p>If any part of these terms is found unenforceable, the rest remains in effect.</p>
+
+<h2>Contact</h2>
+<p>Questions about these terms? Email <a href="mailto:matt@death2data.com">matt@death2data.com</a>.</p>
+
+</div>
+
+<div class="ft">
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/terms.html">terms</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/">search</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
+</div>
 
 </body>
 </html>

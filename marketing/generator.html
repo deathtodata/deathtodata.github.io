@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>D2D Material Generator</title>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --green: #00cc44;
+  --text: #e0e0e0;
+  --muted: #666;
+  --dim: #444;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.controls {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px 16px;
+}
+.controls h1 {
+  font-size: 16px;
+  color: var(--green);
+  margin-bottom: 4px;
+  letter-spacing: 1px;
+}
+.sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+.live-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.live-badge.on { background: rgba(0,204,68,0.15); color: var(--green); border: 1px solid var(--green); }
+.live-badge.off { background: rgba(136,136,136,0.15); color: var(--muted); border: 1px solid var(--dim); }
+
+.row { display: flex; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.fld { flex: 1; min-width: 120px; }
+.fld.wide { flex: 2.5; min-width: 220px; }
+.fld label { display: block; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+.fld input {
+  width: 100%;
+  padding: 7px 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+}
+.fld input:focus { border-color: var(--green); }
+.fld input[readonly] { color: var(--muted); }
+
+.formats { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.fbtn {
+  padding: 8px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.fbtn:hover { border-color: var(--muted); }
+.fbtn.on { border-color: var(--green); background: rgba(0,204,68,0.05); color: #fff; }
+
+.actions { display: flex; gap: 10px; margin-bottom: 16px; }
+.actions button {
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-p { background: var(--green); color: #000; }
+.btn-p:hover { background: #00e64d; }
+
+/* Preview iframe */
+.preview-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 20px 40px;
+}
+.preview-bar {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+.preview-frame {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.preview-frame iframe {
+  width: 100%;
+  border: none;
+  display: block;
+  background: #fff;
+}
+</style>
+</head>
+<body>
+
+<div class="controls">
+  <h1>D2D MATERIAL GENERATOR <span class="live-badge off" id="badge">...</span></h1>
+  <p class="sub">Edit fields, pick format, print. Live data from Stripe.</p>
+
+  <div class="row">
+    <div class="fld"><label>Price</label><input id="c-price" value="$1/month"></div>
+    <div class="fld"><label>URL</label><input id="c-url" value="death2data.com"></div>
+    <div class="fld"><label>Email</label><input id="c-email" value="matt@death2data.com"></div>
+  </div>
+  <div class="row">
+    <div class="fld"><label>Subscribers</label><input id="c-subs" value="--" readonly></div>
+    <div class="fld"><label>MRR</label><input id="c-mrr" value="--" readonly></div>
+    <div class="fld"><label>Goal</label><input id="c-goal" value="4,200"></div>
+    <div class="fld wide"><label>Tagline</label><input id="c-tag" value="Your data is yours. Keep it that way."></div>
+  </div>
+
+  <div class="formats" id="formats">
+    <div class="fbtn on" data-f="card">Card 5&times;3</div>
+    <div class="fbtn" data-f="handout">Handout</div>
+    <div class="fbtn" data-f="bifold">Bifold</div>
+    <div class="fbtn" data-f="half">Half-Page 2-Up</div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-p" id="btn-print">Print / Save PDF</button>
+  </div>
+</div>
+
+<div class="preview-wrap">
+  <div class="preview-bar" id="pbar">Preview</div>
+  <div class="preview-frame">
+    <iframe id="pv" sandbox="allow-same-origin"></iframe>
+  </div>
+</div>
+
+<script>
+const API = 'https://fortune0-com.onrender.com';
+let FMT = 'card';
+
+function v(id) { return document.getElementById(id).value; }
+
+// ── Stats ──
+(async function(){
+  const b = document.getElementById('badge');
+  try {
+    const s = await fetch('/stats.json').then(r=>r.json());
+    if(s.customers) document.getElementById('c-subs').value = s.customers;
+    if(s.mrr) document.getElementById('c-mrr').value = '$'+Math.round(s.mrr);
+    b.textContent='CACHED'; b.className='live-badge off';
+    render();
+  } catch{}
+  try {
+    const r = await fetch(API+'/api/public/stats',{signal:AbortSignal.timeout(60000)});
+    if(r.ok){
+      const d=await r.json();
+      if(d.customers) document.getElementById('c-subs').value=d.customers;
+      if(d.mrr!=null) document.getElementById('c-mrr').value='$'+Math.round(d.mrr);
+      b.textContent='LIVE'; b.className='live-badge on';
+      render();
+    }
+  } catch{}
+})();
+
+// ── Format buttons ──
+document.getElementById('formats').addEventListener('click', function(e){
+  const btn = e.target.closest('.fbtn');
+  if(!btn) return;
+  FMT = btn.dataset.f;
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  render();
+});
+
+// ── Print ──
+document.getElementById('btn-print').addEventListener('click', function(){
+  var f = document.getElementById('pv');
+  f.contentWindow.print();
+});
+
+// ── Re-render on any input ──
+document.querySelectorAll('.fld input').forEach(function(el){
+  el.addEventListener('input', render);
+});
+
+// ── Build the material HTML ──
+function table(){
+  return '<table style="width:100%;border-collapse:collapse;border:2px solid #000;">' +
+    '<tr>' +
+    '<td style="width:50%;padding:14px;background:#fff5f5;border-right:2px solid #000;vertical-align:top;">' +
+    '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#900;border-bottom:1px solid #ddd;padding-bottom:6px;margin-bottom:8px;">Big Tech Takes</div>' +
+    '<div style="font-size:13px;line-height:1.8;color:#333;">' +
+    '\u2717 Your search history<br>\u2717 Your location data<br>\u2717 Your browsing habits<br>\u2717 Your personal info<br>\u2717 Sells it. Keeps it forever.' +
+    '</div></td>' +
+    '<td style="width:50%;padding:14px;background:#f0fff0;vertical-align:top;">' +
+    '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#060;border-bottom:1px solid #ddd;padding-bottom:6px;margin-bottom:8px;">D2D Keeps Nothing</div>' +
+    '<div style="font-size:13px;line-height:1.8;color:#333;">' +
+    '\u2713 No search logs<br>\u2713 No tracking cookies<br>\u2713 No user profiles<br>\u2713 No data collection<br>\u2713 Your data stays yours.' +
+    '</div></td></tr></table>';
+}
+
+function price(){
+  return '<div style="background:#000;color:#fff;text-align:center;padding:18px;margin-top:14px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">' +
+    '<div style="font-size:36px;font-weight:900;">'+v('c-price')+'</div>' +
+    '<div style="font-size:12px;opacity:0.8;margin-top:4px;">No contracts. Cancel anytime. '+v('c-subs')+' subscribers and counting.</div>' +
+    '</div>';
+}
+
+function url(){
+  return '<div style="text-align:center;font-size:20px;font-weight:700;padding:12px;border:2px solid #000;margin-top:12px;">'+v('c-url')+'</div>';
+}
+
+function contact(){
+  return '<div style="text-align:center;font-size:11px;color:#666;margin-top:8px;">'+v('c-email')+' · '+v('c-url')+' · No venture capital.</div>';
+}
+
+// ── Card ──
+function cardHTML(){
+  return '<div style="width:5in;height:3in;padding:0.25in;font-family:-apple-system,Helvetica,Arial,sans-serif;display:flex;flex-direction:column;">' +
+    '<div style="text-align:center;font-size:18px;font-weight:900;margin-bottom:6px;letter-spacing:1px;">DEATH2DATA</div>' +
+    table() +
+    '<div style="text-align:center;margin-top:auto;font-size:12px;font-weight:700;padding-top:6px;">'+v('c-price')+' → '+v('c-url')+'</div>' +
+    '</div>';
+}
+
+// ── Handout ──
+function handoutHTML(){
+  return '<div style="width:8.5in;padding:0.5in;font-family:-apple-system,Helvetica,Arial,sans-serif;">' +
+    '<div style="font-size:48px;font-weight:900;letter-spacing:-1px;">DEATH2DATA</div>' +
+    '<div style="font-size:14px;color:#555;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #000;">'+v('c-tag')+'</div>' +
+    '<div style="display:flex;gap:24px;margin-bottom:20px;">' +
+    '<div style="flex:1;">' +
+    '<h2 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">The Problem</h2>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:10px;">Every "free" app sells your data. Google, Facebook, your notes app — that\'s their business model.</p>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:10px;">VC-funded companies must extract value from users. They owe investors 10x returns.</p>' +
+    '<h2 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;">The Solution</h2>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;"><strong>D2D is subscriber-funded.</strong> No investors. No ads. No data sales. Your data stays on your device.</p>' +
+    '</div>' +
+    '<div style="flex:1;">' +
+    '<h2 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">What '+v('c-price')+' Gets You</h2>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:6px;"><strong>Private Search</strong> — real web results, no tracking</p>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:6px;"><strong>Story Mode</strong> — read any page as clean cards</p>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:6px;"><strong>28-Day Notebook</strong> — explore a topic, stays local</p>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:6px;"><strong>Data Sanitizer</strong> — strip metadata from photos</p>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;margin-bottom:6px;"><strong>Leak Score</strong> — check your breach exposure</p>' +
+    '<h2 style="font-size:13px;text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;">The Math</h2>' +
+    '<p style="font-size:12px;line-height:1.6;color:#333;">'+v('c-goal')+' subscribers = sustainable forever.</p>' +
+    '</div></div>' +
+    price()+url()+contact() +
+    '</div>';
+}
+
+// ── Bifold ──
+function bifoldHTML(){
+  return '<div style="width:11in;display:flex;font-family:-apple-system,Helvetica,Arial,sans-serif;">' +
+    '<div style="width:5.5in;padding:0.5in;display:flex;flex-direction:column;justify-content:center;text-align:center;border-right:1px dashed #ccc;">' +
+    '<h2 style="font-size:18px;margin-bottom:20px;">What You Get</h2>' +
+    '<div style="text-align:left;max-width:3.5in;margin:0 auto 20px;font-size:14px;line-height:2.4;">' +
+    '<strong>Private Search</strong><br><small style="color:#666;">Search without being tracked</small><br>' +
+    '<strong>Story Mode</strong><br><small style="color:#666;">Read any page as clean cards</small><br>' +
+    '<strong>28-Day Notebook</strong><br><small style="color:#666;">Notes stored on your device only</small><br>' +
+    '<strong>Data Sanitizer</strong><br><small style="color:#666;">Strip hidden metadata from photos</small><br>' +
+    '<strong>Leak Score</strong><br><small style="color:#666;">Check your breach exposure</small>' +
+    '</div>' +
+    '<div style="margin-top:auto;padding-top:20px;border-top:1px solid #ddd;">' +
+    '<div style="font-size:20px;font-weight:700;">'+v('c-url')+'</div>' +
+    '<div style="font-size:13px;color:#666;margin-top:4px;">'+v('c-email')+'</div>' +
+    '<div style="font-size:11px;color:#888;margin-top:8px;">Open source. No venture capital.</div>' +
+    '</div></div>' +
+    '<div style="width:5.5in;padding:0.5in;display:flex;flex-direction:column;">' +
+    '<div style="text-align:center;padding-bottom:20px;border-bottom:3px solid #000;margin-bottom:20px;">' +
+    '<div style="font-size:36px;font-weight:900;letter-spacing:-1px;">DEATH2DATA</div>' +
+    '<div style="font-size:14px;color:#555;font-style:italic;margin-top:4px;">'+v('c-tag')+'</div>' +
+    '</div>' +
+    table()+price() +
+    '</div></div>';
+}
+
+// ── Half-page 2-up ──
+function halfHTML(){
+  function one(){
+    return '<div style="width:7.5in;padding:0.3in;font-family:-apple-system,Helvetica,Arial,sans-serif;">' +
+      '<div style="font-size:28px;font-weight:900;margin-bottom:4px;">DEATH2DATA</div>' +
+      '<div style="font-size:12px;color:#555;margin-bottom:10px;">'+v('c-tag')+'</div>' +
+      table() +
+      '<div style="display:flex;gap:12px;margin-top:10px;">' +
+      '<div style="flex:1;background:#000;color:#fff;text-align:center;padding:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact;">' +
+      '<div style="font-size:24px;font-weight:900;">'+v('c-price')+'</div></div>' +
+      '<div style="flex:1;text-align:center;font-size:16px;font-weight:700;padding:10px;border:2px solid #000;">'+v('c-url')+'</div>' +
+      '</div></div>';
+  }
+  return one() +
+    '<div style="border-bottom:1px dashed #999;margin:8px 0;"></div>' +
+    one();
+}
+
+// ── Page sizes for print ──
+var PAGE = {
+  card:    '@page { size: 5in 3in; margin: 0; }',
+  handout: '@page { size: letter; margin: 0; }',
+  bifold:  '@page { size: letter landscape; margin: 0; }',
+  half:    '@page { size: letter; margin: 0; }',
+};
+
+// ── Iframe heights ──
+var HEIGHTS = { card: 320, handout: 820, bifold: 650, half: 780 };
+
+// ── Render into iframe ──
+function render(){
+  var html;
+  if(FMT==='card') html = cardHTML();
+  else if(FMT==='handout') html = handoutHTML();
+  else if(FMT==='bifold') html = bifoldHTML();
+  else html = halfHTML();
+
+  var doc = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#fff;} @media print{'+PAGE[FMT]+'}</style>' +
+    '</head><body>'+html+'</body></html>';
+
+  var iframe = document.getElementById('pv');
+  iframe.srcdoc = doc;
+  iframe.style.height = HEIGHTS[FMT] + 'px';
+
+  document.getElementById('pbar').textContent = 'Preview — ' +
+    {card:'5×3 card',handout:'8.5×11 handout',bifold:'11×8.5 bifold',half:'7.5×5 half-page ×2'}[FMT];
+}
+
+render();
+</script>
+</body>
+</html>

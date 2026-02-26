@@ -235,6 +235,26 @@ h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
   50% { content: '..'; }
   75% { content: '...'; }
 }
+
+/* Footer */
+.ft {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  font-size: 12px;
+  background: var(--bg, #0a0a0a);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.ft a { color: var(--text-muted, #666); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
 </style>
 
 <meta name="description" content="Check if your email or password has been exposed in data breaches. Privacy-first: your data never leaves your device.">
@@ -278,6 +298,16 @@ h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
 
     <div class="tips" id="tips"></div>
   </div>
+</div>
+
+<div class="ft">
+  <a href="/about.html">about</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/tools.html">tools</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
 </div>
 
 <script>

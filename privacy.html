@@ -2,164 +2,340 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Privacy Policy - Death2Data</title>
-<link rel="stylesheet" href="/css/style.css">
-
-<!-- Favicon -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Privacy Policy — Death2Data</title>
+<meta name="description" content="Death2Data privacy policy. What we collect, what we don't, and where your data lives.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- PWA -->
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@700&display=swap');
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --green: #00cc44;
+  --green-dim: #004d1a;
+  --white: #e0e0e0;
+  --gray: #b0b0b0;
+  --muted: #666;
+  --dim: #444;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: var(--green); }
+a:hover { color: #00e64d; }
 
+.hd {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.hd-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 1px;
+  text-decoration: none;
+  margin-right: auto;
+}
+.hd a:not(.hd-logo) { color: var(--muted); font-size: 13px; text-decoration: none; }
+.hd a:not(.hd-logo):hover { color: var(--white); }
+
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.updated {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.tldr {
+  font-size: 14px;
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid rgba(0,204,68,0.2);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--white);
+  margin: 32px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+h2:first-of-type { border-top: none; padding-top: 0; }
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gray);
+  margin: 20px 0 8px;
+}
+p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray);
+  margin-bottom: 10px;
+}
+ul {
+  margin: 0 0 12px 20px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--gray);
+}
+li { margin-bottom: 4px; }
+strong { color: var(--white); }
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0 16px;
+  font-size: 13px;
+}
+.data-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.data-table td {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  color: var(--gray);
+}
+
+.ft {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  gap: 10px;
+  font-size: 12px;
+}
+.ft a { color: var(--muted); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
+</style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="header-inner">
-    <a href="/" class="logo">DEATH2DATA</a>
-    <nav class="nav">
-      <a href="/">Search</a>
-      <a href="/about.html">About</a>
-      <a href="/tools.html">Tools</a>
-      <a href="/docs/index.html">Docs</a>
-      <a href="/admin/manage.html">Account</a>
-    </nav>
-  </div>
-</header>
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">Search</a>
+  <a href="/about.html">About</a>
+  <a href="/tools.html">Tools</a>
+</div>
 
-<main class="page-content">
-  <div class="container">
-    
-    <h1>Privacy Policy</h1>
-    <p class="subtitle">Last updated: January 29, 2026</p>
-    
-    <p><strong>TL;DR: We don't track you. Your data stays on your device. We only have your email for billing.</strong></p>
-    
-    <h2>The Short Version</h2>
-    <p>Death2Data is built on a simple principle: your data is yours. We've architected our system so that we physically cannot access most of your data, even if we wanted to.</p>
-    
-    <h2>What We Collect</h2>
-    
-    <h3>Payment Information</h3>
-    <p>When you subscribe, Stripe (our payment processor) collects:</p>
-    <ul>
-      <li>Email address</li>
-      <li>Payment method (card details go directly to Stripe, we never see them)</li>
-      <li>Billing address (if required by your bank)</li>
-    </ul>
-    <p>We receive only your email from Stripe, which we use to identify your subscription.</p>
-    
-    <h3>That's It</h3>
-    <p>We do not collect:</p>
-    <ul>
-      <li>Your name (unless Stripe provides it)</li>
-      <li>Your location</li>
-      <li>Your device information</li>
-      <li>Your browsing history</li>
-      <li>Your search queries</li>
-      <li>Your notebook entries</li>
-      <li>Analytics or tracking data</li>
-    </ul>
-    
-    <h2>Where Your Data Lives</h2>
-    
-    <h3>On Your Device (localStorage)</h3>
-    <p>The following data is stored in your browser's localStorage:</p>
-    <ul>
-      <li>Your membership token (just an expiration timestamp)</li>
-      <li>Your notebook entries</li>
-      <li>Your tool preferences</li>
-    </ul>
-    <p><strong>We cannot access this data.</strong> It never leaves your device unless you explicitly export it.</p>
-    
-    <h3>On Stripe's Servers</h3>
-    <p>Stripe stores your payment information according to their <a href="https://stripe.com/privacy" target="_blank">Privacy Policy</a>. This includes:</p>
-    <ul>
-      <li>Email address</li>
-      <li>Payment history</li>
-      <li>Subscription status</li>
-    </ul>
-    
-    <h3>On Our Servers</h3>
-    <p>Nothing. We don't have a database of user data. We don't store your information.</p>
-    
-    <h2>Cookies</h2>
-    <p>We don't use cookies. No tracking cookies. No analytics cookies. No cookies at all.</p>
-    
-    <h2>Third-Party Services</h2>
-    
-    <h3>Stripe</h3>
-    <p>We use Stripe for payment processing. When you pay, you interact directly with Stripe. See <a href="https://stripe.com/privacy" target="_blank">Stripe's Privacy Policy</a>.</p>
-    
-    <h3>Netlify</h3>
-    <p>Our site is hosted on Netlify. They may log IP addresses for security purposes. See <a href="https://www.netlify.com/privacy/" target="_blank">Netlify's Privacy Policy</a>.</p>
-    
-    <h3>Ollama (Optional)</h3>
-    <p>If you use AI features, they run locally on your device via Ollama. No data is sent to external AI services.</p>
-    
-    <h2>Analytics</h2>
-    <p>We don't use Google Analytics, Facebook Pixel, or any tracking scripts. We don't know how many people visit our site. We don't track what pages you view.</p>
-    
-    <h2>Data Export</h2>
-    <p>Since your data is stored locally, you can export it anytime:</p>
-    <ul>
-      <li>Open browser DevTools (F12)</li>
-      <li>Go to Application → Local Storage</li>
-      <li>Copy any data you want</li>
-    </ul>
-    <p>Or use our export features within each tool.</p>
-    
-    <h2>Data Deletion</h2>
-    <p>To delete your data:</p>
-    <ul>
-      <li><strong>Local data:</strong> Clear your browser's localStorage for death2data.com</li>
-      <li><strong>Stripe data:</strong> Email us at matt@death2data.com and we'll request deletion from Stripe</li>
-    </ul>
-    
-    <h2>Children</h2>
-    <p>We don't knowingly collect data from anyone under 13. If you're under 13, please don't use our services.</p>
-    
-    <h2>Changes</h2>
-    <p>If we change this policy, we'll update the date at the top. For significant changes, we'll notify you via email.</p>
-    
-    <h2>Contact</h2>
-    <p>Questions? Email <a href="mailto:matt@death2data.com">matt@death2data.com</a></p>
-    
-  </div>
-</main>
+<div class="main">
 
-<footer class="site-footer">
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <span class="logo">DEATH2DATA</span>
-      <p>Privacy tools that don't track you.</p>
-    </div>
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4>Legal</h4>
-        <a href="/privacy.html">Privacy Policy</a>
-        <a href="/terms.html">Terms of Service</a>
-      </div>
-      <div class="footer-col">
-        <h4>Resources</h4>
-        <a href="/docs/index.html">Docs</a>
-        <a href="/docs/faq.html">FAQ</a>
-      </div>
-      <div class="footer-col">
-        <h4>Account</h4>
-        <a href="/admin/manage.html">Manage Subscription</a>
-        <a href="mailto:matt@death2data.com">Support</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 Death2Data. All rights reserved.</p>
-    </div>
-  </div>
-</footer>
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: February 21, 2026</p>
+
+<div class="tldr">
+  <strong>TL;DR:</strong> We store your email and subscription status on our server for billing. Your search queries, notebook entries, and tool data stay on your device. We don't sell data. We don't run analytics. Stripe handles payments.
+</div>
+
+<h2>Data Controller</h2>
+<p>Death2Data is operated as a sole proprietorship based in Florida, USA. For any privacy questions, contact <a href="mailto:matt@death2data.com">matt@death2data.com</a>.</p>
+
+<h2>What We Collect and Where It Lives</h2>
+
+<table class="data-table">
+  <tr>
+    <th>Data</th>
+    <th>Where It's Stored</th>
+    <th>Why</th>
+  </tr>
+  <tr>
+    <td>Email address</td>
+    <td>Our server (Render) + Stripe</td>
+    <td>Account identity, billing</td>
+  </tr>
+  <tr>
+    <td>Subscription status &amp; tier</td>
+    <td>Our server (Render) + Stripe</td>
+    <td>Determine what you can access</td>
+  </tr>
+  <tr>
+    <td>Authentication token (JWT)</td>
+    <td>Your browser (localStorage)</td>
+    <td>Keep you logged in</td>
+  </tr>
+  <tr>
+    <td>Payment method (card details)</td>
+    <td>Stripe only — we never see this</td>
+    <td>Process $1/mo subscription</td>
+  </tr>
+  <tr>
+    <td>Search queries</td>
+    <td><strong>Not stored anywhere</strong></td>
+    <td>Relayed to search engines, then discarded</td>
+  </tr>
+  <tr>
+    <td>Notebook entries</td>
+    <td>Your browser (localStorage)</td>
+    <td>Local-only, we cannot access</td>
+  </tr>
+  <tr>
+    <td>Files processed (sanitizer, converter)</td>
+    <td>Your browser memory only</td>
+    <td>Never uploaded, discarded on page close</td>
+  </tr>
+  <tr>
+    <td>Leak Score checks</td>
+    <td>Your browser only</td>
+    <td>Checked via public API, not logged by us</td>
+  </tr>
+</table>
+
+<h3>On Our Server</h3>
+<p>Our API server on Render.com stores a minimal database containing: your email address, subscription tier (free/active), authentication tokens, and timestamps. This is the minimum required to operate a paid subscription service. We do not store search queries, browsing history, notebook content, or any data from our client-side tools.</p>
+
+<h3>On Your Device</h3>
+<p>Most D2D tools run entirely in your browser. Notebook entries, tool preferences, and processed files never leave your device. If you clear your browser's localStorage, that data is gone — we cannot recover it because we never had it.</p>
+
+<h3>On Stripe's Servers</h3>
+<p>Stripe processes your payment and stores your payment method, billing history, and email. See <a href="https://stripe.com/privacy" target="_blank" rel="noopener">Stripe's Privacy Policy</a>.</p>
+
+<h2>What We Do NOT Collect</h2>
+<ul>
+  <li>Search queries (relayed, not logged)</li>
+  <li>Browsing history or page views</li>
+  <li>Location data</li>
+  <li>Device information or fingerprints</li>
+  <li>Cookies (we use none)</li>
+  <li>Analytics or tracking data (no Google Analytics, no pixels, nothing)</li>
+  <li>Your name (unless Stripe provides it from your card)</li>
+</ul>
+
+<h2>How We Use Your Email</h2>
+<p>Your email is used to: identify your account, verify your subscription status, and contact you about critical service changes. We do not send marketing emails, newsletters, or promotional content unless you explicitly opt in to something in the future. We do not share your email with third parties except Stripe for billing.</p>
+
+<h2>Search Query Privacy</h2>
+<p>When you search on D2D, your query is relayed through our API server to external search engines. We act as a proxy — the search engine sees the query but not your identity. We do not log, store, or analyze your queries on our server. Once the results are returned to your browser, the query is gone from our system.</p>
+
+<h2>Cookies &amp; Tracking</h2>
+<p>We do not use cookies of any kind. No tracking cookies, no analytics cookies, no session cookies. We use localStorage (not cookies) to keep you logged in. We do not use Google Analytics, Facebook Pixel, or any third-party tracking scripts.</p>
+
+<h2>Third-Party Services</h2>
+
+<table class="data-table">
+  <tr>
+    <th>Service</th>
+    <th>What They See</th>
+    <th>Their Privacy Policy</th>
+  </tr>
+  <tr>
+    <td>Stripe</td>
+    <td>Your email, payment method, billing address</td>
+    <td><a href="https://stripe.com/privacy" target="_blank" rel="noopener">stripe.com/privacy</a></td>
+  </tr>
+  <tr>
+    <td>GitHub Pages</td>
+    <td>IP address (standard web server logs)</td>
+    <td><a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener">GitHub Privacy Statement</a></td>
+  </tr>
+  <tr>
+    <td>Render.com</td>
+    <td>API requests (we don't log query content)</td>
+    <td><a href="https://render.com/privacy" target="_blank" rel="noopener">render.com/privacy</a></td>
+  </tr>
+  <tr>
+    <td>Google Fonts</td>
+    <td>IP address (font loading)</td>
+    <td><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Privacy Policy</a></td>
+  </tr>
+</table>
+
+<h2>Your Rights (GDPR — EU/EEA Users)</h2>
+<p>If you are in the European Union or European Economic Area, you have the following rights under the General Data Protection Regulation (GDPR):</p>
+<ul>
+  <li><strong>Right to Access:</strong> Request a copy of all data we hold about you.</li>
+  <li><strong>Right to Rectification:</strong> Request correction of inaccurate data.</li>
+  <li><strong>Right to Erasure:</strong> Request deletion of your data. We will delete your email and account from our server and request deletion from Stripe.</li>
+  <li><strong>Right to Data Portability:</strong> Request your data in a machine-readable format.</li>
+  <li><strong>Right to Object:</strong> Object to processing of your data.</li>
+  <li><strong>Right to Restrict Processing:</strong> Request that we limit how we use your data.</li>
+  <li><strong>Right to Withdraw Consent:</strong> Withdraw consent at any time by canceling your subscription and requesting account deletion.</li>
+</ul>
+<p><strong>Legal basis for processing:</strong> We process your email and subscription data based on contractual necessity (you need an account to use paid features) and legitimate interest (operating the service). We do not process data based on consent alone.</p>
+<p><strong>To exercise any right:</strong> Email <a href="mailto:matt@death2data.com">matt@death2data.com</a>. We will respond within 30 days.</p>
+<p><strong>Supervisory authority:</strong> You have the right to lodge a complaint with your local data protection authority.</p>
+
+<h2>Your Rights (CCPA — California Users)</h2>
+<p>If you are a California resident, you have the right to: know what personal information we collect, request deletion of your data, and opt out of the sale of your data. <strong>We do not sell your personal information.</strong> To exercise your rights, email <a href="mailto:matt@death2data.com">matt@death2data.com</a>.</p>
+
+<h2>Data Retention</h2>
+<ul>
+  <li><strong>Active subscribers:</strong> We retain your email and account data for as long as your subscription is active.</li>
+  <li><strong>Canceled subscribers:</strong> We retain your data for 30 days after cancellation, then delete it from our server.</li>
+  <li><strong>Stripe data:</strong> Stripe retains payment records per their own policy. Request deletion from Stripe separately or ask us and we'll do it for you.</li>
+  <li><strong>Local data:</strong> Data on your device stays until you clear it. We have no control over this.</li>
+</ul>
+
+<h2>Data Security</h2>
+<p>Our server communicates over HTTPS only. Authentication tokens are JWTs with expiration. We do not store passwords — authentication is email-based. Our database is on Render's infrastructure with their security controls. However, no system is perfectly secure, and we cannot guarantee absolute security.</p>
+
+<h2>Children</h2>
+<p>Death2Data is not intended for anyone under 13 years old (or 16 in the EU). We do not knowingly collect data from children. If we discover we have, we will delete it immediately.</p>
+
+<h2>International Transfers</h2>
+<p>Our server is hosted in the United States via Render.com. If you are outside the US, your email address will be transferred to and stored in the US. By using D2D, you consent to this transfer. We rely on standard contractual clauses and the data processing agreements of our service providers (Stripe, Render) for lawful transfer.</p>
+
+<h2>Changes to This Policy</h2>
+<p>If we make material changes, we'll update the date at the top and notify subscribers by email. Continued use after changes constitutes acceptance.</p>
+
+<h2>Contact</h2>
+<p>For any privacy questions, data requests, or concerns:</p>
+<p><strong>Email:</strong> <a href="mailto:matt@death2data.com">matt@death2data.com</a></p>
+<p><strong>Address:</strong> Death2Data, Florida, USA</p>
+
+</div>
+
+<div class="ft">
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/terms.html">terms</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/">search</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
+</div>
 
 </body>
 </html>

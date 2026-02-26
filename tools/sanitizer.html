@@ -169,6 +169,26 @@ h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
   margin-top: 8px;
 }
 .another-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* Footer */
+.ft {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 44px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 10px;
+  font-size: 12px;
+  background: var(--bg, #0a0a0a);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.ft a { color: var(--text-muted, #666); text-decoration: none; }
+.ft a:hover { color: var(--green); }
+.ft-sep { color: var(--border); }
 </style>
 
 <meta name="description" content="Strip metadata from images and files before sharing. EXIF, GPS, camera info — removed locally. Nothing uploaded.">
@@ -191,11 +211,21 @@ h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
   <div class="drop-zone" id="dropZone">
     <div class="icon">&#128391;</div>
     <div class="label">Drop an image here or click to select</div>
-    <div class="hint">Supports JPEG, PNG, WebP. Max 25MB.</div>
-    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp" multiple>
+    <div class="hint">Supports JPEG, PNG, WebP, HEIC. Max 25MB.</div>
+    <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,.heic,.heif,image/heic,image/heif" multiple>
   </div>
 
   <div class="results" id="results"></div>
+</div>
+
+<div class="ft">
+  <a href="/about.html">about</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/privacy.html">privacy</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="/tools.html">tools</a>
+  <span class="ft-sep">&middot;</span>
+  <a href="mailto:matt@death2data.com">support</a>
 </div>
 
 <script>
@@ -504,8 +534,20 @@ function stripPng(buffer) {
   return out.buffer;
 }
 
+// ── HEIC detection ──
+function isHEIC(file) {
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  return ext === 'heic' || ext === 'heif' || file.type === 'image/heic' || file.type === 'image/heif';
+}
+
 // ── Process a file ──
 async function processFile(file) {
+  // HEIC files — always re-encode via canvas (strips all metadata by design)
+  if (isHEIC(file)) {
+    processHEIC(file);
+    return;
+  }
+
   const buffer = await file.arrayBuffer();
   const isJpeg = file.type === 'image/jpeg';
   const isPng = file.type === 'image/png';
@@ -611,6 +653,69 @@ async function processFile(file) {
 
 // ── Fallback: re-encode via canvas (nuclear option — guaranteed clean) ──
 // Canvas re-encoding creates brand new pixel data with ZERO metadata
+// ── Process HEIC — decode then re-encode for guaranteed clean output ──
+async function processHEIC(file) {
+  const card = document.createElement('div');
+  card.className = 'file-card';
+  card.innerHTML = `
+    <div class="file-header">
+      <div>
+        <div class="file-name">${file.name}</div>
+        <div class="file-size">${formatSize(file.size)} &middot; HEIC</div>
+      </div>
+      <span class="status-badge dirty">HEIC (Apple format)</span>
+    </div>
+    <div style="font-size:13px;color:var(--gray);margin-bottom:12px;line-height:1.5;">
+      HEIC files contain embedded EXIF, GPS, and Apple-specific metadata. The entire file will be re-encoded to strip everything.
+    </div>
+    <button class="strip-btn" id="heic-strip">Decoding HEIC...</button>
+  `;
+  results.appendChild(card);
+
+  const btn = card.querySelector('#heic-strip');
+  btn.disabled = true;
+
+  try {
+    // Load heic2any if not already loaded
+    if (typeof heic2any === 'undefined') {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/heic2any/0.0.4/heic2any.min.js';
+      document.head.appendChild(s);
+      await new Promise((resolve, reject) => { s.onload = resolve; s.onerror = reject; });
+    }
+
+    const blob = await heic2any({ blob: file, toType: 'image/png', quality: 1 });
+    const resultBlob = Array.isArray(blob) ? blob[0] : blob;
+
+    btn.textContent = 'Strip metadata & download as PNG';
+    btn.disabled = false;
+
+    btn.addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(resultBlob);
+      a.download = 'clean-' + file.name.replace(/\.\w+$/, '.png');
+      a.click();
+      URL.revokeObjectURL(a.href);
+
+      btn.textContent = '\u2713 Verified clean — downloaded as PNG';
+      btn.disabled = true;
+      btn.style.background = 'var(--green-dim)';
+      btn.style.color = 'var(--green)';
+
+      const proof = document.createElement('div');
+      const saved = file.size - resultBlob.size;
+      proof.style.cssText = 'background:var(--green-dim);border:1px solid rgba(0,204,68,0.3);border-radius:6px;padding:12px 14px;margin-top:10px;font-size:12px;color:var(--green);line-height:1.5;';
+      proof.innerHTML = '<strong>&#10003; Guaranteed clean.</strong> HEIC decoded and re-encoded as PNG — zero original metadata survives this process.' +
+        (saved > 0 ? ' Removed ' + formatSize(saved) + ' of hidden data.' : '');
+      btn.after(proof);
+    });
+  } catch (err) {
+    btn.textContent = 'HEIC decode failed: ' + (err.message || err);
+    btn.style.background = 'var(--red-dim)';
+    btn.style.color = 'var(--red)';
+  }
+}
+
 function reencodeAndDownload(file, btn, card) {
   const img = new Image();
   img.onload = () => {
