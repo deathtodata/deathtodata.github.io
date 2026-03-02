@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Wall | Death2Data</title>
+<meta name="description" content="See what D2D members are discovering about privacy across the web. Real analyses, real scores.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --surface2: #161616;
+  --border: #1e1e1e;
+  --border-hover: #2a3a2a;
+  --text: #e0e0e0;
+  --body: #b0b0b0;
+  --muted: #666;
+  --dim: #444;
+  --green: #00cc44;
+  --green-dim: #0a2a14;
+  --green-hover: #00e64d;
+  --orange: #cc8800;
+  --red: #cc3333;
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: inherit; text-decoration: none; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  max-width: 640px;
+  margin: 0 auto;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-right: auto;
+}
+.nav a:not(.nav-logo) {
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 16px;
+}
+.nav a:not(.nav-logo):hover { color: var(--text); }
+
+/* ── MAIN ── */
+.main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px 80px;
+}
+
+/* ── HEADER ── */
+.wall-header {
+  margin-bottom: 32px;
+}
+.wall-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.wall-header .sub {
+  font-size: 14px;
+  color: var(--body);
+  line-height: 1.6;
+}
+.wall-stats {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.wall-stat {
+  display: flex;
+  flex-direction: column;
+}
+.wall-stat .num {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--green);
+}
+.wall-stat .label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ── FILTER ── */
+.filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.filter-chip {
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  background: transparent;
+  font-family: var(--font);
+  transition: all 0.2s;
+}
+.filter-chip:hover { border-color: var(--muted); color: var(--text); }
+.filter-chip.active {
+  background: var(--green-dim);
+  border-color: var(--green);
+  color: var(--green);
+}
+
+/* ── SEARCH ── */
+.wall-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+.wall-search input {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--text);
+  font-family: var(--font);
+  outline: none;
+}
+.wall-search input:focus { border-color: var(--green); }
+.wall-search input::placeholder { color: var(--dim); }
+.wall-search button {
+  padding: 10px 18px;
+  background: var(--green);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.wall-search button:hover { background: var(--green-hover); }
+
+/* ── CARDS ── */
+.wall-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wall-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: border-color 0.2s;
+  cursor: pointer;
+}
+.wall-card:hover { border-color: var(--border-hover); }
+
+.wc-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.wc-score {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  min-width: 44px;
+}
+.wc-score.high { color: var(--green); }
+.wc-score.mid { color: var(--orange); }
+.wc-score.low { color: var(--red); }
+
+.wc-info {
+  flex: 1;
+  min-width: 0;
+}
+.wc-domain {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wc-verdict {
+  font-size: 13px;
+  color: var(--body);
+  margin-top: 2px;
+}
+
+.wc-time {
+  font-size: 11px;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.wc-summary {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.wc-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.wc-tag {
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+.wc-tag.green { color: var(--green); background: var(--green-dim); border-color: #1a3a1a; }
+
+.wc-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+.wc-action {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: var(--font);
+}
+.wc-action:hover { color: var(--green); }
+
+/* ── EMPTY / LOADING ── */
+.loading {
+  text-align: center;
+  padding: 48px 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.loading .spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── CTA CARD ── */
+.cta-card {
+  background: var(--green-dim);
+  border: 1px solid #1a3a1a;
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  margin-top: 12px;
+}
+.cta-card h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+.cta-card p {
+  font-size: 13px;
+  color: var(--body);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+.cta-card a {
+  display: inline-flex;
+  padding: 10px 24px;
+  background: var(--green);
+  color: #000;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.cta-card a:hover { background: var(--green-hover); }
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .wall-header h1 { font-size: 18px; }
+  .wall-stats { gap: 16px; }
+  .wall-stat .num { font-size: 18px; }
+  .wc-score { font-size: 24px; min-width: 36px; }
+  .wc-domain { font-size: 13px; }
+  .filter-row { gap: 6px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">D2D</a>
+  <a href="/">Search</a>
+  <a href="/tools.html">Tools</a>
+  <a href="/wall.html" style="color:var(--text);">Wall</a>
+</nav>
+
+<main class="main">
+  <div class="wall-header">
+    <h1>The Wall</h1>
+    <div class="sub">Real privacy analyses from D2D members. Every score is generated by AI from a live page fetch. Nothing is fake.</div>
+    <div class="wall-stats">
+      <div class="wall-stat">
+        <span class="num" id="totalAnalyzed">—</span>
+        <span class="label">Sites Analyzed</span>
+      </div>
+      <div class="wall-stat">
+        <span class="num" id="avgScore">—</span>
+        <span class="label">Avg Score</span>
+      </div>
+      <div class="wall-stat">
+        <span class="num" id="memberCount">—</span>
+        <span class="label">Members</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search by zipcode or topic -->
+  <div class="wall-search">
+    <input type="text" id="wallSearchInput" placeholder="Search by zipcode, domain, or topic...">
+    <button onclick="searchWall()">Search</button>
+  </div>
+
+  <!-- Filter chips -->
+  <div class="filter-row" id="filterRow">
+    <button class="filter-chip active" data-filter="all" onclick="filterWall('all', this)">All</button>
+    <button class="filter-chip" data-filter="high" onclick="filterWall('high', this)">Private (7+)</button>
+    <button class="filter-chip" data-filter="low" onclick="filterWall('low', this)">Exposed (&lt;4)</button>
+    <button class="filter-chip" data-filter="recent" onclick="filterWall('recent', this)">Last 24h</button>
+  </div>
+
+  <!-- Feed -->
+  <div class="wall-feed" id="wallFeed">
+    <div class="loading">
+      <div class="spinner"></div>
+      <div>Loading the wall...</div>
+    </div>
+  </div>
+
+  <!-- CTA at bottom -->
+  <div class="cta-card">
+    <h3>Analyze any website</h3>
+    <p>Search a URL and see what it collects. Add it to your 28-day privacy notebook.</p>
+    <a href="/">Start searching</a>
+  </div>
+</main>
+
+<script>
+const API = 'https://fortune0-com.onrender.com';
+let allCards = [];
+let currentFilter = 'all';
+
+async function loadWall() {
+  try {
+    // Fetch wall data and public stats in parallel
+    const [wallResp, statsResp] = await Promise.all([
+      fetch(`${API}/api/wall`).then(r => r.json()),
+      fetch(`${API}/api/public/stats`).then(r => r.json())
+    ]);
+
+    // Update stats
+    document.getElementById('totalAnalyzed').textContent = wallResp.total || 0;
+    document.getElementById('avgScore').textContent = wallResp.avg_score ? wallResp.avg_score.toFixed(1) : '—';
+    document.getElementById('memberCount').textContent = statsResp.customers || 0;
+
+    allCards = wallResp.analyses || [];
+    renderCards(allCards);
+  } catch (e) {
+    document.getElementById('wallFeed').innerHTML =
+      '<div class="loading">Could not load the wall. The server might be waking up — try again in 30 seconds.</div>';
+  }
+}
+
+function renderCards(cards) {
+  const feed = document.getElementById('wallFeed');
+  if (!cards.length) {
+    feed.innerHTML = '<div class="loading">No analyses found matching your search.</div>';
+    return;
+  }
+
+  feed.innerHTML = cards.map(c => {
+    const scoreClass = c.score >= 7 ? 'high' : c.score >= 4 ? 'mid' : 'low';
+    const timeAgo = getTimeAgo(c.created_at);
+
+    // Parse cards_json for summary if available
+    let summary = c.verdict || '';
+    let tags = [c.domain];
+    if (c.has_analysis) tags.push('AI Analyzed');
+
+    return `
+      <div class="wall-card" onclick="openStory('${esc(c.url)}')">
+        <div class="wc-top">
+          <div class="wc-score ${scoreClass}">${c.score || '?'}</div>
+          <div class="wc-info">
+            <div class="wc-domain">${esc(c.domain)}</div>
+            <div class="wc-verdict">${esc(summary)}</div>
+          </div>
+          <div class="wc-time">${timeAgo}</div>
+        </div>
+        ${c.summary ? `<div class="wc-summary">${esc(c.summary).slice(0, 160)}${c.summary.length > 160 ? '...' : ''}</div>` : ''}
+        <div class="wc-tags">
+          ${tags.map(t => `<span class="wc-tag${t === 'AI Analyzed' ? ' green' : ''}">${esc(t)}</span>`).join('')}
+        </div>
+        <div class="wc-actions">
+          <button class="wc-action" onclick="event.stopPropagation(); openStory('${esc(c.url)}')">View full analysis</button>
+          <button class="wc-action" onclick="event.stopPropagation(); startNotebook('${esc(c.domain)}')">Start notebook</button>
+          <button class="wc-action" onclick="event.stopPropagation(); shareCard('${esc(c.domain)}', ${c.score})">Share</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function filterWall(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+
+  let filtered = allCards;
+  if (filter === 'high') filtered = allCards.filter(c => c.score >= 7);
+  else if (filter === 'low') filtered = allCards.filter(c => c.score < 4);
+  else if (filter === 'recent') {
+    const day = Date.now() - 86400000;
+    filtered = allCards.filter(c => new Date(c.created_at).getTime() > day);
+  }
+  renderCards(filtered);
+}
+
+function searchWall() {
+  const q = document.getElementById('wallSearchInput').value.trim().toLowerCase();
+  if (!q) { renderCards(allCards); return; }
+  const filtered = allCards.filter(c =>
+    c.domain.toLowerCase().includes(q) ||
+    (c.verdict || '').toLowerCase().includes(q) ||
+    (c.summary || '').toLowerCase().includes(q) ||
+    (c.title || '').toLowerCase().includes(q)
+  );
+  renderCards(filtered);
+}
+
+// Enter key for search
+document.getElementById('wallSearchInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') searchWall();
+});
+
+function openStory(url) {
+  window.location.href = `/story.html?url=${encodeURIComponent(url)}`;
+}
+
+function startNotebook(domain) {
+  window.location.href = `/tools/notebook.html?topic=${encodeURIComponent(domain + ' privacy')}`;
+}
+
+function shareCard(domain, score) {
+  const text = `${domain} scored ${score}/10 on privacy. Check it on Death2Data:`;
+  const url = `https://death2data.com/wall.html`;
+  if (navigator.share) {
+    navigator.share({ title: `${domain} — ${score}/10`, text, url });
+  } else {
+    navigator.clipboard.writeText(`${text} ${url}`).then(() => {
+      alert('Link copied!');
+    });
+  }
+}
+
+function getTimeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  return days + 'd ago';
+}
+
+function esc(s) {
+  if (!s) return '';
+  const el = document.createElement('span');
+  el.textContent = s;
+  return el.innerHTML;
+}
+
+// Init
+loadWall();
+</script>
+
+</body>
+</html>
