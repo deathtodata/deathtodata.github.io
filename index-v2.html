@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Death2Data — 28 Lines. 28 Days. Know What You're Giving Away.</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --surface2: #161616;
+  --border: #1e1e1e;
+  --border-hover: #2a3a2a;
+  --text: #e0e0e0;
+  --text-body: #b0b0b0;
+  --muted: #666;
+  --dim: #444;
+  --green: #00cc44;
+  --green-dim: #0a2a14;
+  --green-hover: #00e64d;
+  --orange: #cc8800;
+  --red: #cc3333;
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: inherit; text-decoration: none; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+.nav {
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  height: 48px;
+  border-bottom: 1px solid var(--border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--green);
+  letter-spacing: 1px;
+  margin-right: auto;
+}
+.nav a:not(.nav-logo) {
+  color: var(--muted);
+  font-size: 13px;
+  margin-left: 20px;
+  transition: color 0.2s;
+}
+.nav a:not(.nav-logo):hover { color: var(--text); }
+
+/* ── HERO ── */
+.hero {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 64px 24px 48px;
+  text-align: center;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-dim);
+  border: 1px solid #1a3a1a;
+  border-radius: 20px;
+  padding: 5px 14px;
+  margin-bottom: 24px;
+}
+.hero-badge .dot {
+  width: 6px; height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+.hero h1 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+.hero h1 .accent { color: var(--green); }
+.hero .sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-body);
+  max-width: 480px;
+  margin: 0 auto 32px;
+}
+
+/* ── NOTEBOOK PREVIEW ── */
+.notebook-preview {
+  max-width: 520px;
+  margin: 0 auto 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.nb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.nb-header .topic {
+  font-family: var(--mono);
+  color: var(--green);
+  font-weight: 700;
+}
+.nb-header .meta { color: var(--muted); }
+.nb-progress {
+  height: 3px;
+  background: var(--border);
+}
+.nb-progress-fill {
+  height: 100%;
+  width: 39%;
+  background: var(--green);
+  border-radius: 2px;
+  transition: width 1.5s ease;
+}
+.nb-cell {
+  padding: 20px;
+}
+.nb-cell-badge {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.nb-cell-prompt {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.nb-cell-prompt strong { color: var(--green); }
+.nb-cell-hint {
+  font-size: 12px;
+  color: var(--dim);
+  line-height: 1.5;
+  font-style: italic;
+}
+.nb-lines {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.nb-lines .count {
+  font-family: var(--mono);
+  color: var(--text-body);
+}
+
+/* ── CTA ── */
+.cta-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-primary {
+  background: var(--green);
+  color: #000;
+}
+.btn-primary:hover { background: var(--green-hover); }
+.btn-secondary {
+  background: transparent;
+  color: var(--text-body);
+  border: 1px solid var(--border);
+}
+.btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+.cta-note {
+  font-size: 12px;
+  color: var(--dim);
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+/* ── STORY MODE DEMO ── */
+.section {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+.section-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.section h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.section .desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text-body);
+  margin-bottom: 28px;
+}
+
+/* Story demo */
+.story-demo {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.story-bar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.story-bar .url {
+  font-family: var(--mono);
+  color: var(--text-body);
+  font-size: 11px;
+}
+.story-cards {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.story-cards::-webkit-scrollbar { display: none; }
+.story-card {
+  min-width: 260px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+}
+.story-card .card-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.score-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.score-num {
+  font-family: var(--mono);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.score-meta { font-size: 13px; color: var(--orange); }
+.score-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.score-bar-fill {
+  height: 100%;
+  width: 40%;
+  background: var(--orange);
+  border-radius: 2px;
+}
+.story-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-body);
+}
+.story-card .question-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.5;
+}
+.story-card .question-item:last-child { border-bottom: none; }
+.story-card .q-mark {
+  font-family: var(--mono);
+  color: var(--green);
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.story-card .edu-label {
+  color: var(--green);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  font-family: var(--mono);
+}
+
+/* ── HOW IT WORKS ── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.step {
+  display: flex;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--green);
+  width: 40px;
+  flex-shrink: 0;
+}
+.step-body h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.step-body p {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+/* ── LIVE TICKER ── */
+.ticker {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+}
+.ticker-label {
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.ticker-items {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 13px;
+}
+.ticker-item:nth-child(n+5) { opacity: 0.5; }
+.ticker-item .t-score {
+  font-family: var(--mono);
+  font-weight: 700;
+  min-width: 32px;
+}
+.ticker-item .t-domain {
+  font-family: var(--mono);
+  color: var(--text);
+  font-size: 12px;
+}
+.ticker-item .t-topic {
+  color: var(--muted);
+  font-size: 12px;
+  margin-left: auto;
+}
+.t-high { color: var(--green); }
+.t-mid { color: var(--orange); }
+.t-low { color: var(--red); }
+
+/* ── FREE TOOLS ── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .hero { padding: 40px 16px 32px; }
+  .hero h1 { font-size: 24px; }
+  .hero .sub { font-size: 14px; margin-bottom: 24px; }
+  .cta-row { flex-direction: column; gap: 8px; }
+  .btn { width: 100%; justify-content: center; padding: 14px 20px; }
+  .section { padding: 0 16px 48px; }
+  .section h2 { font-size: 20px; }
+  .section .desc { font-size: 14px; }
+  .tools-grid { grid-template-columns: 1fr; }
+  .pricing-box { padding: 28px 20px; }
+  .price { font-size: 42px; }
+  .story-card { min-width: 240px; }
+  .score-num { font-size: 36px; }
+  .nb-cell-prompt { font-size: 15px; }
+  .ticker { padding: 0 16px 48px; }
+  .footer { flex-direction: column; gap: 12px; text-align: center; }
+  .footer a { margin-left: 12px; }
+  .step { gap: 12px; }
+  .step-num { font-size: 20px; width: 32px; }
+}
+@media (max-width: 380px) {
+  .hero h1 { font-size: 20px; }
+  .nav { padding: 0 12px; }
+  .hero { padding: 32px 12px 24px; }
+  .section { padding: 0 12px 40px; }
+  .story-card { min-width: 220px; padding: 16px; }
+  .nb-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+.tool-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  transition: border-color 0.2s;
+}
+.tool-card:hover { border-color: var(--border-hover); }
+.tool-card h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.tool-card p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.tool-card .tool-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-family: var(--mono);
+  color: var(--green);
+  background: var(--green-dim);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+/* ── PRICING ── */
+.pricing-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+}
+.price {
+  font-family: var(--mono);
+  font-size: 56px;
+  font-weight: 700;
+  color: var(--green);
+}
+.price-period {
+  font-size: 16px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.price-features {
+  list-style: none;
+  margin: 24px auto;
+  max-width: 360px;
+  text-align: left;
+}
+.price-features li {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  color: var(--text-body);
+  display: flex;
+  gap: 10px;
+}
+.price-features li:last-child { border-bottom: none; }
+.check { color: var(--green); font-weight: 700; }
+
+/* ── FOOTER ── */
+.footer {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--dim);
+}
+.footer a { color: var(--muted); margin-left: 16px; }
+.footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="/" class="nav-logo">D2D</a>
+  <a href="/tools.html">Tools</a>
+  <a href="/about.html">About</a>
+  <a href="/revenue.html">Revenue</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span> 9 researchers active</div>
+  <h1>28 lines. 28 days.<br>Know what you're <span class="accent">giving away</span>.</h1>
+  <p class="sub">Search any website. See what it collects from you. Start a privacy notebook. Learn something every day for 28 days — then share what you found.</p>
+
+  <!-- NOTEBOOK PREVIEW -->
+  <div class="notebook-preview">
+    <div class="nb-header">
+      <span class="topic">startup privacy tools</span>
+      <span class="meta">Day 11 of 28 · Week 2: Research</span>
+    </div>
+    <div class="nb-progress"><div class="nb-progress-fill"></div></div>
+    <div class="nb-cell">
+      <div class="nb-cell-badge">RESEARCH — DAY 11</div>
+      <div class="nb-cell-prompt">Search for the history of <strong>startup privacy tools</strong>. How has it changed in the last 10 years? What caused the changes?</div>
+      <div class="nb-cell-hint">Things that seem permanent are often recent. Things that seem new are often old.</div>
+    </div>
+    <div class="nb-lines">
+      <span>Lines used</span>
+      <span class="count">11 / 28</span>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a href="/tools/notebook.html" class="btn btn-primary">Start your notebook — free</a>
+    <button id="installBtn" class="btn btn-secondary" onclick="installApp()" style="display:none;">Install D2D</button>
+    <a href="#how" class="btn btn-secondary" id="howBtn">How it works</a>
+  </div>
+  <div class="cta-note">Day 1 is free. $1/mo unlocks all 28 days + tools. Works offline.</div>
+</section>
+
+<!-- STORY MODE -->
+<section class="section">
+  <div class="section-label">Story Mode</div>
+  <h2>Search any URL. See what it really does.</h2>
+  <p class="desc">Paste any website into D2D search. Our AI analyzes the page and tells you what data they collect, what trackers they use, and what you should know before signing up.</p>
+
+  <div class="story-demo">
+    <div class="story-bar">
+      <span>analyzing</span>
+      <span class="url">stripe.com/atlas</span>
+    </div>
+    <div class="story-cards">
+      <div class="story-card">
+        <div class="card-label">Privacy Score</div>
+        <div class="score-row">
+          <span class="score-num">4</span>
+          <span class="score-meta">/10 — Mixed</span>
+        </div>
+        <div class="score-bar"><div class="score-bar-fill"></div></div>
+        <p>Requires SSN, EIN, bank details. Shares data with banking partners. Standard for financial services but significant data exposure.</p>
+      </div>
+      <div class="story-card">
+        <div class="edu-label">What You Should Know</div>
+        <p>Stripe Atlas collects extensive identity data to comply with KYC regulations. Your information is shared with their banking partner (Silicon Valley Bank) and payment processors. This is normal for incorporation services but means your personal data exists in multiple systems.</p>
+      </div>
+      <div class="story-card">
+        <div class="card-label">Ask Yourself</div>
+        <div class="question-item">
+          <span class="q-mark">?</span>
+          <span>Do I need a US incorporation, or would a local alternative reduce my data exposure?</span>
+        </div>
+        <div class="question-item">
+          <span class="q-mark">?</span>
+          <span>What happens to my data if I close my Stripe Atlas company?</span>
+        </div>
+        <div class="question-item">
+          <span class="q-mark">?</span>
+          <span>Have I read the data sharing agreement with their banking partner?</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-label">The Loop</div>
+  <h2>Search. Learn. Write. Share.</h2>
+  <p class="desc">Every piece feeds into the next. By day 28, you have a privacy research journal nobody else has.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Search any website</h3>
+        <p>Paste a URL into D2D. Story mode analyzes it with AI — privacy score, data collection, trackers, and what you should know before signing up.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>One question per day</h3>
+        <p>Your notebook gives you one prompt each day for 28 days. Week 1: Explore. Week 2: Research. Week 3: Apply. Week 4: Synthesize. Each question builds on the last.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>28 lines — make them count</h3>
+        <p>You only get 28 entries. That constraint forces you to curate, not hoard. By the end you have a focused privacy journal, not 47 open tabs.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Export and share</h3>
+        <p>Download your completed notebook. Share your research. Start a new one. Your journals stack up over time into a personal privacy library.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE FEED -->
+<section class="ticker">
+  <div class="ticker-label">Recently Analyzed</div>
+  <div class="ticker-items">
+    <div class="ticker-item">
+      <span class="t-score t-high">8</span>
+      <span class="t-domain">discoverycove.com</span>
+      <span class="t-topic">travel</span>
+    </div>
+    <div class="ticker-item">
+      <span class="t-score t-mid">5</span>
+      <span class="t-domain">weather.com</span>
+      <span class="t-topic">utilities</span>
+    </div>
+    <div class="ticker-item">
+      <span class="t-score t-mid">6</span>
+      <span class="t-domain">oldnavy.gap.com</span>
+      <span class="t-topic">shopping</span>
+    </div>
+    <div class="ticker-item">
+      <span class="t-score t-high">7</span>
+      <span class="t-domain">etsy.com</span>
+      <span class="t-topic">shopping</span>
+    </div>
+    <div class="ticker-item">
+      <span class="t-score t-mid">6</span>
+      <span class="t-domain">tampabay.com</span>
+      <span class="t-topic">news</span>
+    </div>
+  </div>
+</section>
+
+<!-- FREE TOOLS -->
+<section class="section">
+  <div class="section-label">Free Tools</div>
+  <h2>Use these right now. No account needed.</h2>
+  <p class="desc">Every tool runs on your device. Nothing uploaded. Nothing tracked.</p>
+
+  <div class="tools-grid">
+    <a href="/tools/sanitizer.html" class="tool-card">
+      <h3>Data Sanitizer</h3>
+      <p>Strip GPS, camera info, and hidden metadata from photos before sharing.</p>
+      <span class="tool-tag">LOCAL</span>
+    </a>
+    <a href="/tools/leak-score.html" class="tool-card">
+      <h3>Leak Score</h3>
+      <p>Check if your email or passwords appeared in known data breaches.</p>
+      <span class="tool-tag">LOCAL</span>
+    </a>
+    <a href="/tools/converter.html" class="tool-card">
+      <h3>File Converter</h3>
+      <p>Convert between image formats. HEIC, WebP, PNG, JPEG. All on-device.</p>
+      <span class="tool-tag">LOCAL</span>
+    </a>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="section">
+  <div class="section-label">Membership</div>
+  <div class="pricing-box">
+    <div class="price">$1</div>
+    <div class="price-period">per month · 28-day cycle</div>
+    <ul class="price-features">
+      <li><span class="check">+</span> Full 28-day notebook (Day 1 is free)</li>
+      <li><span class="check">+</span> AI-powered Story Mode on any URL</li>
+      <li><span class="check">+</span> Privacy scores + educational analysis</li>
+      <li><span class="check">+</span> Export notebooks as shareable journals</li>
+      <li><span class="check">+</span> All privacy tools (sanitizer, converter, leak score)</li>
+      <li><span class="check">+</span> Your data stays on your device — always</li>
+    </ul>
+    <a href="/tools/notebook.html" class="btn btn-primary" style="margin-top:20px;">Start for free — upgrade when ready</a>
+  </div>
+</section>
+
+<!-- FOR DEVELOPERS -->
+<section class="section">
+  <div class="section-label">For Developers</div>
+  <h2>Open source. Local-first. No tracking SDK.</h2>
+  <p class="desc">Every tool runs client-side. The search API is one Python file. Fork it, self-host it, build on it. Privacy tools should be transparent.</p>
+  <div style="display:flex;gap:12px;">
+    <a href="https://github.com/deathtodata" class="btn btn-secondary">GitHub</a>
+    <a href="/revenue.html" class="btn btn-secondary">Live revenue</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <span>Death2Data · Privacy-first since 2025</span>
+  <div>
+    <a href="/privacy.html">Privacy</a>
+    <a href="/terms.html">Terms</a>
+    <a href="/about.html">About</a>
+  </div>
+</footer>
+
+<!-- PWA Install + Service Worker -->
+<script>
+// Register service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// Capture install prompt
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if (installBtn) installBtn.style.display = 'inline-flex';
+});
+
+function installApp() {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choice) => {
+    if (choice.outcome === 'accepted' && installBtn) {
+      installBtn.style.display = 'none';
+    }
+    deferredPrompt = null;
+  });
+}
+</script>
+</body>
+</html>
