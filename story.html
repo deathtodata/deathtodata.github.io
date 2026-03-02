@@ -1159,6 +1159,38 @@ function serverCardsToHtml(data) {
           <p>${esc(truncate(card.text, 240))}</p>
         </div>`
       });
+    } else if (card.type === 'what_to_know') {
+      result.push({
+        type: 'what_to_know',
+        html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:520px;margin:0 auto;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">What You Should Know</div>
+          <div style="font-size:16px;line-height:1.8;color:var(--gray);">${esc(card.text)}</div>
+          <div style="font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;">D2D Privacy Education</div>
+        </div>`
+      });
+    } else if (card.type === 'alternatives') {
+      result.push({
+        type: 'alternatives',
+        html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:520px;margin:0 auto;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Privacy-Friendly Alternatives</div>
+          <div style="font-size:15px;line-height:1.8;color:var(--gray);">${esc(card.text)}</div>
+        </div>`
+      });
+    } else if (card.type === 'questions') {
+      const qHtml = (card.items || []).map((q, i) =>
+        `<div style="display:flex;gap:12px;align-items:flex-start;padding:14px 0;${i > 0 ? 'border-top:1px solid var(--border);' : ''}">
+          <span style="font-family:var(--mono);font-size:20px;color:var(--green);line-height:1;">?</span>
+          <span style="font-size:14px;line-height:1.6;color:var(--gray);">${esc(q)}</span>
+        </div>`
+      ).join('');
+      result.push({
+        type: 'questions',
+        html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;gap:12px;max-width:520px;margin:0 auto;">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);">Ask Yourself</div>
+          ${qHtml}
+          <div style="font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:12px;">Journal these in your <a href="/tools/notebook.html?topic=${encodeURIComponent(title)}" style="color:var(--green);text-decoration:underline;">D2D Notebook</a></div>
+        </div>`
+      });
     } else if (card.type === 'image') {
       result.push({
         type: 'image',
