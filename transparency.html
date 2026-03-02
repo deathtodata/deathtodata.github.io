@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Transparency Report | Death2Data</title>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="/site.webmanifest">
+<meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #0a0a0a;
+  --surface: #111;
+  --border: #1e1e1e;
+  --text: #e0e0e0;
+  --body: #b0b0b0;
+  --muted: #666;
+  --dim: #444;
+  --green: #00cc44;
+  --green-dim: #0a2a14;
+  --font: 'Inter', -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: var(--green); text-decoration: underline; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+.nav {
+  display: flex; align-items: center; padding: 0 16px; height: 48px;
+  border-bottom: 1px solid var(--border); max-width: 640px; margin: 0 auto;
+}
+.nav-logo { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--green); letter-spacing: 1px; text-decoration: none; margin-right: auto; }
+.nav a:not(.nav-logo) { color: var(--muted); font-size: 13px; margin-left: 16px; text-decoration: none; }
+
+.main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 16px 80px;
+}
+
+h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+.sub { font-size: 14px; color: var(--body); line-height: 1.7; margin-bottom: 40px; }
+
+h2 {
+  font-size: 16px; font-weight: 700; margin-bottom: 12px; margin-top: 40px;
+  padding-top: 24px; border-top: 1px solid var(--border);
+}
+h2:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+
+p { font-size: 14px; line-height: 1.8; color: var(--body); margin-bottom: 16px; }
+
+.proof-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.proof-card .label {
+  font-size: 10px; font-family: var(--mono); letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--green); margin-bottom: 8px;
+}
+.proof-card .claim {
+  font-size: 15px; font-weight: 600; margin-bottom: 8px;
+}
+.proof-card .evidence {
+  font-size: 13px; color: var(--muted); line-height: 1.6;
+}
+.proof-card code {
+  font-family: var(--mono); font-size: 12px; background: var(--bg);
+  padding: 2px 6px; border-radius: 4px; color: var(--text);
+}
+
+.audit-section {
+  background: var(--green-dim);
+  border: 1px solid #1a3a1a;
+  border-radius: 10px;
+  padding: 24px;
+  margin-top: 24px;
+}
+.audit-section h3 { font-size: 15px; margin-bottom: 12px; }
+.audit-section p { color: var(--body); }
+
+.hash-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  word-break: break-all;
+  margin: 12px 0;
+}
+
+#selfScore {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 16px 0;
+}
+#selfScore .score {
+  font-family: var(--mono);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--green);
+}
+#selfScore .meta { font-size: 14px; color: var(--body); }
+#selfScore .note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+@media (max-width: 600px) {
+  h1 { font-size: 20px; }
+  #selfScore .score { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-logo">D2D</a>
+  <a href="/">Search</a>
+  <a href="/wall.html">Wall</a>
+  <a href="/tools.html">Tools</a>
+</nav>
+
+<main class="main">
+  <h1>Transparency Report</h1>
+  <p class="sub">We claim to be privacy-first. Here's the proof. Every claim below is verifiable by you, by any developer, or by any AI model. If we're lying, the code will show it.</p>
+
+  <!-- Self-score -->
+  <h2>D2D Scored by D2D</h2>
+  <p>We ran our own privacy analysis tool on death2data.com. Same AI, same scoring, no special treatment.</p>
+  <div id="selfScore">
+    <div class="score" id="selfScoreNum">—</div>
+    <div>
+      <div class="meta" id="selfVerdict">Loading self-analysis...</div>
+      <div class="note" id="selfDate"></div>
+    </div>
+  </div>
+
+  <!-- Verifiable claims -->
+  <h2>What We Claim — and How to Verify It</h2>
+
+  <div class="proof-card">
+    <div class="label">Claim 1</div>
+    <div class="claim">Your notebook data never leaves your device.</div>
+    <div class="evidence">
+      The notebook stores everything in <code>localStorage</code> — your browser's local storage. No API call sends notebook content anywhere.
+      Verify: Open <a href="https://github.com/deathtodata/deathtodata.github.io/blob/main/tools/notebook.html" target="_blank">notebook.html on GitHub</a> and search for <code>fetch</code> — the only network call is for search queries, never for your written entries.
+    </div>
+  </div>
+
+  <div class="proof-card">
+    <div class="label">Claim 2</div>
+    <div class="claim">The privacy tools run entirely on your device.</div>
+    <div class="evidence">
+      The sanitizer, converter, and leak score tools process files using client-side JavaScript. No file is ever uploaded.
+      Verify: Open any tool, disconnect your WiFi, and use it. It still works. Or read the source:
+      <a href="https://github.com/deathtodata/deathtodata.github.io/blob/main/tools/sanitizer.html" target="_blank">sanitizer</a>,
+      <a href="https://github.com/deathtodata/deathtodata.github.io/blob/main/tools/converter.html" target="_blank">converter</a>,
+      <a href="https://github.com/deathtodata/deathtodata.github.io/blob/main/tools/leak-score.html" target="_blank">leak score</a>.
+    </div>
+  </div>
+
+  <div class="proof-card">
+    <div class="label">Claim 3</div>
+    <div class="claim">GitHub Pages cannot run server-side code or log your visits.</div>
+    <div class="evidence">
+      GitHub Pages is a static file host. It serves HTML, CSS, and JS files — nothing else. GitHub does log standard web server access (IP addresses in their infrastructure), but D2D has no access to those logs and cannot add custom tracking.
+      Verify: <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages" target="_blank">GitHub Pages documentation</a> confirms it serves static content only.
+    </div>
+  </div>
+
+  <div class="proof-card">
+    <div class="label">Claim 4</div>
+    <div class="claim">The API server code matches what's on GitHub.</div>
+    <div class="evidence">
+      The server running on Render auto-deploys from <a href="https://github.com/deathtodata/fortune0.com" target="_blank">github.com/deathtodata/fortune0.com</a> on every push. The <code>/health</code> endpoint reports the running version.
+      Verify: Compare <code>curl https://fortune0-com.onrender.com/health</code> version field against the latest commit on GitHub. Render's deploy logs are tied to specific git commits.
+    </div>
+  </div>
+
+  <div class="proof-card">
+    <div class="label">Claim 5</div>
+    <div class="claim">Search queries are logged for functionality, not sold.</div>
+    <div class="evidence">
+      The server stores search queries in an <code>activity</code> table to power features like search count on the about page. This data is NOT shared with third parties. The <code>server.py</code> source shows exactly what's stored: email (if logged in), action type, and detail string.
+      Verify: Read the <code>log_activity()</code> function in <a href="https://github.com/deathtodata/fortune0.com/blob/main/server.py" target="_blank">server.py</a>. There are zero outbound API calls that transmit user data.
+    </div>
+  </div>
+
+  <div class="proof-card">
+    <div class="label">Honest Disclosure</div>
+    <div class="claim">What we DO collect.</div>
+    <div class="evidence">
+      We are honest about what touches our server: search queries go through our Render API (needed to proxy results), story mode sends URLs to our server (needed for AI analysis), and Stripe handles all payment data (we never see your card number). The activity table on our database logs actions like "search" and "login" with timestamps. We believe this is the minimum needed to run the service. If you disagree, the code is open — tell us what to change.
+    </div>
+  </div>
+
+  <!-- AI Audit section -->
+  <h2>AI Audit Challenge</h2>
+
+  <div class="audit-section">
+    <h3>Verify us with any AI model.</h3>
+    <p>Copy this prompt and paste it into ChatGPT, Claude, Gemini, Llama, or any AI. Ask them to audit our code. We welcome it.</p>
+  </div>
+
+  <div class="hash-box">
+Audit prompt: "Go to https://github.com/deathtodata/deathtodata.github.io and read the source code of notebook.html, sanitizer.html, converter.html, and leak-score.html. Does any of this code send user data to a remote server? Does it contain tracking pixels, analytics scripts, or hidden network requests? Score the privacy from 1-10 and explain your reasoning."
+  </div>
+
+  <p>We publish the results of independent AI audits here. If any model finds tracking code, we fix it or explain it publicly.</p>
+
+  <!-- Server commit hash -->
+  <h2>Current Deploy</h2>
+  <div class="hash-box" id="deployInfo">Loading deploy info...</div>
+
+  <p style="margin-top:40px; color:var(--dim); font-size:12px; border-top:1px solid var(--border); padding-top:20px;">
+    This page is itself open source: <a href="https://github.com/deathtodata/deathtodata.github.io/blob/main/transparency.html" target="_blank" style="color:var(--muted);">view on GitHub</a>.
+    Last updated: March 2026.
+  </p>
+</main>
+
+<script>
+const API = 'https://fortune0-com.onrender.com';
+
+// Load self-score from story cache
+async function loadSelfScore() {
+  try {
+    const resp = await fetch(`${API}/api/story`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({url: 'https://death2data.com'})
+    });
+    const data = await resp.json();
+    const analysisCard = (data.cards || []).find(c => c.type === 'analysis');
+    if (analysisCard) {
+      document.getElementById('selfScoreNum').textContent = analysisCard.privacy_score;
+      document.getElementById('selfScoreNum').style.color =
+        analysisCard.privacy_score >= 7 ? 'var(--green)' :
+        analysisCard.privacy_score >= 4 ? '#cc8800' : '#cc3333';
+      document.getElementById('selfVerdict').textContent = analysisCard.verdict;
+      document.getElementById('selfDate').textContent = 'Analyzed ' + new Date().toLocaleDateString();
+    }
+  } catch (e) {
+    document.getElementById('selfVerdict').textContent = 'Could not load self-analysis. Server may be starting up.';
+  }
+}
+
+// Load deploy info
+async function loadDeploy() {
+  try {
+    const resp = await fetch(`${API}/health`);
+    const data = await resp.json();
+    const el = document.getElementById('deployInfo');
+    el.textContent = `Server version: ${data.version}\nDatabase: ${data.db_type}\nAnthropic key: ${data.anthropic_key_set ? 'set' : 'not set'}\n\nVerify: compare this version against the latest commit at\nhttps://github.com/deathtodata/fortune0.com`;
+  } catch (e) {
+    document.getElementById('deployInfo').textContent = 'Server not responding — may be spinning up.';
+  }
+}
+
+loadSelfScore();
+loadDeploy();
+</script>
+
+</body>
+</html>
