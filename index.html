@@ -317,7 +317,8 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
 (function init(){
   const t = localStorage.getItem('d2d_token');
   const e = localStorage.getItem('d2d_email');
-  if (t && e) { S.token = t; S.email = e; showUser(); }
+  const savedTier = localStorage.getItem('d2d_tier');
+  if (t && e) { S.token = t; S.email = e; S.tier = savedTier; showUser(); }
   else { showLogin(); }
 
   const urlQ = new URLSearchParams(location.search).get('q');
@@ -329,12 +330,16 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
     if (S.email) reauth().then(() => history.replaceState(null, '', '/'));
   }
 
-  // Verify token silently
+  // Verify token silently + sync tier
   if (S.token && S.email) {
     fetch(API+'/api/search?q=ping', {headers:{'Authorization':'Bearer '+S.token}})
       .then(r=>r.json()).then(d=>{
         if (d.authed === false) reauth();
-        if (d.tier) { S.tier = d.tier; showUser(); }
+        if (d.tier) {
+          S.tier = d.tier;
+          localStorage.setItem('d2d_tier', d.tier);
+          showUser();
+        }
       }).catch(()=>{});
   }
 
@@ -358,12 +363,19 @@ function showUser() {
       <span>signed in</span>
       <button onclick="logout()">sign out</button>
     </div>`;
-  // Join box: upgrade or confirmation
+  // Join box: different experience for members vs free
   const box = document.getElementById('join-cta');
   if (S.tier === 'active') {
     box.innerHTML = `
-      <div style="font-size:13px;color:var(--text);margin-bottom:4px;">You're in. Search anything.</div>
-      <div style="font-size:12px;color:var(--text-dim);">Full web results unlocked.</div>`;
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="width:8px;height:8px;background:var(--green);border-radius:50%;"></span>
+        <span style="font-size:13px;color:var(--green);font-weight:500;">Member</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/tools/notebook.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">notebook</a>
+        <a href="/wall.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">wall</a>
+        <a href="/tools.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">all tools</a>
+      </div>`;
   } else {
     let stripeUrl = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
     if (S.email) stripeUrl += '?prefilled_email=' + encodeURIComponent(S.email);
@@ -399,6 +411,7 @@ async function login() {
       S.token = d.token; S.email = d.email; S.tier = d.tier;
       localStorage.setItem('d2d_token', d.token);
       localStorage.setItem('d2d_email', d.email);
+      if (d.tier) localStorage.setItem('d2d_tier', d.tier);
       showUser();
       return;
     }
@@ -413,6 +426,7 @@ async function login() {
         S.token = d2.token; S.email = d2.email; S.tier = d2.tier;
         localStorage.setItem('d2d_token', d2.token);
         localStorage.setItem('d2d_email', d2.email);
+        if (d2.tier) localStorage.setItem('d2d_tier', d2.tier);
         showUser();
         return;
       }
@@ -438,6 +452,7 @@ async function reauth() {
     if (d.token) {
       S.token = d.token; S.tier = d.tier;
       localStorage.setItem('d2d_token', d.token);
+      if (d.tier) localStorage.setItem('d2d_tier', d.tier);
     }
   } catch(e) {}
 }
@@ -446,6 +461,7 @@ function logout() {
   S.token = null; S.email = null; S.tier = null;
   localStorage.removeItem('d2d_token');
   localStorage.removeItem('d2d_email');
+  localStorage.removeItem('d2d_tier');
   location.reload();
 }
 
