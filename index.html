@@ -520,8 +520,10 @@ function getQuery() {
 function looksLikeUrl(s) {
   s = s.trim();
   if (s.startsWith('http://') || s.startsWith('https://')) return true;
-  // matches stuff like "example.com" or "example.com/path"
-  if (/^[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/|$)/.test(s) && !s.includes(' ')) return true;
+  // No spaces = not a search query
+  if (s.includes(' ')) return false;
+  // matches: stripe.com, www.stripe.com, docs.stripe.com/payments, etc.
+  if (/^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(\/.*)?$/.test(s)) return true;
   return false;
 }
 
