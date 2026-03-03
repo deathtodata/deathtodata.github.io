@@ -366,16 +366,10 @@ function showUser() {
   // Join box: different experience for members vs free
   const box = document.getElementById('join-cta');
   if (S.tier === 'active') {
-    box.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
-        <span style="width:8px;height:8px;background:var(--green);border-radius:50%;"></span>
-        <span style="font-size:13px;color:var(--green);font-weight:500;">Member</span>
-      </div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <a href="/tools/notebook.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">notebook</a>
-        <a href="/wall.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">wall</a>
-        <a href="/tools.html" style="font-size:12px;color:var(--text-body);padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:6px;text-decoration:none;">all tools</a>
-      </div>`;
+    // Hide the join box entirely for members
+    box.style.display = 'none';
+    // Instead, load their dashboard inline
+    loadMemberDash();
   } else {
     let stripeUrl = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
     if (S.email) stripeUrl += '?prefilled_email=' + encodeURIComponent(S.email);
@@ -463,6 +457,64 @@ function logout() {
   localStorage.removeItem('d2d_email');
   localStorage.removeItem('d2d_tier');
   location.reload();
+}
+
+/* ── Member Dashboard ── */
+function loadMemberDash() {
+  // Replace the whole join-box area with a member dashboard
+  const joinBox = document.getElementById('join-box');
+  joinBox.style.padding = '0';
+  joinBox.style.background = 'transparent';
+  joinBox.style.border = 'none';
+
+  // Get notebook progress from localStorage
+  const nbDay = localStorage.getItem('nb_current_day') || '1';
+  const nbTopic = localStorage.getItem('nb_topic') || '';
+  const nbWeek = Math.ceil(parseInt(nbDay) / 7);
+  const weekNames = ['Explore', 'Research', 'Apply', 'Synthesize'];
+  const weekName = weekNames[nbWeek - 1] || 'Explore';
+  const progress = Math.round((parseInt(nbDay) / 28) * 100);
+
+  let dashHtml = `
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <a href="/tools/notebook.html" style="display:block;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);text-decoration:none;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--green);">Notebook · Day ${nbDay}</span>
+          <span style="font-size:11px;color:var(--text-dim);">Week ${nbWeek}: ${weekName}</span>
+        </div>
+        <div style="width:100%;height:3px;background:var(--border);border-radius:2px;overflow:hidden;">
+          <div style="width:${progress}%;height:100%;background:var(--green);border-radius:2px;"></div>
+        </div>
+        ${nbTopic ? `<div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${nbTopic}</div>` : ''}
+      </a>
+      <div id="member-wall" style="display:none;"></div>
+    </div>`;
+
+  joinBox.innerHTML = dashHtml;
+
+  // Load recent wall activity
+  fetch(API+'/api/wall').then(r=>r.json()).then(d=>{
+    if (!d.analyses || d.analyses.length === 0) return;
+    const wallEl = document.getElementById('member-wall');
+    const recent = d.analyses.slice(0, 3);
+    let wallHtml = recent.map(a => {
+      const scoreColor = a.score >= 7 ? 'var(--green)' : a.score >= 4 ? '#cc8800' : '#cc0000';
+      return `<a href="/story.html?url=${encodeURIComponent(a.url)}" style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;text-decoration:none;border-bottom:1px solid var(--border);">
+        <span style="font-size:12px;color:var(--text-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:75%;">${a.domain || a.title || a.url}</span>
+        <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:${scoreColor};">${a.score}/10</span>
+      </a>`;
+    }).join('');
+
+    wallEl.innerHTML = `
+      <div style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <span style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text-dim);">Recent on the wall</span>
+          <a href="/wall.html" style="font-size:11px;color:var(--green);text-decoration:none;">see all →</a>
+        </div>
+        ${wallHtml}
+      </div>`;
+    wallEl.style.display = 'block';
+  }).catch(()=>{});
 }
 
 /* ── Search ── */
