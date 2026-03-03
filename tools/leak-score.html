@@ -315,6 +315,7 @@ h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
 // Uses Have I Been Pwned k-anonymity API
 // Nothing sensitive ever leaves the browser
 // ═══════════════════════════════════════
+const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrender.com';
 
 // ── SHA-1 hash (built-in WebCrypto) ──
 async function sha1(str) {
@@ -397,6 +398,13 @@ async function checkEmail() {
     score = Math.max(0, Math.min(100, score));
 
     showResults(email, score, domain, domainRisk > 0, totalBreaches, emailHits);
+
+    // Capture check to server (fire-and-forget)
+    fetch(API+'/api/check', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: email, score: score, source: 'leak-score' })
+    }).catch(()=>{});
 
   } catch (e) {
     console.error('Check failed:', e);
