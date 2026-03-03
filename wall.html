@@ -41,29 +41,27 @@ body {
 }
 
 /* ── NAV ── */
-.nav {
+.hd {
   display: flex;
   align-items: center;
   padding: 0 16px;
-  height: 48px;
+  height: 44px;
   border-bottom: 1px solid var(--border);
+  gap: 12px;
   max-width: 640px;
   margin: 0 auto;
 }
-.nav-logo {
+.hd-logo {
   font-family: var(--mono);
   font-weight: 700;
   font-size: 14px;
   color: var(--green);
   letter-spacing: 1px;
   margin-right: auto;
+  text-decoration: none;
 }
-.nav a:not(.nav-logo) {
-  color: var(--muted);
-  font-size: 13px;
-  margin-left: 16px;
-}
-.nav a:not(.nav-logo):hover { color: var(--text); }
+.hd a:not(.hd-logo) { color: #444; font-size: 12px; text-decoration: none; }
+.hd a:not(.hd-logo):hover { color: #666; }
 
 /* ── MAIN ── */
 .main {
@@ -330,12 +328,12 @@ body {
 </head>
 <body>
 
-<nav class="nav">
-  <a href="/" class="nav-logo">D2D</a>
-  <a href="/">Search</a>
-  <a href="/tools.html">Tools</a>
-  <a href="/wall.html" style="color:var(--text);">Wall</a>
-</nav>
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">search</a>
+  <a href="/wall.html">wall</a>
+  <a href="/tools.html">tools</a>
+</div>
 
 <main class="main">
   <div class="wall-header">

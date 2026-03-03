@@ -245,10 +245,10 @@ body.searching .results-page { display: block; }
 
 <!-- HEADER -->
 <div class="hd">
-  <span class="hd-logo">D2D</span>
-  <a href="/about.html">about</a>
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">search</a>
+  <a href="/wall.html">wall</a>
   <a href="/tools.html">tools</a>
-  <a href="/revenue.html">revenue</a>
 </div>
 
 <!-- HOME PAGE -->
@@ -343,7 +343,7 @@ const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrende
     const el = document.getElementById('pulse');
     if (!el) return;
     const parts = [];
-    if (d.total_users) parts.push(d.total_users + ' members');
+    if (d.customers) parts.push(d.customers + ' subscribers');
     if (d.searches_total) parts.push(d.searches_total + ' searches');
     parts.push('230 domains');
     if (parts.length) el.textContent = parts.join(' · ');

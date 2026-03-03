@@ -33,12 +33,10 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.nav {
-  display: flex; align-items: center; padding: 0 16px; height: 48px;
-  border-bottom: 1px solid var(--border); max-width: 640px; margin: 0 auto;
-}
-.nav-logo { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--green); letter-spacing: 1px; text-decoration: none; margin-right: auto; }
-.nav a:not(.nav-logo) { color: var(--muted); font-size: 13px; margin-left: 16px; text-decoration: none; }
+.hd { display: flex; align-items: center; padding: 0 16px; height: 44px; border-bottom: 1px solid var(--border); gap: 12px; max-width: 640px; margin: 0 auto; }
+.hd-logo { font-family: var(--mono); font-weight: 700; font-size: 14px; color: var(--green); letter-spacing: 1px; text-decoration: none; margin-right: auto; }
+.hd a:not(.hd-logo) { color: #444; font-size: 12px; text-decoration: none; }
+.hd a:not(.hd-logo):hover { color: #666; }
 
 .main {
   max-width: 640px;
@@ -128,12 +126,12 @@ p { font-size: 14px; line-height: 1.8; color: var(--body); margin-bottom: 16px; 
 </head>
 <body>
 
-<nav class="nav">
-  <a href="/" class="nav-logo">D2D</a>
-  <a href="/">Search</a>
-  <a href="/wall.html">Wall</a>
-  <a href="/tools.html">Tools</a>
-</nav>
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">search</a>
+  <a href="/wall.html">wall</a>
+  <a href="/tools.html">tools</a>
+</div>
 
 <main class="main">
   <h1>Transparency Report</h1>

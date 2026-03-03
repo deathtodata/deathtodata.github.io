@@ -1127,6 +1127,24 @@ function serverCardsToHtml(data) {
           </div>`
         });
       }
+
+      // CTA card — right after analysis (highest conversion point)
+      if (card.type === 'analysis') {
+        const stripeUrl = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00';
+        const topicParam = encodeURIComponent(title);
+        result.push({
+          type: 'cta',
+          html: `<div class="card-inner" style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;max-width:520px;margin:0 auto;text-align:center;">
+            <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);">YOUR MOVE</div>
+            <div style="font-size:18px;line-height:1.6;color:var(--gray);">Track what you learn.<br>28 days. 28 lines. $1/mo.</div>
+            <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:280px;">
+              <a href="/tools/notebook.html?topic=${topicParam}" style="display:block;padding:14px 24px;background:var(--green);color:#000;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;text-align:center;">Start your notebook</a>
+              <a href="${stripeUrl}" target="_blank" style="display:block;padding:10px 24px;background:transparent;color:var(--green);font-weight:500;font-size:12px;border:1px solid var(--green-dim);border-radius:8px;text-decoration:none;text-align:center;">Join D2D — $1/mo</a>
+            </div>
+            <div style="font-size:11px;color:var(--muted);">Day 1 is free. No credit card needed to start.</div>
+          </div>`
+        });
+      }
     } else if (card.type === 'keypoint') {
       result.push({
         type: 'keypoint',
