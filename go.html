@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Death2Data</title>
+<meta name="description" content="Private Search. No Trail. $1/month.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:title" content="Death2Data — Private Search">
+<meta property="og:description" content="Find out what the internet knows about you. Takes 3 seconds.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#e0e0e0;font-family:'JetBrains Mono',monospace;overflow:hidden;height:100vh;width:100vw}
+
+/* ══ MATRIX RAIN ══ */
+canvas#rain{position:fixed;inset:0;z-index:0;opacity:0.15}
+
+/* ══ SPLASH SCREEN ══ */
+#splash{
+  position:fixed;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:#0a0a0a;
+  transition:opacity 0.6s ease, transform 0.6s ease;
+}
+#splash.fade-out{opacity:0;transform:scale(1.05);pointer-events:none}
+
+.logo-text{
+  font-size:clamp(48px,12vw,120px);font-weight:700;letter-spacing:-2px;
+  opacity:0;transform:translateY(30px);
+  animation:rise 0.8s ease forwards;
+}
+.logo-text .d2{color:#fff}
+.logo-text .two{color:#00cc44}
+
+.tagline{
+  font-size:clamp(14px,2.5vw,20px);font-weight:400;color:#666;
+  letter-spacing:4px;text-transform:uppercase;
+  margin-top:16px;
+  opacity:0;animation:rise 0.8s ease 0.4s forwards;
+}
+
+.enter-btn{
+  margin-top:48px;
+  padding:16px 48px;
+  border:1px solid #00cc44;
+  background:transparent;
+  color:#00cc44;
+  font-family:inherit;font-size:14px;letter-spacing:2px;
+  cursor:pointer;
+  opacity:0;animation:rise 0.8s ease 0.8s forwards;
+  transition:all 0.3s ease;
+}
+.enter-btn:hover{background:#00cc44;color:#000}
+
+.ref-tag{
+  position:fixed;bottom:24px;
+  font-size:11px;color:#333;letter-spacing:1px;
+  opacity:0;animation:rise 0.8s ease 1s forwards;
+}
+
+@keyframes rise{
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ══ AUTO-ADVANCE PROGRESS ══ */
+.progress-bar{
+  position:fixed;bottom:0;left:0;height:2px;
+  background:#00cc44;z-index:11;
+  width:0;transition:width 3s linear;
+}
+.progress-bar.go{width:100%}
+</style>
+</head>
+<body>
+
+<canvas id="rain"></canvas>
+
+<div id="splash">
+  <div class="logo-text">
+    <span class="d2">death</span><span class="two">2</span><span class="d2">data</span>
+  </div>
+  <div class="tagline">Private Search. No Trail.</div>
+  <button class="enter-btn" onclick="enter()">enter →</button>
+</div>
+
+<div class="progress-bar" id="progress"></div>
+<div class="ref-tag" id="refTag"></div>
+
+<script>
+// ══ CAPTURE REFERRAL CODE ══
+const params = new URLSearchParams(location.search);
+const ref = params.get('ref') || '';
+if (ref) {
+  document.getElementById('refTag').textContent = 'ref: ' + ref;
+}
+
+// ══ MATRIX RAIN ══
+const canvas = document.getElementById('rain');
+const ctx = canvas.getContext('2d');
+let cols, drops;
+
+function initRain() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const size = 14;
+  cols = Math.floor(canvas.width / size);
+  drops = Array(cols).fill(1);
+}
+initRain();
+window.addEventListener('resize', initRain);
+
+const chars = 'DEATH2DATA01アイウエオカキクケコ'.split('');
+function drawRain() {
+  ctx.fillStyle = 'rgba(10,10,10,0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#00cc4422';
+  ctx.font = '14px monospace';
+  for (let i = 0; i < cols; i++) {
+    const char = chars[Math.floor(Math.random() * chars.length)];
+    ctx.fillText(char, i * 14, drops[i] * 14);
+    if (drops[i] * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i]++;
+  }
+}
+setInterval(drawRain, 50);
+
+// ══ AUTO-ADVANCE (3 seconds, or click) ══
+let timer;
+function startAutoAdvance() {
+  document.getElementById('progress').classList.add('go');
+  timer = setTimeout(enter, 3200);
+}
+setTimeout(startAutoAdvance, 800);
+
+// ══ ENTER — redirect to check.html with ref passthrough ══
+function enter() {
+  clearTimeout(timer);
+  const splash = document.getElementById('splash');
+  splash.classList.add('fade-out');
+
+  // Log the visit to server (fire-and-forget)
+  const API = 'https://fortune0-com.onrender.com';
+  if (ref) {
+    fetch(API + '/r/' + ref).catch(()=>{});
+  }
+
+  setTimeout(() => {
+    const dest = '/check.html' + (ref ? '?ref=' + encodeURIComponent(ref) : '');
+    location.href = dest;
+  }, 600);
+}
+
+// ══ KEYBOARD ══
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' || e.key === ' ') enter();
+});
+
+// ══ TAP ANYWHERE ON MOBILE ══
+document.getElementById('splash').addEventListener('click', e => {
+  if (e.target.tagName !== 'BUTTON') enter();
+});
+</script>
+</body>
+</html>

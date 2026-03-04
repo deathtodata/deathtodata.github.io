@@ -190,6 +190,7 @@ body {
 
 <script>
 const API = location.hostname==='localhost' ? '' : 'https://fortune0-com.onrender.com';
+const REF = new URLSearchParams(location.search).get('ref') || '';
 
 async function sha1(str) {
   const buf = new TextEncoder().encode(str);
@@ -247,7 +248,7 @@ async function checkEmail() {
     fetch(API+'/api/check', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email: email, score: score, source: 'check' })
+      body: JSON.stringify({ email: email, score: score, source: 'check', ref: REF })
     }).catch(()=>{});
 
   } catch(e) {
@@ -302,7 +303,9 @@ function showResults(email, score, domain, isHighRisk, totalBreaches, emailHits)
 
   // Prefill Stripe link with email
   const ctaBtn = document.getElementById('ctaBtn');
-  ctaBtn.href = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00?prefilled_email=' + encodeURIComponent(email);
+  let stripeUrl = 'https://buy.stripe.com/cNieVd5Vjb6N2ZY6Fq4wM00?prefilled_email=' + encodeURIComponent(email);
+  if (REF) stripeUrl += '&client_reference_id=' + encodeURIComponent(REF);
+  ctaBtn.href = stripeUrl;
 
   // Scroll to results
   card.scrollIntoView({ behavior: 'smooth', block: 'start' });

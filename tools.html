@@ -399,6 +399,14 @@ function showTools(email) {
           <p>Your D2D identity card. Share at events, verify trust circles.</p>
         </div>
       </div>
+
+      <div class="tool-card" onclick="openTool('account')">
+        <span class="tool-ck">&#10003;</span>
+        <div class="tool-info">
+          <h3>Your Account</h3>
+          <p>28-day timer, referral link, stats, membership status.</p>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -422,6 +430,7 @@ function openTool(name) {
     'converter': '/tools/converter.html',
     'sanitizer': '/tools/sanitizer.html',
     'leak-score': '/tools/leak-score.html',
+    'account': '/tools/account.html',
   };
   if (urls[name]) window.location.href = urls[name];
 }

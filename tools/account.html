@@ -2,450 +2,424 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Account Settings | Death2Data</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:ui-monospace,monospace;
-  background:#000;
-  color:#fff;
-  min-height:100vh;
-}
-
-/* Header */
-header{
-  background:#0a0a0a;
-  border-bottom:1px solid #222;
-  padding:20px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.logo{
-  font-size:1.2rem;
-  font-weight:700;
-  color:#00cc44;
-}
-.back-link{
-  color:#666;
-  text-decoration:none;
-  font-size:0.9rem;
-}
-.back-link:hover{
-  color:#00cc44;
-}
-
-/* Main */
-main{
-  max-width:800px;
-  margin:0 auto;
-  padding:40px 20px;
-}
-
-h1{
-  font-size:clamp(1.5rem,5vw,2.5rem);
-  margin-bottom:10px;
-}
-h1 span{color:#00cc44}
-
-.subtitle{
-  color:#888;
-  margin-bottom:40px;
-  font-size:0.9rem;
-}
-
-/* Identity Box */
-.identity-box{
-  background:#0a0a0a;
-  border:2px solid #00cc44;
-  padding:30px;
-  margin-bottom:40px;
-}
-
-.identity-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:15px;
-}
-
-.identity-label{
-  color:#666;
-  font-size:0.8rem;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-}
-
-.identity-value{
-  color:#00cc44;
-  font-family:monospace;
-  font-size:1.1rem;
-  font-weight:700;
-}
-
-/* Action Cards */
-.action-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-  gap:20px;
-  margin-bottom:40px;
-}
-
-.action-card{
-  background:#0a0a0a;
-  border:1px solid #222;
-  padding:30px;
-  cursor:pointer;
-  transition:border-color 0.2s,background 0.2s;
-  position:relative;
-}
-
-.action-card:hover{
-  border-color:#00cc44;
-  background:#0d0d0d;
-}
-
-.action-card h2{
-  font-size:1.2rem;
-  margin-bottom:15px;
-  color:#00cc44;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.action-card p{
-  color:#888;
-  font-size:0.9rem;
-  line-height:1.6;
-  margin-bottom:20px;
-}
-
-.action-btn{
-  background:#00cc44;
-  color:#000;
-  padding:12px 24px;
-  border:none;
-  font-family:inherit;
-  font-weight:700;
-  cursor:pointer;
-  font-size:0.9rem;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  width:100%;
-}
-
-.action-btn:hover{
-  background:#fff;
-}
-
-.action-btn.secondary{
-  background:#222;
-  color:#888;
-}
-
-.action-btn.secondary:hover{
-  background:#333;
-  color:#00cc44;
-}
-
-/* Status Badge */
-.status-badge{
-  display:inline-block;
-  padding:4px 12px;
-  background:#00cc44;
-  color:#000;
-  font-size:0.7rem;
-  font-weight:700;
-  letter-spacing:0.1em;
-  border-radius:2px;
-}
-
-.status-badge.inactive{
-  background:#666;
-  color:#fff;
-}
-
-/* Info Box */
-.info-box{
-  background:#050505;
-  border:1px solid #222;
-  padding:20px;
-  margin-top:40px;
-  font-size:0.85rem;
-  color:#666;
-  line-height:1.6;
-}
-
-.info-box strong{
-  color:#00cc44;
-}
-
-@media(max-width:768px){
-  .action-grid{
-    grid-template-columns:1fr;
-  }
-  .identity-row{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:8px;
-  }
-}
-</style>
-<!-- SEO/AEO/LLMEO Head -->
-<title>Account Dashboard - Manage Your Membership</title>
-<meta name="description" content="View your Death2Data membership status, manage subscription, and access account settings.">
-<meta name="keywords" content="account dashboard, membership, subscription management">
-<meta name="author" content="Death2Data">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://death2data.com/tools/account.html">
-
-<!-- Open Graph (Facebook, LinkedIn, Discord) -->
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Death2Data">
-<meta property="og:title" content="Account Dashboard - Manage Your Membership">
-<meta property="og:description" content="View your Death2Data membership status, manage subscription, and access account settings.">
-<meta property="og:url" content="https://death2data.com/tools/account.html">
-<meta property="og:image" content="https://death2data.com/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_US">
-
-<!-- Twitter Cards -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:site" content="@death2data">
-<meta name="twitter:creator" content="@death2data">
-<meta name="twitter:title" content="Account Dashboard - Manage Your Membership">
-<meta name="twitter:description" content="View your Death2Data membership status, manage subscription, and access account settings.">
-<meta name="twitter:image" content="https://death2data.com/og-image.png">
-
-<!-- JSON-LD for AI Engines (GPT, Claude, Perplexity) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebPage",
-  "name": "Account Dashboard - Manage Your Membership",
-  "description": "View your Death2Data membership status, manage subscription, and access account settings.",
-  "url": "https://death2data.com/tools/account.html",
-  "provider": {
-    "@type": "Organization",
-    "name": "Death2Data",
-    "url": "https://death2data.com",
-    "email": "matt@death2data.com"
-  }
-}
-</script>
-
-
-<!-- Favicon -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Account | Death2Data</title>
+<meta name="description" content="Your Death2Data membership — 28-day key, referral link, stats.">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="icon" href="/favicon.ico" sizes="32x32">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-<!-- PWA -->
 <link rel="manifest" href="/site.webmanifest">
 <meta name="theme-color" content="#0a0a0a">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
 
+:root {
+  --bg: #0a0a0a; --surface: #111; --border: #1e1e1e;
+  --text: #e0e0e0; --muted: #666; --dim: #444;
+  --green: #00cc44; --green-dim: #004d1a; --green-hover: #00e64d;
+  --yellow: #cc8800; --red: #cc0000;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+a { color: inherit; text-decoration: none; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+
+/* ═══ NAV ═══ */
+.hd {
+  display:flex; align-items:center; gap:16px;
+  padding:12px 20px; height:44px;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.hd a { color:var(--muted); transition:color .2s; }
+.hd a:hover { color:var(--green); }
+.hd-logo { font-family:var(--mono); font-weight:700; color:var(--green) !important; font-size:15px; margin-right:8px; }
+
+/* ═══ MAIN ═══ */
+.wrap { max-width:600px; margin:0 auto; padding:32px 20px 60px; }
+
+/* ═══ LOGIN GATE ═══ */
+.gate { text-align:center; padding:80px 20px; }
+.gate h1 { font-size:24px; margin-bottom:12px; }
+.gate p { color:var(--muted); margin-bottom:32px; font-size:14px; }
+.gate-input {
+  display:flex; gap:8px; max-width:400px; margin:0 auto;
+}
+.gate-input input {
+  flex:1; padding:12px 16px;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--text); font-family:var(--mono); font-size:14px;
+  outline:none;
+}
+.gate-input input:focus { border-color:var(--green); }
+.gate-input button {
+  padding:12px 24px; background:var(--green); color:#000;
+  border:none; font-family:var(--font); font-weight:600;
+  font-size:14px; cursor:pointer;
+}
+.gate-input button:hover { background:var(--green-hover); }
+.gate-or { margin-top:20px; color:var(--dim); font-size:13px; }
+.gate-or a { color:var(--green); }
+
+/* ═══ DASHBOARD ═══ */
+.dash { display:none; }
+.dash.show { display:block; }
+
+.section-title {
+  font-size:11px; color:var(--muted); letter-spacing:2px;
+  text-transform:uppercase; margin-bottom:12px; margin-top:32px;
+}
+.section-title:first-child { margin-top:0; }
+
+/* Timer card */
+.timer-card {
+  background:var(--surface); border:1px solid var(--border);
+  padding:24px; text-align:center;
+}
+.timer-days { font-size:48px; font-weight:700; font-family:var(--mono); }
+.timer-label { color:var(--muted); font-size:13px; margin-top:4px; }
+.timer-bar {
+  height:4px; background:var(--border); margin-top:16px;
+  border-radius:2px; overflow:hidden;
+}
+.timer-bar-fill { height:100%; background:var(--green); transition:width .5s; }
+
+/* Info rows */
+.info-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 0; border-bottom:1px solid var(--border);
+  font-size:14px;
+}
+.info-row:last-child { border-bottom:none; }
+.info-label { color:var(--muted); }
+.info-value { font-family:var(--mono); color:var(--green); font-size:13px; }
+.info-value.warn { color:var(--yellow); }
+.info-value.bad { color:var(--red); }
+
+/* Ref share box */
+.ref-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:16px; margin-top:12px;
+}
+.ref-url {
+  font-family:var(--mono); font-size:12px; color:var(--green);
+  word-break:break-all; margin-bottom:12px;
+}
+.ref-copy {
+  padding:8px 16px; background:var(--border); color:var(--text);
+  border:none; font-family:var(--font); font-size:12px;
+  cursor:pointer; width:100%;
+}
+.ref-copy:hover { background:var(--green); color:#000; }
+
+/* Stats grid */
+.stat-grid {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;
+  margin-top:12px;
+}
+.stat-box {
+  background:var(--surface); border:1px solid var(--border);
+  padding:16px; text-align:center;
+}
+.stat-num { font-size:24px; font-weight:700; font-family:var(--mono); color:var(--green); }
+.stat-label { font-size:11px; color:var(--muted); margin-top:4px; }
+
+/* Actions */
+.actions { display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.action-link {
+  display:block; padding:14px 16px;
+  background:var(--surface); border:1px solid var(--border);
+  color:var(--text); font-size:14px; transition:border-color .2s;
+}
+.action-link:hover { border-color:var(--green); }
+.action-link span { float:right; color:var(--dim); }
+
+/* Footer */
+.ft {
+  text-align:center; padding:20px; font-size:12px;
+  color:var(--dim); border-top:1px solid var(--border);
+}
+.ft a { color:var(--muted); margin:0 8px; }
+.ft a:hover { color:var(--green); }
+
+@media(max-width:480px) {
+  .stat-grid { grid-template-columns:1fr 1fr; }
+}
+</style>
 </head>
 <body>
 
-<header>
-  <div class="logo">D2D ACCOUNT</div>
-  <a href="/tools.html" class="back-link">← Back to Tools</a>
-</header>
+<div class="hd">
+  <a href="/" class="hd-logo">D2D</a>
+  <a href="/">search</a>
+  <a href="/wall.html">wall</a>
+  <a href="/tools.html">tools</a>
+</div>
 
-<main>
-  <h1><span>YOUR</span> ACCOUNT</h1>
-  <p class="subtitle">Manage subscription, recover identity, and download backups</p>
+<!-- ═══ LOGIN GATE ═══ -->
+<div class="wrap" id="gate">
+  <div class="gate">
+    <h1>Your Account</h1>
+    <p>Enter your membership email to view your dashboard.</p>
+    <div class="gate-input">
+      <input type="email" id="loginEmail" placeholder="you@email.com" autocomplete="email">
+      <button onclick="login()">Go</button>
+    </div>
+    <div class="gate-or">
+      No account? <a href="/check.html">Check your email first</a>
+    </div>
+    <p id="loginError" style="color:var(--red);margin-top:16px;font-size:13px;display:none;"></p>
+  </div>
+</div>
 
-  <!-- Identity Info -->
-  <div class="identity-box">
-    <div class="identity-row">
-      <span class="identity-label">Anonymous Name</span>
-      <span class="identity-value" id="anon-name">Loading...</span>
+<!-- ═══ DASHBOARD ═══ -->
+<div class="wrap dash" id="dashboard">
+
+  <!-- 28-Day Timer -->
+  <div class="section-title">Membership</div>
+  <div class="timer-card">
+    <div class="timer-days" id="daysLeft">--</div>
+    <div class="timer-label" id="timerLabel">days remaining</div>
+    <div class="timer-bar"><div class="timer-bar-fill" id="timerBar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Account Info -->
+  <div class="section-title">Identity</div>
+  <div class="info-row">
+    <span class="info-label">email</span>
+    <span class="info-value" id="userEmail">--</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">tier</span>
+    <span class="info-value" id="userTier">--</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">key</span>
+    <span class="info-value" id="userKey" style="font-size:11px;max-width:60%;text-align:right;word-break:break-all;">--</span>
+  </div>
+  <div class="info-row">
+    <span class="info-label">credits</span>
+    <span class="info-value" id="userCredits">--</span>
+  </div>
+
+  <!-- Referral -->
+  <div class="section-title">Your Referral Link</div>
+  <div class="ref-box">
+    <div class="ref-url" id="refUrl">--</div>
+    <button class="ref-copy" id="refCopy" onclick="copyRef()">Copy link</button>
+  </div>
+
+  <!-- Referral Stats -->
+  <div class="section-title">Referral Stats</div>
+  <div class="stat-grid">
+    <div class="stat-box">
+      <div class="stat-num" id="refClicks">0</div>
+      <div class="stat-label">clicks</div>
     </div>
-    <div class="identity-row">
-      <span class="identity-label">Access Token</span>
-      <span class="identity-value" id="token" style="font-size:0.85rem;word-break:break-all">Loading...</span>
+    <div class="stat-box">
+      <div class="stat-num" id="refConversions">0</div>
+      <div class="stat-label">signups</div>
     </div>
-    <div class="identity-row">
-      <span class="identity-label">Subscription Status</span>
-      <span class="status-badge" id="sub-status">ACTIVE</span>
+    <div class="stat-box">
+      <div class="stat-num" id="refEarned">$0</div>
+      <div class="stat-label">earned</div>
     </div>
   </div>
 
-  <!-- Action Cards -->
-  <div class="action-grid">
-    <!-- Manage Subscription -->
-    <div class="action-card">
-      <h2>💳 Manage Subscription</h2>
-      <p>Update payment method, view invoices, or cancel your subscription via Stripe's secure billing portal.</p>
-      <button class="action-btn" onclick="manageSubscription()">
-        Open Billing Portal →
-      </button>
-    </div>
-
-    <!-- Recover Identity -->
-    <div class="action-card">
-      <h2>🔑 Recover Identity</h2>
-      <p>Lost your device? Recover your D2D identity using your subscription email address.</p>
-      <button class="action-btn secondary" onclick="recoverIdentity()">
-        Recover Identity
-      </button>
-    </div>
-
-    <!-- Download Backup -->
-    <div class="action-card">
-      <h2>💾 Download Backup</h2>
-      <p>Export your identity keys and save them to a secure location. Use this to restore your identity on a new device.</p>
-      <button class="action-btn secondary" onclick="downloadBackup()">
-        Download Backup
-      </button>
-    </div>
-
-    <!-- View Recovery Email -->
-    <div class="action-card">
-      <h2>📧 Recovery Email</h2>
-      <p id="email-display">No email saved. Add one for account recovery.</p>
-      <button class="action-btn secondary" onclick="updateEmail()">
-        Update Email
-      </button>
-    </div>
+  <!-- Actions -->
+  <div class="section-title">Actions</div>
+  <div class="actions">
+    <a href="/" class="action-link">Search privately <span>→</span></a>
+    <a href="/story.html" class="action-link">Story mode <span>→</span></a>
+    <a href="/tools/notebook.html" class="action-link">28-day notebook <span>→</span></a>
+    <a href="/tools.html" class="action-link">All tools <span>→</span></a>
+    <a href="#" class="action-link" onclick="logout();return false;">Log out <span>×</span></a>
   </div>
+</div>
 
-  <!-- Info Box -->
-  <div class="info-box">
-    <p><strong>Subscription Details:</strong></p>
-    <ul style="margin:10px 0 10px 20px">
-      <li>Price: $1 every 4 weeks ($13/year)</li>
-      <li>Next billing: Varies by signup date</li>
-      <li>Cancel anytime via billing portal</li>
-      <li>Refund policy: Contact hello@death2data.com</li>
-    </ul>
-
-    <p style="margin-top:20px"><strong>Privacy Guarantee:</strong></p>
-    <p>We only store your email for recovery and billing. Your identity keys are stored client-side on your device only. We cannot access your private keys.</p>
-
-    <p style="margin-top:20px"><strong>Need Help?</strong></p>
-    <p>Email: <a href="mailto:hello@death2data.com" style="color:#00cc44">hello@death2data.com</a></p>
-  </div>
-</main>
+<div class="ft">
+  <a href="/about.html">about</a>
+  <a href="/privacy.html">privacy</a>
+  <a href="mailto:matt@death2data.com">contact</a>
+</div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// LOAD IDENTITY INFO
-// ═══════════════════════════════════════════════════════════════════════════════
+const API = location.hostname === 'localhost' ? '' : 'https://fortune0-com.onrender.com';
 
-function loadIdentityInfo() {
-  const anonName = localStorage.getItem('d2d_anon_name');
-  const accessToken = localStorage.getItem('d2d_access_token');
-  const email = localStorage.getItem('d2d_email');
+// ═══ AUTO-LOGIN if key in localStorage ═══
+(function() {
+  const saved = localStorage.getItem('d2d_email');
+  if (saved) {
+    document.getElementById('loginEmail').value = saved;
+    login();
+  }
+})();
 
-  // Display identity
-  if (anonName) {
-    document.getElementById('anon-name').textContent = anonName;
+// ═══ LOGIN ═══
+async function login() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  if (!email || !email.includes('@')) {
+    showError('Enter a valid email.'); return;
+  }
+  hideError();
+
+  try {
+    // Authenticate with server
+    const res = await fetch(API + '/api/signup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (data.error) { showError(data.error); return; }
+
+    // Store session token
+    if (data.session_token) {
+      localStorage.setItem('d2d_session', data.session_token);
+      localStorage.setItem('d2d_email', email);
+    }
+
+    // Now fetch full profile
+    const meRes = await fetch(API + '/api/me', {
+      headers: { 'Authorization': 'Bearer ' + (data.session_token || localStorage.getItem('d2d_session')) }
+    });
+    const me = await meRes.json();
+    if (me.error) { showError('Account not found. Check your email or join first.'); return; }
+
+    renderDashboard(me);
+
+    // Fetch referral stats
+    if (me.referral_code) {
+      fetchRefStats(me.referral_code);
+    }
+
+  } catch(e) {
+    showError('Could not reach server. Try again.');
+  }
+}
+
+// ═══ RENDER DASHBOARD ═══
+function renderDashboard(me) {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('dashboard').classList.add('show');
+
+  // Mask email: m***@gmail.com
+  const em = me.email || '';
+  const masked = em[0] + '***' + em.substring(em.indexOf('@'));
+  document.getElementById('userEmail').textContent = masked;
+
+  // Tier
+  const tierEl = document.getElementById('userTier');
+  tierEl.textContent = me.tier || 'free';
+  if (me.tier === 'active') {
+    tierEl.style.color = 'var(--green)';
   } else {
-    document.getElementById('anon-name').textContent = 'Not Generated';
+    tierEl.classList.add('warn');
   }
 
-  if (accessToken) {
-    document.getElementById('token').textContent = accessToken.slice(0, 32) + '...';
+  // Key (truncated)
+  const key = me.license_key || 'none';
+  document.getElementById('userKey').textContent = key.length > 30 ? key.substring(0, 28) + '...' : key;
+
+  // Credits
+  document.getElementById('userCredits').textContent = (me.credit_balance || 0).toFixed(2);
+
+  // 28-day timer from license key
+  if (me.license_key && me.license_key.startsWith('IK-')) {
+    try {
+      const token = me.license_key.substring(3);
+      const padded = token + '='.repeat((4 - token.length % 4) % 4);
+      const payload = JSON.parse(atob(padded.replace(/-/g,'+').replace(/_/g,'/')));
+      const expires = new Date(payload.expires + 'T23:59:59Z');
+      const now = new Date();
+      const msLeft = expires - now;
+      const daysLeft = Math.max(0, Math.ceil(msLeft / (1000*60*60*24)));
+      const pct = Math.max(0, Math.min(100, (daysLeft / 28) * 100));
+
+      document.getElementById('daysLeft').textContent = daysLeft;
+      document.getElementById('timerBar').style.width = pct + '%';
+
+      if (daysLeft <= 0) {
+        document.getElementById('daysLeft').style.color = 'var(--red)';
+        document.getElementById('timerLabel').textContent = 'expired — renew to continue';
+        document.getElementById('timerBar').style.background = 'var(--red)';
+      } else if (daysLeft <= 7) {
+        document.getElementById('daysLeft').style.color = 'var(--yellow)';
+        document.getElementById('timerLabel').textContent = 'days left — auto-renews via Stripe';
+        document.getElementById('timerBar').style.background = 'var(--yellow)';
+      }
+    } catch(e) {
+      document.getElementById('daysLeft').textContent = '?';
+    }
   } else {
-    document.getElementById('token').textContent = 'Not Generated';
+    document.getElementById('daysLeft').textContent = '--';
+    document.getElementById('timerLabel').textContent = 'no active key';
   }
 
-  // Display email
-  if (email) {
-    document.getElementById('email-display').innerHTML =
-      `Recovery email: <strong style="color:#00cc44">${email}</strong>`;
-  }
-
-  // TODO: Check subscription status via API
-  // For now, assume active
-  document.getElementById('sub-status').textContent = 'ACTIVE';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ACTIONS
-// ═══════════════════════════════════════════════════════════════════════════════
-
-function manageSubscription() {
-  // Redirect to manage.html (which opens Stripe billing portal)
-  const email = localStorage.getItem('d2d_email');
-
-  if (email) {
-    // Pre-fill email in URL param
-    window.location.href = `/manage.html?email=${encodeURIComponent(email)}`;
+  // Referral link
+  const code = me.referral_code || '';
+  if (code) {
+    const url = 'https://death2data.com/go?ref=' + code;
+    document.getElementById('refUrl').textContent = url;
   } else {
-    window.location.href = '/manage.html';
+    document.getElementById('refUrl').textContent = 'No referral code yet';
   }
 }
 
-function recoverIdentity() {
-  window.location.href = '/recover.html';
+// ═══ REFERRAL STATS ═══
+async function fetchRefStats(code) {
+  try {
+    const res = await fetch(API + '/api/affiliate/stats?code=' + code);
+    const data = await res.json();
+    if (data.error) return;
+    document.getElementById('refClicks').textContent = data.clicks || 0;
+    document.getElementById('refConversions').textContent = data.total_referrals || 0;
+    document.getElementById('refEarned').textContent = '$' + (data.total_earned || 0).toFixed(2);
+  } catch(e) {}
 }
 
-function downloadBackup() {
-  const privateKey = localStorage.getItem('d2d_private_key');
-  const publicKey = localStorage.getItem('d2d_public_key');
-  const anonName = localStorage.getItem('d2d_anon_name');
-  const accessToken = localStorage.getItem('d2d_access_token');
-  const created = localStorage.getItem('d2d_created');
-  const email = localStorage.getItem('d2d_email');
-
-  if (!privateKey || !publicKey) {
-    alert('No identity found in localStorage. Generate one first by visiting /success.html after payment.');
-    return;
-  }
-
-  const backup = {
-    anon_name: anonName,
-    access_token: accessToken,
-    public_key: publicKey,
-    private_key: privateKey,
-    created: created,
-    email: email,
-    exported: new Date().toISOString(),
-    warning: 'KEEP THIS FILE SECURE. Anyone with your private key can impersonate you.'
-  };
-
-  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `d2d-identity-backup-${anonName || 'unknown'}.json`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  alert('✓ Identity backup downloaded!\n\nStore this file in a secure location (password manager, encrypted drive, etc.).');
+// ═══ COPY REFERRAL ═══
+function copyRef() {
+  const url = document.getElementById('refUrl').textContent;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('refCopy');
+    btn.textContent = 'Copied!';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#000';
+    setTimeout(() => {
+      btn.textContent = 'Copy link';
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2000);
+  });
 }
 
-function updateEmail() {
-  const currentEmail = localStorage.getItem('d2d_email');
-  const newEmail = prompt(
-    'Enter your email for account recovery:\n\n' +
-    (currentEmail ? `Current: ${currentEmail}` : 'No email currently saved'),
-    currentEmail || ''
-  );
-
-  if (newEmail && newEmail.includes('@')) {
-    localStorage.setItem('d2d_email', newEmail);
-    document.getElementById('email-display').innerHTML =
-      `Recovery email: <strong style="color:#00cc44">${newEmail}</strong>`;
-    alert('✓ Email updated!');
-  } else if (newEmail !== null) {
-    alert('Invalid email address');
-  }
+// ═══ LOGOUT ═══
+function logout() {
+  localStorage.removeItem('d2d_session');
+  localStorage.removeItem('d2d_email');
+  location.reload();
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════════
+// ═══ HELPERS ═══
+function showError(msg) {
+  const el = document.getElementById('loginError');
+  el.textContent = msg; el.style.display = 'block';
+}
+function hideError() {
+  document.getElementById('loginError').style.display = 'none';
+}
 
-loadIdentityInfo();
+// ═══ ENTER KEY ═══
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') login();
+});
 </script>
 
 </body>

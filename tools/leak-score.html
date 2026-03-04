@@ -403,7 +403,7 @@ async function checkEmail() {
     fetch(API+'/api/check', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email: email, score: score, source: 'leak-score' })
+      body: JSON.stringify({ email: email, score: score, source: 'leak-score', ref: new URLSearchParams(location.search).get('ref') || '' })
     }).catch(()=>{});
 
   } catch (e) {
